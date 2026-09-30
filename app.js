@@ -8,12 +8,32 @@ const brainStatus = document.getElementById("brainStatus");
 const imageInput = document.getElementById("imageInput");
 const imagePreview = document.getElementById("imagePreview");
 const imagePlaceholder = document.getElementById("imagePlaceholder");
+const targetSelect = document.getElementById("target");
+const replacementSelect = document.getElementById("replacement");
+
+const targetHints = {
+  "Sofa": "Tập trung vào số chỗ ngồi, tỷ lệ thân sofa, tay vịn, lưng, đệm, chân/đế và khoảng cách tới bàn trà.",
+  "Armchair / ghế đơn": "Tập trung vào tỷ lệ ngồi, lưng ghế, tay vịn, chân/đế và quan hệ giữa phần gỗ/kim loại với phần bọc.",
+  "Bàn trà": "Tập trung vào kích thước mặt bàn, chiều cao, độ dày mặt, cạnh, chân/đế và khoảng cách với sofa.",
+  "Bàn ăn": "Tập trung vào kích thước mặt bàn, chiều cao, chân/đế và số lượng ghế có thể bố trí.",
+  "Ghế ăn": "Tập trung vào chiều cao mặt ngồi, lưng ghế, chân và quan hệ tỷ lệ với bàn ăn.",
+  "Giường": "Tập trung vào kích thước đệm, đầu giường, khung giường, chân/đế và khoảng cách hai bên.",
+  "Tủ / kệ": "Tập trung vào module, cánh/ngăn kéo, chiều sâu, cao độ, chân/đế và giao tiếp với tường.",
+  "Đèn": "Tập trung vào loại đèn, kích thước, vị trí treo/đặt, cấu tạo và hướng phát sáng.",
+  "Khác": "Tập trung vào silhouette, tỷ lệ, công năng, cấu tạo và điểm nhận diện của món đồ."
+};
 
 document.querySelectorAll("[data-fill]").forEach(button => {
   button.addEventListener("click", () => {
     brief.value = (brief.value ? brief.value + " " : "") + button.dataset.fill;
     brief.focus();
   });
+});
+
+targetSelect.addEventListener("change", () => {
+  const hint = targetHints[targetSelect.value] || targetHints["Khác"];
+  resultText.textContent = hint;
+  brainStatus.textContent = targetSelect.value + " engine selected";
 });
 
 imageInput.addEventListener("change", () => {
@@ -27,41 +47,36 @@ imageInput.addEventListener("change", () => {
 });
 
 document.getElementById("generate").addEventListener("click", () => {
-  const target = document.getElementById("target").value;
-  const replacement = document.getElementById("replacement").value;
+  const target = targetSelect.value;
+  const replacement = replacementSelect.value;
+  const userBrief = brief.value.trim();
+
+  if (!userBrief) {
+    brief.focus();
+    resultText.textContent = "Hãy mô tả món đồ mới để Furniture Engine có đủ dữ liệu tạo prompt.";
+    brainStatus.textContent = "Waiting for furniture direction";
+    return;
+  }
+
   const data = {
     brief: [
       "EDIT FURNITURE IN THE PROVIDED INTERIOR IMAGE.",
       "Target furniture: " + target,
       "Replacement direction: " + replacement,
-      brief.value.trim()
+      userBrief
     ].filter(Boolean).join(" "),
     mode: "Furniture replacement",
     output: "Photorealistic",
-    camera: "Preserve original camera"
+    camera: "Preserve original camera",
+    target,
+    replacement
   };
 
   const { analysis, prompt } = buildDirection(data);
-  const finalPrompt = [
-    "HOANGGIA AI — FURNITURE REPLACEMENT PROMPT",
-    "",
-    prompt,
-    "",
-    "IMAGE EDITING RULES",
-    "• Keep the room architecture unchanged.",
-    "• Keep walls, floor, ceiling, windows, doors and built-in elements unchanged.",
-    "• Keep the original camera angle, framing, perspective and image proportions.",
-    "• Replace only the selected furniture.",
-    "• Match the replacement furniture to the original scale, floor contact, perspective, shadows and lighting.",
-    "• Do not redesign the room or add unrelated furniture.",
-    "• Preserve every non-target object unless explicitly requested.",
-    "• The replacement must look physically present, not pasted or floating."
-  ].join("\n");
-
-  resultContent.textContent = finalPrompt;
+  resultContent.textContent = prompt;
   result.classList.remove("hidden");
-  brainStatus.textContent = "Furniture edit direction ready";
-  resultText.textContent = "Đã khóa kiến trúc + camera và tập trung toàn bộ suy luận vào việc thay đổi đồ nội thất.";
+  brainStatus.textContent = target + " replacement prompt ready";
+  resultText.textContent = "Furniture Engine đã áp dụng bộ quy tắc riêng cho " + target + ".";
   result.dataset.analysis = JSON.stringify(analysis);
   result.scrollIntoView({ behavior: "smooth", block: "nearest" });
 });
@@ -80,5 +95,6 @@ document.getElementById("newProject").addEventListener("click", () => {
   imagePlaceholder.classList.remove("hidden");
   result.classList.add("hidden");
   brainStatus.textContent = "Furniture editor ready";
+  resultText.textContent = "Ảnh + target + mô tả → tạo chỉ dẫn chỉnh sửa.";
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
