@@ -65,6 +65,7 @@
           <option>Giữ ngôn ngữ thiết kế, tối ưu theo không gian A</option>
         </select>
       </div>
+      <div id="modeControls" class="mode-controls"></div>
     </div>
     <div>
       <label>Yêu cầu bổ sung</label>
@@ -80,11 +81,12 @@
 </section>
 
 <section class="result-panel hidden" id="result">
-  <div class="result-head"><div><span class="kicker">OUTPUT</span><h2>Reference Replacement Prompt</h2></div><button class="copy-btn" id="copy">Copy prompt</button></div>
+  <div class="result-head"><div><span class="kicker">OUTPUT</span><h2>Production Prompt</h2></div><button class="copy-btn" id="copy">Copy prompt</button></div>
+  <div id="reasoningSummary" class="reasoning-summary"></div>
   <pre id="resultContent"></pre>
 </section>
 
-<footer><span>HOANGGIA AI — Furniture Prompt Engine</span><span>© 2026 Hoàng Gia</span></footer>
+<footer><span>HOANGGIA AI — Interior Edit Engine</span><span>© 2026 Hoàng Gia</span></footer>
 </main>
 </div>
 <script type="module" src="./app.js"></script>
