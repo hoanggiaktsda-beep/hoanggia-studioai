@@ -34,16 +34,16 @@
     <div class="panel-head"><div><span class="kicker">01</span><h2>Ảnh không gian</h2></div><span class="panel-note">Ảnh gốc</span></div>
     <label class="upload-box" for="sceneInput">
       <img id="scenePreview" alt="Ảnh không gian">
-      <div id="scenePlaceholder"><strong>＋ Tải ảnh nội thất</strong><span>JPG / PNG · Render hoặc ảnh chụp</span></div>
+      <div id="scenePlaceholder"><strong>＋ Tải ảnh không gian</strong><span>JPG / PNG · Render hoặc ảnh chụp</span></div>
     </label>
     <input id="sceneInput" type="file" accept="image/png,image/jpeg" hidden>
   </div>
 
   <div class="panel upload-panel">
-    <div class="panel-head"><div><span class="kicker">02</span><h2>Ảnh tham chiếu</h2></div><span class="panel-note">Có thể bỏ qua</span></div>
+    <div class="panel-head"><div><span class="kicker">02</span><h2>Model cung cấp</h2></div><span class="panel-note">Bắt buộc với nội thất</span></div>
     <label class="upload-box" for="referenceInput">
-      <img id="referencePreview" alt="Ảnh tham chiếu">
-      <div id="referencePlaceholder"><strong>＋ Tải ảnh tham chiếu</strong><span>JPG / PNG · Mẫu đồ, vật liệu hoặc ánh sáng</span></div>
+      <img id="referencePreview" alt="Model cung cấp">
+      <div id="referencePlaceholder"><strong>＋ Tải model cung cấp</strong><span>JPG / PNG · Ảnh model nội thất cần đưa vào không gian</span></div>
     </label>
     <input id="referenceInput" type="file" accept="image/png,image/jpeg" hidden>
   </div>
@@ -72,11 +72,11 @@
           <option>Sofa</option><option>Ghế đơn</option><option>Bàn trà</option><option>Bàn ăn</option><option>Ghế ăn</option><option>Giường</option><option>Tủ / kệ</option><option>Đèn</option><option>Khác</option>
         </select>
       </div>
-      <div class="field"><label>Ưu tiên ảnh tham chiếu</label>
+      <div class="field"><label>Ưu tiên model cung cấp</label>
         <select id="referencePriority">
-          <option>Giữ nguyên thiết kế và hình dáng mẫu B</option>
+          <option>Giữ nguyên thiết kế và hình dáng model cung cấp</option>
           <option>Giữ hình dáng, cho phép đổi vật liệu / màu</option>
-          <option>Giữ ngôn ngữ thiết kế, tối ưu theo không gian A</option>
+          <option>Giữ ngôn ngữ thiết kế, tối ưu theo không gian</option>
         </select>
       </div>
       <div id="modeControls" class="mode-controls"></div>
@@ -85,15 +85,15 @@
     <div>
       <div class="decision-intro"><span class="decision-step">02</span><div><strong>Ý đồ thiết kế</strong><small>Chỉ mô tả điều bạn muốn thay đổi bằng ngôn ngữ tự nhiên.</small></div></div>
       <label>Yêu cầu bổ sung</label>
-      <textarea id="brief" placeholder="Ví dụ: đưa sofa mẫu B vào vị trí sofa hiện tại, giữ nguyên kiểu dáng mẫu B, điều chỉnh tỷ lệ vừa không gian nhưng không thay đổi kiến trúc..."></textarea>
-      <div class="chips"><button data-fill="giữ nguyên thiết kế và hình dáng mẫu tham chiếu">Giữ mẫu B</button><button data-fill="giữ nguyên tỷ lệ tương đối của không gian A">Giữ tỷ lệ</button><button data-fill="giữ nguyên vật liệu và màu sắc mẫu B">Giữ vật liệu</button><button data-fill="chỉ thay đúng món đồ mục tiêu">Chỉ thay đối tượng</button></div>
+      <textarea id="brief" placeholder="Ví dụ: đưa model cung cấp vào vị trí sofa hiện tại, giữ nguyên kiểu dáng model, điều chỉnh tỷ lệ vừa không gian nhưng không thay đổi kiến trúc..."></textarea>
+      <div class="chips"><button data-fill="giữ nguyên thiết kế và hình dáng model cung cấp">Giữ model</button><button data-fill="giữ nguyên tỷ lệ tương đối của không gian">Giữ tỷ lệ</button><button data-fill="giữ nguyên vật liệu và màu sắc model cung cấp">Giữ vật liệu</button><button data-fill="chỉ thay đúng món đồ mục tiêu">Chỉ thay đối tượng</button></div>
     </div>
   </div>
 </section>
 
 <section class="decision-bar"><div><span class="kicker">HỆ THỐNG QUYẾT ĐỊNH KIẾN TRÚC</span><h2>Ốc quyết định. Chuyên gia suy luận. HOANGGIA AI kiểm soát.</h2><p>Bốn chuyên gia hoạt động độc lập. Mỗi chuyên gia chỉ suy luận trong phạm vi chuyên môn đã chọn và không tự ý thay đổi phạm vi thiết kế.</p></div><div class="decision-status"><span>QUYẾT ĐỊNH</span><strong id="decisionCount">0 / 3</strong></div></section>
 <section class="action-panel">
-  <div><span class="kicker">04</span><h2>Xây dựng prompt kiến trúc</h2><p id="resultText">Ảnh không gian + quyết định + chuyên gia → tạo prompt, không tạo ảnh.</p></div>
+  <div><span class="kicker">04</span><h2>Xây dựng prompt kiến trúc</h2><p id="resultText">Ảnh không gian + model cung cấp + quyết định → tạo prompt, không tạo ảnh.</p></div>
   <button class="primary-btn" id="generate">TẠO PROMPT <span>↗</span></button>
 </section>
 
