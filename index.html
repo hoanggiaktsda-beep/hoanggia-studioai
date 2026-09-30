@@ -1,1 +1,80 @@
-<!doctype html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0c0e"><meta name="description" content="HOANGGIA AI Studio — AI workspace for architecture, interior design and visual production."><title>HOANGGIA AI Studio</title><link rel="stylesheet" href="./styles.css"></head><body><div class="app-shell"><aside class="sidebar"><div class="brand"><div class="brand-mark">HG</div><div><strong>HOANGGIA</strong><span>AI STUDIO</span></div></div><nav><a class="nav-item active" href="#workspace"><span>✦</span> Studio</a><a class="nav-item" href="#projects"><span>▱</span> Projects</a><a class="nav-item" href="#library"><span>□</span> Library</a></nav><div class="sidebar-bottom"><div class="status-dot"></div><span id="brainStatus">Brain ready</span></div></aside><main class="main"><header class="topbar"><div class="crumb">HOANGGIA AI <span>/</span> Studio</div><button class="ghost-btn" id="newProject">＋ New project</button></header><section class="hero" id="workspace"><div><p class="eyebrow">ARCHITECTURE × AI</p><h1>Turn design intent<br><em>into visual direction.</em></h1><p class="hero-copy">A focused AI workspace for architects and interior designers — from brief, material and camera to production-ready visual direction.</p></div><div class="hero-badge"><span>HG</span><small>ARCHITECTURAL<br>BRAIN</small></div></section><section class="workspace-grid"><div class="panel"><div class="panel-head"><div><span class="kicker">01</span><h2>Design brief</h2></div><span class="panel-note">AI-ready input</span></div><label>What are you designing?</label><textarea id="brief" placeholder="Ví dụ: Phòng khách Modern Luxury, tinh thần tối giản, vật liệu gỗ veneer óc chó và đá tự nhiên, ánh sáng ấm..."></textarea><div class="chips"><button data-fill="Modern Luxury">Modern Luxury</button><button data-fill="Minimal Luxury">Minimal Luxury</button><button data-fill="Neo-classic">Neo-classic</button><button data-fill="Contemporary">Contemporary</button></div></div><div class="panel"><div class="panel-head"><div><span class="kicker">02</span><h2>Direction</h2></div></div><div class="field"><label>Mode</label><select id="mode"><option>Interior visualization</option><option>Furniture direction</option><option>Material study</option><option>Camera / composition</option><option>Before / after</option></select></div><div class="field"><label>Output</label><select id="output"><option>Photorealistic</option><option>Editorial</option><option>Conceptual</option><option>Technical</option></select></div><div class="field"><label>Camera</label><select id="camera"><option>Preserve original camera</option><option>Eye level</option><option>Wide architectural</option><option>Close material detail</option></select></div></div></section><section class="action-panel"><div><span class="kicker">03</span><h2>Generate direction</h2><p id="resultText">Your structured design direction will appear here.</p></div><button class="primary-btn" id="generate">KẾT XUẤT <span>↗</span></button></section><section class="result-panel hidden" id="result"><div class="result-head"><div><span class="kicker">OUTPUT</span><h2>HOANGGIA AI Direction</h2></div><button class="copy-btn" id="copy">Copy direction</button></div><pre id="resultContent"></pre></section><section class="bottom-grid" id="projects"><div class="mini-card"><span>PROJECTS</span><strong>Build your design library</strong><p>Keep briefs, directions and future AI outputs organised by project.</p></div><div class="mini-card" id="library"><span>LIBRARY</span><strong>Materials · Cameras · Styles</strong><p>A dedicated knowledge layer for HOANGGIA AI is next.</p></div></section><footer><span>HOANGGIA AI Studio</span><span>© 2026 Hoàng Gia</span></footer></main></div><script type="module" src="./app.js"></script></body></html>
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0c0e">
+<meta name="description" content="HOANGGIA AI — thay đổi đồ nội thất bằng AI, giữ nguyên không gian và góc máy.">
+<title>HOANGGIA AI — Furniture Editor</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">HG</div><div><strong>HOANGGIA</strong><span>AI FURNITURE</span></div></div>
+  <nav>
+    <a class="nav-item active" href="#workspace"><span>✦</span> Furniture Edit</a>
+    <a class="nav-item" href="#result"><span>↗</span> Output</a>
+  </nav>
+  <div class="sidebar-bottom"><div class="status-dot"></div><span id="brainStatus">Furniture editor ready</span></div>
+</aside>
+<main class="main">
+<header class="topbar"><div class="crumb">HOANGGIA AI <span>/</span> Furniture Editor</div><button class="ghost-btn" id="newProject">＋ New edit</button></header>
+
+<section class="hero" id="workspace">
+  <div>
+    <p class="eyebrow">AI FURNITURE EDITOR</p>
+    <h1>Change furniture.<br><em>Keep the room.</em></h1>
+    <p class="hero-copy">Tải ảnh nội thất lên, chọn món đồ cần thay và mô tả món đồ mới. HOANGGIA AI giữ nguyên kiến trúc, bố cục và góc máy.</p>
+  </div>
+  <div class="hero-badge"><span>HG</span><small>FURNITURE<br>EDITOR</small></div>
+</section>
+
+<section class="editor-grid">
+  <div class="panel upload-panel">
+    <div class="panel-head"><div><span class="kicker">01</span><h2>Ảnh không gian</h2></div><span class="panel-note">Reference</span></div>
+    <label class="upload-box" for="imageInput">
+      <img id="imagePreview" alt="Preview">
+      <div id="imagePlaceholder"><strong>＋ Tải ảnh nội thất</strong><span>JPG / PNG · Ảnh render hoặc ảnh chụp</span></div>
+    </label>
+    <input id="imageInput" type="file" accept="image/png,image/jpeg" hidden>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><div><span class="kicker">02</span><h2>Chọn đồ cần thay</h2></div></div>
+    <div class="field"><label>Furniture target</label>
+      <select id="target">
+        <option>Sofa</option><option>Armchair / ghế đơn</option><option>Bàn trà</option><option>Bàn ăn</option><option>Ghế ăn</option><option>Giường</option><option>Tủ / kệ</option><option>Đèn</option><option>Khác</option>
+      </select>
+    </div>
+    <div class="field"><label>Món đồ mới</label>
+      <select id="replacement">
+        <option>Giữ nguyên kiểu dáng tham chiếu, thay vật liệu / màu sắc</option>
+        <option>Thay bằng mẫu sofa hiện đại cao cấp</option>
+        <option>Thay bằng mẫu armchair cao cấp</option>
+        <option>Thay bằng bàn trà đá tự nhiên</option>
+        <option>Thay bằng mẫu nội thất theo ảnh tham chiếu</option>
+        <option>Thiết kế lại theo mô tả</option>
+      </select>
+    </div>
+    <label>Yêu cầu chi tiết</label>
+    <textarea id="brief" placeholder="Ví dụ: thay sofa bằng mẫu 3 chỗ màu nâu cognac, tay gỗ, giữ nguyên kích thước tương đối và vị trí sofa cũ..."></textarea>
+    <div class="chips"><button data-fill="giữ nguyên kích thước và vị trí">Giữ vị trí</button><button data-fill="giữ nguyên vật liệu tham chiếu">Giữ vật liệu</button><button data-fill="thay màu theo ảnh tham chiếu">Đổi màu</button><button data-fill="giữ nguyên thiết kế gốc">Giữ thiết kế</button></div>
+  </div>
+</section>
+
+<section class="action-panel">
+  <div><span class="kicker">03</span><h2>Thay đồ nội thất</h2><p id="resultText">Ảnh + target + mô tả → tạo chỉ dẫn chỉnh sửa.</p></div>
+  <button class="primary-btn" id="generate">THAY ĐỒ <span>↗</span></button>
+</section>
+
+<section class="result-panel hidden" id="result">
+  <div class="result-head"><div><span class="kicker">OUTPUT</span><h2>Furniture Edit Prompt</h2></div><button class="copy-btn" id="copy">Copy prompt</button></div>
+  <pre id="resultContent"></pre>
+</section>
+
+<footer><span>HOANGGIA AI — Furniture Editor</span><span>© 2026 Hoàng Gia</span></footer>
+</main>
+</div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
