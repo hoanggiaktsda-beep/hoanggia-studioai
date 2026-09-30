@@ -66,8 +66,7 @@ function renderModelControls(){
   ["modelObject","Đối tượng nội thất",modelSchema.object],
   ["modelPriority","Ưu tiên model cung cấp",modelSchema.priority],
   ["modelPreservation","Mức độ bảo toàn",modelSchema.preservation],
-  ["modelViews","Chuẩn hóa góc nhìn",modelSchema.views],
-  ["modelRoles","Quy ước ảnh",modelSchema.roles]
+  ["modelViews","Chuẩn hóa góc nhìn",modelSchema.views]
  ].map(([key,label,opts])=>`<div class="field"><label>${label}</label><select data-model="${key}">${opts.map((o,i)=>`<option${i===0?" selected":""}>${o}</option>`).join("")}</select></div>`).join("");
  const object=modelControls.querySelector('[data-model="modelObject"]');
  if(object){object.value=targetSelect.value;object.addEventListener("change",syncModelObjectToTarget);}
@@ -115,7 +114,14 @@ function updateCount(){
 decisionControls.addEventListener("change",updateCount);
 
 const modeTemplates={
- Furniture:()=>`<div class="mode-control-grid"><div class="field"><label>Ưu tiên model cung cấp</label><select data-param="reference"><option>Khóa hình dáng + cấu tạo model</option><option>Khóa hình dáng, cho phép đổi bề mặt</option><option>Khóa ngôn ngữ thiết kế</option></select></div><div class="field"><label>Kiểm tra cấu tạo</label><select data-param="construction"><option>Kiến trúc / có thể thi công</option><option>Giữ chi tiết liên kết nhìn thấy</option><option>Can thiệp cấu trúc tối thiểu</option></select></div></div>`,
+ Furniture:()=>`<div class="mode-control-grid furniture-advanced">
+ <div class="field"><label>Cách thay đồ</label><select data-param="replacementMethod"><option>Thay đúng model cung cấp</option><option>Thay model tương đương theo ngôn ngữ thiết kế</option><option>Tinh chỉnh model hiện tại</option></select></div>
+ <div class="field"><label>Khóa nhận diện model</label><select data-param="identityLock"><option>Khóa tuyệt đối silhouette + cấu tạo</option><option>Khóa silhouette + chi tiết đặc trưng</option><option>Khóa ngôn ngữ thiết kế</option></select></div>
+ <div class="field"><label>Xử lý tỷ lệ</label><select data-param="scalePolicy"><option>Giữ nguyên tỷ lệ model</option><option>Điều chỉnh vừa không gian nhưng không đổi thiết kế</option><option>Ưu tiên tỷ lệ model so với đồ cũ</option></select></div>
+ <div class="field"><label>Vị trí & tiếp xúc</label><select data-param="placementPolicy"><option>Khớp đúng vị trí đồ cũ</option><option>Tối ưu khoảng lưu thông</option><option>Giữ footprint hiện tại</option></select></div>
+ <div class="field"><label>Kiểm tra cấu tạo</label><select data-param="construction"><option>Kiến trúc / có thể thi công</option><option>Giữ chi tiết liên kết nhìn thấy</option><option>Can thiệp cấu trúc tối thiểu</option></select></div>
+ <div class="field"><label>Vật liệu model</label><select data-param="modelMaterial"><option>Giữ nguyên vật liệu model</option><option>Giữ cấu tạo, cho phép đổi bề mặt</option><option>Ưu tiên vật liệu theo ảnh tham chiếu</option></select></div>
+ </div>`,
  Material:()=>`<div class="mode-control-grid"><div class="field"><label>Tỷ lệ vân / texture</label><select data-param="texture"><option>Tỷ lệ thực tế theo kiến trúc</option><option>Vân mịn</option><option>Vân / đường đá nổi bật</option></select></div><div class="field"><label>Ưu tiên vật liệu</label><select data-param="materialPriority"><option>Ưu tiên tính chân thực</option><option>Ưu tiên ảnh tham chiếu</option><option>Ưu tiên tính liên tục kiến trúc</option></select></div></div>`,
  Lighting:()=>`<div class="mode-control-grid"><div class="field"><label>Nhiệt độ màu</label><select data-param="temperature"><option>2700–3000K · ấm</option><option>3500–4000K · trung tính</option><option>5000–6500K · ánh sáng ban ngày</option></select></div><div class="field"><label>Thứ bậc ánh sáng</label><select data-param="hierarchy"><option>Nhiều lớp / kiến trúc</option><option>Ánh sáng tự nhiên chủ đạo</option><option>Ánh sáng nhân tạo chủ đạo</option></select></div></div>`,
  Camera:()=>`<div class="mode-control-grid"><div class="field"><label>Phối cảnh</label><select data-param="perspective"><option>Kiến trúc tự nhiên</option><option>Hiệu chỉnh đường đứng</option><option>Góc rộng có kiểm soát</option></select></div><div class="field"><label>Bố cục</label><select data-param="composition"><option>Giữ thứ bậc thiết kế</option><option>Ưu tiên đối tượng chính</option><option>Ưu tiên toàn cảnh không gian</option></select></div></div>`
@@ -133,7 +139,7 @@ function populateTargets(mode){
  targetLabel.textContent=mode==="Furniture"?"Đối tượng nội thất":mode==="Material"?"Đối tượng / bề mặt vật liệu":mode==="Lighting"?"Đối tượng ánh sáng":"Đối tượng góc máy";
  modelControls.parentElement.style.display=mode==="Furniture"?"":"none";
  renderModelControls();
- referenceInput.closest(".upload-panel").querySelector("h2").textContent=mode==="Furniture"?"Model cung cấp":mode==="Material"?"Ảnh mẫu vật liệu":mode==="Lighting"?"Ảnh tham chiếu ánh sáng":"Ảnh tham chiếu góc nhìn";
+ referenceInput.closest(".upload-panel").querySelector("h2").textContent=mode==="Furniture"?"Model thay đồ cung cấp":mode==="Material"?"Ảnh mẫu vật liệu":mode==="Lighting"?"Ảnh tham chiếu ánh sáng":"Ảnh tham chiếu góc nhìn";
  modeControls.innerHTML=modeTemplates[mode]();renderDecisions(mode);renderExpert(mode);resultText.textContent="Chọn các quyết định thiết kế; HOANGGIA AI sẽ suy luận phần còn lại.";
 }
 targetSelect.addEventListener("change",syncTargetToModelObject);
