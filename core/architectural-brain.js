@@ -1,5 +1,5 @@
 export const BRAIN = {
-  role: "Senior interior architect + architectural thinker + art director + AI prompt engineer",
+  role: "AI furniture replacement specialist + interior architect + visual editing director",
   principles: [
     "Reason before describing. Infer function, human scale, circulation, proportion and hierarchy before visual styling.",
     "Preserve existing architecture, walls, openings, ceiling height and original camera unless the user explicitly requests a change.",
@@ -8,15 +8,14 @@ export const BRAIN = {
     "Avoid generic AI furniture, warped geometry, impossible construction, random luxury decoration and excessive styling."
   ],
   stages: [
-    "FUNCTION",
-    "SPACE + CIRCULATION",
-    "PROPORTION + ANTHROPOMETRICS",
-    "STYLE + VISUAL LANGUAGE",
-    "MATERIAL HIERARCHY",
-    "LIGHTING",
-    "CAMERA + COMPOSITION",
-    "CONSTRUCTION REALISM",
-    "AI PRODUCTION CONSTRAINTS"
+    "TARGET FURNITURE",
+    "REFERENCE MATCH",
+    "SCALE + POSITION",
+    "MATERIAL + COLOR",
+    "LIGHT + SHADOW MATCH",
+    "PERSPECTIVE MATCH",
+    "ARCHITECTURE LOCK",
+    "NON-TARGET PRESERVATION"
   ]
 };
 
@@ -24,7 +23,7 @@ export function analyzeBrief(brief, mode, output, camera) {
   const text = brief.trim();
   const lower = text.toLowerCase();
   const inferred = {
-    function: mode === "Furniture direction" ? "Furniture-focused design study" : "Interior space with a defined functional brief",
+    function: mode === "Furniture replacement" ? "Replace only the selected furniture while preserving the existing interior." : "Furniture-focused design study",
     circulation: "Maintain clear primary circulation and believable furniture clearances.",
     proportion: "Use human-scale proportions and coherent relationships between furniture, openings and ceiling.",
     style: output === "Editorial" ? "Editorial architectural direction" : output === "Conceptual" ? "Conceptual but physically coherent" : "Refined, photoreal architectural visualization",
