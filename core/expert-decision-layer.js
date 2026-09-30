@@ -1,17 +1,18 @@
 /*
- * HOANGGIA AI — Expert Decision Layer
+ * HOANGGIA AI — Lớp quyết định chuyên gia
  *
- * These are expert lenses inspired by documented bodies of work, not literal
- * simulations or endorsements by the named designers. Each engine uses the
- * lens as a decision framework and keeps the final decision with the user.
+ * Các expert lens lấy cảm hứng từ những tư duy thiết kế đã được công bố,
+ * không mô phỏng cá nhân hay đại diện cho các chuyên gia được nêu tên.
+ * Mỗi engine sử dụng một hệ quy chiếu độc lập và quyền quyết định cuối cùng
+ * vẫn thuộc về người dùng.
  */
 
 export const EXPERTS = {
   Furniture: {
     name: "Antonio Citterio",
-    role: "Architect + furniture / industrial designer",
-    label: "CITTERIO FURNITURE LENS",
-    source: "Proportion · comfort · spatial freedom · construction clarity",
+    role: "Kiến trúc sư + nhà thiết kế nội thất / công nghiệp",
+    label: "GÓC NHÌN NỘI THẤT CITTERIO",
+    source: "Tỷ lệ · công năng · tự do không gian · logic cấu tạo",
     principles: [
       "Treat furniture as architecture at human scale: proportion, comfort, circulation and spatial freedom come before styling.",
       "Read silhouette, structure, joints, support and material transitions as one coherent object.",
@@ -26,9 +27,9 @@ export const EXPERTS = {
   },
   Material: {
     name: "Peter Zumthor",
-    role: "Architect",
-    label: "ZUMTHOR MATERIAL LENS",
-    source: "Material presence · compatibility · atmosphere · tactile depth",
+    role: "Kiến trúc sư",
+    label: "GÓC NHÌN VẬT LIỆU ZUMTHOR",
+    source: "Hiện diện vật liệu · tương thích · không khí · chiều sâu xúc giác",
     principles: [
       "Choose materials by physical and atmospheric compatibility, not by isolated appearance.",
       "Evaluate grain, weight, texture, temperature, reflectance and the way adjacent materials react to each other.",
@@ -43,9 +44,9 @@ export const EXPERTS = {
   },
   Lighting: {
     name: "Ingo Maurer",
-    role: "Lighting designer",
-    label: "MAURER LIGHTING LENS",
-    source: "Light as atmosphere · source logic · poetry + technology",
+    role: "Nhà thiết kế ánh sáng",
+    label: "GÓC NHÌN ÁNH SÁNG MAURER",
+    source: "Ánh sáng như không khí · logic nguồn sáng · thi vị + công nghệ",
     principles: [
       "Treat light as a designed experience, not merely brightness.",
       "Balance functional visibility with atmosphere, shadow, contrast and emotional focus.",
@@ -60,9 +61,9 @@ export const EXPERTS = {
   },
   Camera: {
     name: "Iwan Baan",
-    role: "Architectural photographer",
-    label: "BAAN CAMERA LENS",
-    source: "Architecture · human context · narrative · sense of place",
+    role: "Nhiếp ảnh gia kiến trúc",
+    label: "GÓC NHÌN MÁY ẢNH BAAN",
+    source: "Kiến trúc · bối cảnh con người · câu chuyện · cảm nhận không gian",
     principles: [
       "Photograph the space as architecture with a sense of life and context, not as a sterile catalog object.",
       "Choose viewpoint, height and lens to explain spatial relationships and hierarchy.",
