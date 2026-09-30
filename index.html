@@ -11,101 +11,36 @@
 <div class="app-shell">
 <aside class="sidebar">
   <div class="brand"><div class="brand-mark">HG</div><div><strong>HOANGGIA</strong><span>HỆ THỐNG AI</span></div></div>
-  <nav>
-    <a class="nav-item active" href="#workspace"><span>✦</span> Bộ máy chỉnh sửa</a>
-    <a class="nav-item" href="#result"><span>↗</span> Kết quả prompt</a>
-  </nav>
+  <nav><a class="nav-item active" href="#workspace"><span>✦</span> Bộ máy chỉnh sửa</a><a class="nav-item" href="#result"><span>↗</span> Kết quả prompt</a></nav>
   <div class="sidebar-bottom"><div class="status-dot"></div><span id="brainStatus">Hệ thống sẵn sàng</span></div>
 </aside>
 <main class="main">
 <header class="topbar"><div class="crumb">HOANGGIA AI <span>/</span> Hệ thống Quyết định Kiến trúc</div><button class="ghost-btn" id="newProject">＋ Chỉnh sửa mới</button></header>
-
-<section class="hero" id="workspace">
-  <div>
-    <p class="eyebrow">HỆ THỐNG QUYẾT ĐỊNH KIẾN TRÚC</p>
-    <h1>Thay đổi không gian.<br><em>Giữ nguyên thiết kế.</em></h1>
-    <p class="hero-copy">HOANGGIA AI không chỉ chuyển yêu cầu thành prompt. Bốn chuyên gia độc lập phân tích đồ nội thất, vật liệu, ánh sáng và góc máy trước khi xây dựng prompt sản xuất.</p>
-  </div>
-  <div class="hero-badge"><span>HG</span><small>TRÍ TUỆ<br>KIẾN TRÚC</small></div>
-</section>
-
+<section class="hero" id="workspace"><div><p class="eyebrow">HỆ THỐNG QUYẾT ĐỊNH KIẾN TRÚC</p><h1>Thay đổi không gian.<br><em>Giữ nguyên thiết kế.</em></h1><p class="hero-copy">HOANGGIA AI không chỉ chuyển yêu cầu thành prompt. Bốn chuyên gia độc lập phân tích đồ nội thất, vật liệu, ánh sáng và góc máy trước khi xây dựng prompt sản xuất.</p></div><div class="hero-badge"><span>HG</span><small>TRÍ TUỆ<br>KIẾN TRÚC</small></div></section>
 <section class="editor-grid">
-  <div class="panel upload-panel">
-    <div class="panel-head"><div><span class="kicker">01</span><h2>Ảnh không gian</h2></div><span class="panel-note">Ảnh gốc</span></div>
-    <label class="upload-box" for="sceneInput">
-      <img id="scenePreview" alt="Ảnh không gian">
-      <div id="scenePlaceholder"><strong>＋ Tải ảnh không gian</strong><span>JPG / PNG · Render hoặc ảnh chụp</span></div>
-    </label>
-    <input id="sceneInput" type="file" accept="image/png,image/jpeg" hidden>
-  </div>
-
-  <div class="panel upload-panel">
-    <div class="panel-head"><div><span class="kicker">02</span><h2>Model cung cấp</h2></div><span class="panel-note">Bắt buộc với nội thất</span></div>
-    <label class="upload-box" for="referenceInput">
-      <img id="referencePreview" alt="Model cung cấp">
-      <div id="referencePlaceholder"><strong>＋ Tải model cung cấp</strong><span>JPG / PNG · Ảnh model nội thất cần đưa vào không gian</span></div>
-    </label>
-    <input id="referenceInput" type="file" accept="image/png,image/jpeg" hidden>
-  </div>
-</section>
-
-<section class="panel reference-controls">
-  <div class="panel-head"><div><span class="kicker">03</span><h2>Chọn hệ thống quyết định</h2></div><span class="panel-note">Chỉ tạo prompt</span></div>
-  <div class="mode-grid">
-    <button class="mode-card active" data-mode="Furniture"><strong>01</strong><span>Nội thất</span><small>Antonio Citterio · tỷ lệ · công năng</small></button>
-    <button class="mode-card" data-mode="Material"><strong>02</strong><span>Vật liệu</span><small>Peter Zumthor · vật liệu · không khí</small></button>
-    <button class="mode-card" data-mode="Lighting"><strong>03</strong><span>Ánh sáng</span><small>Ingo Maurer · ánh sáng · cảm xúc</small></button>
-    <button class="mode-card" data-mode="Camera"><strong>04</strong><span>Góc máy</span><small>Iwan Baan · kiến trúc · câu chuyện</small></button>
-  </div>
-
-  <div class="expert-lens">
-    <div class="expert-icon">AI</div>
-    <div class="expert-copy"><span class="kicker">CHUYÊN GIA ĐANG HOẠT ĐỘNG</span><strong id="expertName">Antonio Citterio</strong><small id="expertRole">Kiến trúc sư + nhà thiết kế nội thất / công nghiệp</small></div>
-    <div class="expert-source" id="expertSource">Tỷ lệ · công năng · tự do không gian · logic cấu tạo</div>
-  </div>
-
-  <div class="editor-grid">
-    <div>
-      <div class="decision-intro"><span class="decision-step">01</span><div><strong>Quyết định thiết kế</strong><small>Không cần viết prompt. Chỉ chọn quyết định thiết kế.</small></div></div>
-      <div class="field"><label id="targetLabel">Đối tượng nội thất</label>
-        <select id="target">
-          <option>Sofa</option><option>Ghế đơn</option><option>Bàn trà</option><option>Bàn ăn</option><option>Ghế ăn</option><option>Giường</option><option>Tủ / kệ</option><option>Đèn</option><option>Khác</option>
-        </select>
-      </div>
-      <div class="field"><label>Ưu tiên model cung cấp</label>
-        <select id="referencePriority">
-          <option>Giữ nguyên thiết kế và hình dáng model cung cấp</option>
-          <option>Giữ hình dáng, cho phép đổi vật liệu / màu</option>
-          <option>Giữ ngôn ngữ thiết kế, tối ưu theo không gian</option>
-        </select>
-      </div>
-      <div id="modeControls" class="mode-controls"></div>
-      <div id="decisionControls" class="decision-controls"></div>
-    </div>
-    <div>
-      <div class="decision-intro"><span class="decision-step">02</span><div><strong>Ý đồ thiết kế</strong><small>Chỉ mô tả điều bạn muốn thay đổi bằng ngôn ngữ tự nhiên.</small></div></div>
-      <label>Yêu cầu bổ sung</label>
-      <textarea id="brief" placeholder="Ví dụ: đưa model cung cấp vào vị trí sofa hiện tại, giữ nguyên kiểu dáng model, điều chỉnh tỷ lệ vừa không gian nhưng không thay đổi kiến trúc..."></textarea>
-      <div class="chips"><button data-fill="giữ nguyên thiết kế và hình dáng model cung cấp">Giữ model</button><button data-fill="giữ nguyên tỷ lệ tương đối của không gian">Giữ tỷ lệ</button><button data-fill="giữ nguyên vật liệu và màu sắc model cung cấp">Giữ vật liệu</button><button data-fill="chỉ thay đúng món đồ mục tiêu">Chỉ thay đối tượng</button></div>
-    </div>
-  </div>
-</section>
-
-<section class="decision-bar"><div><span class="kicker">HỆ THỐNG QUYẾT ĐỊNH KIẾN TRÚC</span><h2>Ốc quyết định. Chuyên gia suy luận. HOANGGIA AI kiểm soát.</h2><p>Bốn chuyên gia hoạt động độc lập. Mỗi chuyên gia chỉ suy luận trong phạm vi chuyên môn đã chọn và không tự ý thay đổi phạm vi thiết kế.</p></div><div class="decision-status"><span>QUYẾT ĐỊNH</span><strong id="decisionCount">0 / 3</strong></div></section>
-<section class="action-panel">
-  <div><span class="kicker">04</span><h2>Xây dựng prompt kiến trúc</h2><p id="resultText">Ảnh không gian + model cung cấp + quyết định → tạo prompt, không tạo ảnh.</p></div>
-  <button class="primary-btn" id="generate">TẠO PROMPT <span>↗</span></button>
-</section>
-
-<section class="result-panel hidden" id="result">
-  <div class="result-head"><div><span class="kicker">KẾT QUẢ</span><h2>Prompt sản xuất</h2></div><button class="copy-btn" id="copy">Sao chép prompt</button></div>
-  <div id="reasoningSummary" class="reasoning-summary"></div>
-  <pre id="resultContent"></pre>
-</section>
-
-<footer><span>HOANGGIA AI — Hệ thống Quyết định Kiến trúc</span><span>© 2026 Hoàng Gia</span></footer>
-</main>
+<div class="panel upload-panel">
+<div class="panel-head"><div><span class="kicker">01</span><h2>Ảnh không gian</h2></div><span class="panel-note">Ảnh gốc</span></div>
+<label class="upload-box" for="sceneInput"><img id="scenePreview" alt="Ảnh không gian"><div id="scenePlaceholder"><strong>＋ Tải ảnh không gian</strong><span>JPG / PNG · Render hoặc ảnh chụp</span></div></label><input id="sceneInput" type="file" accept="image/png,image/jpeg" hidden>
 </div>
-<script type="module" src="./app.js"></script>
-</body>
-</html>
+<div class="panel upload-panel">
+<div class="panel-head"><div><span class="kicker">02</span><h2>Model cung cấp</h2></div><span class="panel-note">Có thể thêm nhiều ảnh</span></div>
+<label class="upload-box" for="referenceInput"><div id="referenceGallery" class="reference-gallery"></div><div id="referencePlaceholder"><strong>＋ Thêm ảnh model cung cấp</strong><span>JPG / PNG · Có thể chọn nhiều ảnh, nhiều góc nhìn của cùng một model</span></div></label>
+<input id="referenceInput" type="file" accept="image/png,image/jpeg" multiple hidden>
+</div>
+</section>
+<section class="panel reference-controls">
+<div class="panel-head"><div><span class="kicker">03</span><h2>Chọn hệ thống quyết định</h2></div><span class="panel-note">Chỉ tạo prompt</span></div>
+<div class="mode-grid"><button class="mode-card active" data-mode="Furniture"><strong>01</strong><span>Nội thất</span><small>Antonio Citterio · tỷ lệ · công năng</small></button><button class="mode-card" data-mode="Material"><strong>02</strong><span>Vật liệu</span><small>Peter Zumthor · vật liệu · không khí</small></button><button class="mode-card" data-mode="Lighting"><strong>03</strong><span>Ánh sáng</span><small>Ingo Maurer · ánh sáng · cảm xúc</small></button><button class="mode-card" data-mode="Camera"><strong>04</strong><span>Góc máy</span><small>Iwan Baan · kiến trúc · câu chuyện</small></button></div>
+<div class="expert-lens"><div class="expert-icon">AI</div><div class="expert-copy"><span class="kicker">CHUYÊN GIA ĐANG HOẠT ĐỘNG</span><strong id="expertName">Antonio Citterio</strong><small id="expertRole">Kiến trúc sư + nhà thiết kế nội thất / công nghiệp</small></div><div class="expert-source" id="expertSource">Tỷ lệ · công năng · tự do không gian · logic cấu tạo</div></div>
+<div class="editor-grid"><div>
+<div class="decision-intro"><span class="decision-step">01</span><div><strong>Quyết định thiết kế</strong><small>Không cần viết prompt. Chỉ chọn quyết định thiết kế.</small></div></div>
+<div class="field"><label id="targetLabel">Đối tượng nội thất</label><select id="target"><option>Sofa</option><option>Ghế đơn</option><option>Bàn trà</option><option>Bàn ăn</option><option>Ghế ăn</option><option>Giường</option><option>Tủ / kệ</option><option>Đèn</option><option>Khác</option></select></div>
+<div class="field"><label>Ưu tiên model cung cấp</label><select id="referencePriority"><option>Giữ nguyên thiết kế và hình dáng model cung cấp</option><option>Giữ hình dáng, cho phép đổi vật liệu / màu</option><option>Giữ ngôn ngữ thiết kế, tối ưu theo không gian</option></select></div>
+<div id="modeControls" class="mode-controls"></div><div id="decisionControls" class="decision-controls"></div>
+</div><div><div class="decision-intro"><span class="decision-step">02</span><div><strong>Ý đồ thiết kế</strong><small>Chỉ mô tả điều bạn muốn thay đổi bằng ngôn ngữ tự nhiên.</small></div></div><label>Yêu cầu bổ sung</label><textarea id="brief" placeholder="Ví dụ: đưa model cung cấp vào vị trí sofa hiện tại, giữ nguyên kiểu dáng model, điều chỉnh tỷ lệ vừa không gian nhưng không thay đổi kiến trúc..."></textarea><div class="chips"><button data-fill="giữ nguyên thiết kế và hình dáng model cung cấp">Giữ model</button><button data-fill="giữ nguyên tỷ lệ tương đối của không gian">Giữ tỷ lệ</button><button data-fill="giữ nguyên vật liệu và màu sắc model cung cấp">Giữ vật liệu</button><button data-fill="chỉ thay đúng món đồ mục tiêu">Chỉ thay đối tượng</button></div></div></div>
+</section>
+<section class="decision-bar"><div><span class="kicker">HỆ THỐNG QUYẾT ĐỊNH KIẾN TRÚC</span><h2>Ốc quyết định. Chuyên gia suy luận. HOANGGIA AI kiểm soát.</h2><p>Bốn chuyên gia hoạt động độc lập. Mỗi chuyên gia chỉ suy luận trong phạm vi chuyên môn đã chọn và không tự ý thay đổi phạm vi thiết kế.</p></div><div class="decision-status"><span>QUYẾT ĐỊNH</span><strong id="decisionCount">0 / 3</strong></div></section>
+<section class="action-panel"><div><span class="kicker">04</span><h2>Xây dựng prompt kiến trúc</h2><p id="resultText">Ảnh không gian + model cung cấp + quyết định → tạo prompt, không tạo ảnh.</p></div><button class="primary-btn" id="generate">TẠO PROMPT <span>↗</span></button></section>
+<section class="result-panel hidden" id="result"><div class="result-head"><div><span class="kicker">KẾT QUẢ</span><h2>Prompt sản xuất</h2></div><button class="copy-btn" id="copy">Sao chép prompt</button></div><div id="reasoningSummary" class="reasoning-summary"></div><pre id="resultContent"></pre></section>
+<footer><span>HOANGGIA AI — Hệ thống Quyết định Kiến trúc</span><span>© 2026 Hoàng Gia</span></footer>
+</main></div><script type="module" src="./app.js"></script></body></html>
