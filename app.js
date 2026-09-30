@@ -5,23 +5,39 @@ const result = document.getElementById("result");
 const resultContent = document.getElementById("resultContent");
 const resultText = document.getElementById("resultText");
 const brainStatus = document.getElementById("brainStatus");
-const imageInput = document.getElementById("imageInput");
-const imagePreview = document.getElementById("imagePreview");
-const imagePlaceholder = document.getElementById("imagePlaceholder");
+const sceneInput = document.getElementById("sceneInput");
+const referenceInput = document.getElementById("referenceInput");
+const scenePreview = document.getElementById("scenePreview");
+const referencePreview = document.getElementById("referencePreview");
+const scenePlaceholder = document.getElementById("scenePlaceholder");
+const referencePlaceholder = document.getElementById("referencePlaceholder");
 const targetSelect = document.getElementById("target");
-const replacementSelect = document.getElementById("replacement");
+const referencePriority = document.getElementById("referencePriority");
 
 const targetHints = {
-  "Sofa": "Tập trung vào số chỗ ngồi, tỷ lệ thân sofa, tay vịn, lưng, đệm, chân/đế và khoảng cách tới bàn trà.",
-  "Armchair / ghế đơn": "Tập trung vào tỷ lệ ngồi, lưng ghế, tay vịn, chân/đế và quan hệ giữa phần gỗ/kim loại với phần bọc.",
-  "Bàn trà": "Tập trung vào kích thước mặt bàn, chiều cao, độ dày mặt, cạnh, chân/đế và khoảng cách với sofa.",
-  "Bàn ăn": "Tập trung vào kích thước mặt bàn, chiều cao, chân/đế và số lượng ghế có thể bố trí.",
-  "Ghế ăn": "Tập trung vào chiều cao mặt ngồi, lưng ghế, chân và quan hệ tỷ lệ với bàn ăn.",
-  "Giường": "Tập trung vào kích thước đệm, đầu giường, khung giường, chân/đế và khoảng cách hai bên.",
-  "Tủ / kệ": "Tập trung vào module, cánh/ngăn kéo, chiều sâu, cao độ, chân/đế và giao tiếp với tường.",
-  "Đèn": "Tập trung vào loại đèn, kích thước, vị trí treo/đặt, cấu tạo và hướng phát sáng.",
-  "Khác": "Tập trung vào silhouette, tỷ lệ, công năng, cấu tạo và điểm nhận diện của món đồ."
+  "Sofa": "seat count, overall proportions, back, arms, cushions, base and upholstery construction",
+  "Armchair / ghế đơn": "seat proportions, back, arms, base/legs and relationship between upholstery and exposed structure",
+  "Bàn trà": "top dimensions, height, thickness, edge profile, base and distance to sofa",
+  "Bàn ăn": "table dimensions, height, top thickness, base and seating capacity",
+  "Ghế ăn": "seat height, back, legs and relationship to the dining table",
+  "Giường": "mattress size, headboard, frame, base and bedside clearances",
+  "Tủ / kệ": "modules, doors, drawers, depth, height, base and wall relationship",
+  "Đèn": "fixture type, scale, mounting, construction and light direction",
+  "Khác": "silhouette, proportions, function, construction and distinctive details"
 };
+
+function setupPreview(input, preview, placeholder, label) {
+  input.addEventListener("change", () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    preview.src = URL.createObjectURL(file);
+    preview.classList.add("visible");
+    placeholder.classList.add("hidden");
+    brainStatus.textContent = label + " loaded";
+  });
+}
+setupPreview(sceneInput, scenePreview, scenePlaceholder, "Scene image");
+setupPreview(referenceInput, referencePreview, referencePlaceholder, "Furniture reference");
 
 document.querySelectorAll("[data-fill]").forEach(button => {
   button.addEventListener("click", () => {
@@ -31,52 +47,65 @@ document.querySelectorAll("[data-fill]").forEach(button => {
 });
 
 targetSelect.addEventListener("change", () => {
-  const hint = targetHints[targetSelect.value] || targetHints["Khác"];
-  resultText.textContent = hint;
-  brainStatus.textContent = targetSelect.value + " engine selected";
-});
-
-imageInput.addEventListener("change", () => {
-  const file = imageInput.files?.[0];
-  if (!file) return;
-  const url = URL.createObjectURL(file);
-  imagePreview.src = url;
-  imagePreview.classList.add("visible");
-  imagePlaceholder.classList.add("hidden");
-  brainStatus.textContent = "Reference image loaded";
+  resultText.textContent = targetHints[targetSelect.value] || targetHints["Khác"];
+  brainStatus.textContent = targetSelect.value + " reference engine selected";
 });
 
 document.getElementById("generate").addEventListener("click", () => {
   const target = targetSelect.value;
-  const replacement = replacementSelect.value;
+  const priority = referencePriority.value;
   const userBrief = brief.value.trim();
+
+  if (!sceneInput.files?.[0] || !referenceInput.files?.[0]) {
+    resultText.textContent = "Hãy tải đủ 2 ảnh: không gian A và mẫu nội thất B.";
+    brainStatus.textContent = "Waiting for scene + furniture reference";
+    return;
+  }
 
   if (!userBrief) {
     brief.focus();
-    resultText.textContent = "Hãy mô tả món đồ mới để Furniture Engine có đủ dữ liệu tạo prompt.";
-    brainStatus.textContent = "Waiting for furniture direction";
+    resultText.textContent = "Hãy thêm yêu cầu để Reference Intelligence biết chính xác cách đưa mẫu B vào không gian A.";
+    brainStatus.textContent = "Waiting for replacement direction";
     return;
   }
 
   const data = {
     brief: [
-      "EDIT FURNITURE IN THE PROVIDED INTERIOR IMAGE.",
+      "SCENE A: provided interior image.",
+      "REFERENCE B: provided furniture reference image.",
+      "EDIT TASK: replace the existing target furniture in Scene A with the furniture shown in Reference B.",
       "Target furniture: " + target,
-      "Replacement direction: " + replacement,
+      "Reference priority: " + priority,
       userBrief
-    ].filter(Boolean).join(" "),
+    ].join(" "),
     mode: "Furniture replacement",
     output: "Photorealistic",
     camera: "Preserve original camera",
     target,
-    replacement
+    replacement: "Use Reference B as the primary furniture design reference."
   };
 
   const { analysis, prompt } = buildDirection(data);
-  resultContent.textContent = prompt;
+
+  const finalPrompt = [
+    prompt,
+    "",
+    "REFERENCE INTELLIGENCE — A + B RELATIONSHIP",
+    "• Scene A is the environment authority: preserve its architecture, camera, perspective, lighting context and all non-target objects.",
+    "• Reference B is the furniture authority: reproduce the target furniture's silhouette, proportions, construction language, materials, color and distinctive details.",
+    "• Transfer the furniture from B into the target furniture position in A; do not transfer B's background, floor, walls, props or camera.",
+    "• Adapt only the physical scale and orientation required for a believable fit in Scene A, without redesigning the reference furniture.",
+    "• Resolve occlusion, floor contact, perspective, shadows and ambient light so the furniture belongs naturally to Scene A.",
+    "• If Scene A and Reference B conflict, preserve Scene A's spatial context and preserve Reference B's furniture identity.",
+    "",
+    "OUTPUT INTENT",
+    "Create a production-ready image-editing prompt only. Do not generate the image. Do not describe unrelated design alternatives."
+  ].join("\n");
+
+  resultContent.textContent = finalPrompt;
   result.classList.remove("hidden");
-  brainStatus.textContent = target + " replacement prompt ready";
-  resultText.textContent = "Furniture Engine đã áp dụng bộ quy tắc riêng cho " + target + ".";
+  brainStatus.textContent = "A + B reference prompt ready";
+  resultText.textContent = "Đã liên kết không gian A với mẫu nội thất B. Chỉ xuất prompt.";
   result.dataset.analysis = JSON.stringify(analysis);
   result.scrollIntoView({ behavior: "smooth", block: "nearest" });
 });
@@ -89,12 +118,16 @@ document.getElementById("copy").addEventListener("click", async () => {
 
 document.getElementById("newProject").addEventListener("click", () => {
   brief.value = "";
-  imageInput.value = "";
-  imagePreview.src = "";
-  imagePreview.classList.remove("visible");
-  imagePlaceholder.classList.remove("hidden");
+  sceneInput.value = "";
+  referenceInput.value = "";
+  scenePreview.src = "";
+  referencePreview.src = "";
+  scenePreview.classList.remove("visible");
+  referencePreview.classList.remove("visible");
+  scenePlaceholder.classList.remove("hidden");
+  referencePlaceholder.classList.remove("hidden");
   result.classList.add("hidden");
-  brainStatus.textContent = "Furniture editor ready";
-  resultText.textContent = "Ảnh + target + mô tả → tạo chỉ dẫn chỉnh sửa.";
+  brainStatus.textContent = "Reference engine ready";
+  resultText.textContent = "Ảnh A + mẫu B + target → tạo prompt thay đồ, không tạo ảnh.";
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
