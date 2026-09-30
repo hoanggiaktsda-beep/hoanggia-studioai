@@ -12,7 +12,7 @@
 <aside class="sidebar">
   <div class="brand"><div class="brand-mark">HG</div><div><strong>HOANGGIA</strong><span>AI FURNITURE</span></div></div>
   <nav>
-    <a class="nav-item active" href="#workspace"><span>✦</span> Reference Intelligence</a>
+    <a class="nav-item active" href="#workspace"><span>✦</span> Edit Engine</a>
     <a class="nav-item" href="#result"><span>↗</span> Prompt Output</a>
   </nav>
   <div class="sidebar-bottom"><div class="status-dot"></div><span id="brainStatus">Reference engine ready</span></div>
@@ -22,38 +22,38 @@
 
 <section class="hero" id="workspace">
   <div>
-    <p class="eyebrow">REFERENCE INTELLIGENCE</p>
-    <h1>Reference in.<br><em>Prompt out.</em></h1>
-    <p class="hero-copy">Đưa ảnh không gian A và ảnh mẫu nội thất B. HOANGGIA AI phân tích mối quan hệ giữa hai ảnh để tạo prompt thay đúng món đồ, đúng tỷ lệ, đúng vật liệu và đúng góc máy — không tạo ảnh.</p>
+    <p class="eyebrow">INTERIOR EDIT ENGINE</p>
+    <h1>Change space.<br><em>Keep the design.</em></h1>
+    <p class="hero-copy">HOANGGIA AI tạo prompt chuyên biệt để thay đổi đồ nội thất, vật liệu, ánh sáng hoặc góc nhìn — vẫn giữ đúng những gì không được yêu cầu thay đổi.</p>
   </div>
-  <div class="hero-badge"><span>A<br>→ B</span><small>REFERENCE<br>ENGINE</small></div>
+  <div class="hero-badge"><span>HG</span><small>INTERIOR<br>EDIT ENGINE</small></div>
 </section>
 
 <section class="editor-grid">
   <div class="panel upload-panel">
-    <div class="panel-head"><div><span class="kicker">01</span><h2>Không gian A</h2></div><span class="panel-note">Scene image</span></div>
+    <div class="panel-head"><div><span class="kicker">01</span><h2>Ảnh không gian</h2></div><span class="panel-note">Base image</span></div>
     <label class="upload-box" for="sceneInput">
       <img id="scenePreview" alt="Scene preview">
-      <div id="scenePlaceholder"><strong>＋ Tải ảnh không gian</strong><span>JPG / PNG · Phòng khách, phòng ăn, phòng ngủ...</span></div>
+      <div id="scenePlaceholder"><strong>＋ Tải ảnh nội thất</strong><span>JPG / PNG · Render hoặc ảnh chụp</span></div>
     </label>
     <input id="sceneInput" type="file" accept="image/png,image/jpeg" hidden>
   </div>
 
   <div class="panel upload-panel">
-    <div class="panel-head"><div><span class="kicker">02</span><h2>Mẫu nội thất B</h2></div><span class="panel-note">Furniture reference</span></div>
+    <div class="panel-head"><div><span class="kicker">02</span><h2>Ảnh tham chiếu</h2></div><span class="panel-note">Optional reference</span></div>
     <label class="upload-box" for="referenceInput">
       <img id="referencePreview" alt="Furniture reference preview">
-      <div id="referencePlaceholder"><strong>＋ Tải ảnh mẫu đồ</strong><span>JPG / PNG · Ảnh sản phẩm, render hoặc ảnh tham chiếu</span></div>
+      <div id="referencePlaceholder"><strong>＋ Tải ảnh tham chiếu</strong><span>JPG / PNG · Mẫu đồ, vật liệu hoặc ánh sáng</span></div>
     </label>
     <input id="referenceInput" type="file" accept="image/png,image/jpeg" hidden>
   </div>
 </section>
 
 <section class="panel reference-controls">
-  <div class="panel-head"><div><span class="kicker">03</span><h2>Reference Intelligence</h2></div><span class="panel-note">Prompt only</span></div>
-  <div class="editor-grid">
+  <div class="panel-head"><div><span class="kicker">03</span><h2>Chọn loại thay đổi</h2></div><span class="panel-note">Prompt only</span></div>
+  <div class="mode-grid"><button class="mode-card active" data-mode="Furniture"><strong>01</strong><span>Đồ nội thất</span><small>Sofa · bàn · ghế · tủ</small></button><button class="mode-card" data-mode="Material"><strong>02</strong><span>Vật liệu</span><small>Gỗ · đá · da · kim loại</small></button><button class="mode-card" data-mode="Lighting"><strong>03</strong><span>Ánh sáng</span><small>Daylight · warm · mood</small></button><button class="mode-card" data-mode="Camera"><strong>04</strong><span>Góc nhìn</span><small>View · lens · framing</small></button></div><div class="editor-grid">
     <div>
-      <div class="field"><label>Furniture target</label>
+      <div class="field"><label id="targetLabel">Furniture target</label>
         <select id="target">
           <option>Sofa</option><option>Armchair / ghế đơn</option><option>Bàn trà</option><option>Bàn ăn</option><option>Ghế ăn</option><option>Giường</option><option>Tủ / kệ</option><option>Đèn</option><option>Khác</option>
         </select>
@@ -75,7 +75,7 @@
 </section>
 
 <section class="action-panel">
-  <div><span class="kicker">04</span><h2>Generate replacement prompt</h2><p id="resultText">Ảnh A + mẫu B + target → tạo prompt thay đồ, không tạo ảnh.</p></div>
+  <div><span class="kicker">04</span><h2>Generate replacement prompt</h2><p id="resultText">Ảnh không gian + mẫu tham chiếu + target → tạo prompt, không tạo ảnh.</p></div>
   <button class="primary-btn" id="generate">TẠO PROMPT <span>↗</span></button>
 </section>
 
