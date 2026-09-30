@@ -1,71 +1,17 @@
-const MODES = {
-  "Furniture": {
-    label: "Furniture Replacement",
-    instruction: "Replace only the selected furniture while preserving the surrounding interior.",
-    defaultTarget: "Sofa"
-  },
-  "Material": {
-    label: "Material Change",
-    instruction: "Change only the specified material or finish while preserving geometry, furniture form and spatial composition.",
-    defaultTarget: "Surface / material"
-  },
-  "Lighting": {
-    label: "Lighting Change",
-    instruction: "Change the lighting atmosphere and light sources while preserving architecture, furniture geometry and materials unless explicitly requested.",
-    defaultTarget: "Lighting"
-  },
-  "Camera": {
-    label: "Camera / View Change",
-    instruction: "Change the requested camera position, lens feel, framing or viewpoint while preserving the designed space and objects.",
-    defaultTarget: "Camera"
-  }
+const MODES={
+ Furniture:{label:"Furniture Replacement",instruction:"Replace only the selected furniture while preserving the surrounding interior."},
+ Material:{label:"Material Change",instruction:"Change only the specified material system while preserving geometry, proportion and spatial composition."},
+ Lighting:{label:"Lighting Change",instruction:"Recompose light only: source, direction, temperature, intensity, contrast and bounce."},
+ Camera:{label:"Camera / View Change",instruction:"Change viewpoint only: position, height, lens feel, framing and perspective."}
 };
-
-export function editModeDirection(mode, target, brief) {
-  const config = MODES[mode] || MODES.Furniture;
-  const text = (brief || "").toLowerCase();
-  const safeguards = [];
-
-  if (mode === "Material") {
-    safeguards.push(
-      "Do not change furniture geometry, dimensions, proportions or construction unless explicitly requested.",
-      "Preserve the existing material boundaries and apply the new finish only to the requested target surfaces.",
-      "Maintain realistic texture scale, grain direction, roughness, reflectivity, edge behavior and junctions."
-    );
-  }
-
-  if (mode === "Lighting") {
-    safeguards.push(
-      "Do not redesign furniture or architecture to create the lighting effect.",
-      "Preserve material appearance while adapting highlights, shadows, ambient bounce and color temperature consistently.",
-      "Maintain physically believable light direction, intensity, falloff and contact shadows."
-    );
-  }
-
-  if (mode === "Camera") {
-    safeguards.push(
-      "Do not redesign or relocate objects merely to suit the new view.",
-      "Preserve the same design intent, dimensions and material identity from the original scene.",
-      "Keep verticals, perspective and lens behavior architecturally believable unless distortion is explicitly requested."
-    );
-  }
-
-  if (mode === "Furniture") {
-    safeguards.push(
-      "Replace only the target furniture.",
-      "Preserve all non-target objects, architecture and the original camera.",
-      "Match scale, floor contact, perspective, occlusion, lighting and shadows."
-    );
-  }
-
-  return {
-    mode,
-    label: config.label,
-    target: target || config.defaultTarget,
-    instruction: config.instruction,
-    safeguards,
-    detectedIntent: text || "No additional direction."
-  };
+export function editModeDirection(mode,target,brief,params={}){
+ const config=MODES[mode]||MODES.Furniture;
+ const safeguards={
+ Furniture:["Replace only the target furniture.","Preserve all non-target objects, architecture and original camera.","Match scale, floor contact, perspective, occlusion, lighting and shadows.","Do not invent a different furniture model when a reference is supplied."],
+ Material:["Lock object geometry, dimensions, joints and proportions.","Change only the requested material boundary.","Match texture scale, grain/veining, roughness, reflectivity and edge behavior.","Preserve existing junctions, reveals and construction logic."],
+ Lighting:["Do not redesign furniture or architecture to create a lighting effect.","Reason in key/fill/ambient terms and preserve believable source logic.","Match shadow density, contact shadows, bounce light, exposure and color temperature.","Do not flatten material response or over-light the scene."],
+ Camera:["Do not relocate or redesign objects merely to suit the new view.","Reason from camera height, lens/FOV, yaw, pitch, framing and vanishing points.","Keep architectural verticals and perspective believable.","Preserve material identity and design intent."]
+ }[mode];
+ return {mode,label:config.label,instruction:config.instruction,target:target||"Unspecified",safeguards,params,detectedIntent:(brief||"").trim()||"No additional direction."};
 }
-
-export { MODES };
+export {MODES};
