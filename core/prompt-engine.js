@@ -79,7 +79,7 @@ export function buildDirection({
   );
 
   if (mode === "Furniture") {
-    const f = furnitureDirection(target, replacement, brief);
+    const f = furnitureDirection(target, replacement, brief, params, decisions, model, referenceRoles);
     body.push(
       "",
       "FURNITURE TARGET",
@@ -90,12 +90,18 @@ export function buildDirection({
       "• All supplied model images control only the selected furniture identity.",
       "• Reconcile multiple views into one coherent model; never mix unrelated models.",
       "",
+      "FURNITURE DECISION SEQUENCE",
+      f.decisionSequence.join("\n"),
+      "",
       "FURNITURE REASONING",
       "• " + f.anatomy.join(", "),
       f.checks.map(x => "• " + x).join("\n"),
       "• " + f.referenceRule,
       "• " + f.editRule,
-      "• " + f.realism
+      "• " + f.realism,
+      "",
+      "FURNITURE EXPERT QUESTIONS",
+      f.expertQuestions.map(x => "• " + x).join("\n")
     );
   } else if (mode === "Material") {
     const m = materialDirection(analysis);
@@ -142,6 +148,7 @@ export function buildDirection({
     "PRESERVATION LOCK",
     ...modeData.safeguards.map(x => "• " + x),
     ...expert.qualityGates.map(x => "• QUALITY GATE: " + x),
+    ...(mode === "Furniture" ? furnitureDirection(target, replacement, brief, params, decisions, model, referenceRoles).qualityGates.map(x => "• FURNITURE GATE: " + x) : []),
     "• Keep walls, floor, ceiling, windows, doors, openings and built-ins unchanged.",
     "• Preserve every non-target object unless explicitly included in the selected expert scope.",
     "",
