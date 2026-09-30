@@ -1,40 +1,62 @@
 import { analyzeBrief } from "./architectural-brain.js";
 import { materialDirection } from "./material-engine.js";
 import { cameraDirection } from "./camera-engine.js";
+import { furnitureDirection } from "./furniture-engine.js";
 
-export function buildDirection({ brief, mode, output, camera }) {
+export function buildDirection({ brief, mode, output, camera, target = "Khác", replacement = "" }) {
   const analysis = analyzeBrief(brief, mode, output, camera);
   const materials = materialDirection(analysis);
   const cam = cameraDirection(analysis, camera);
+  const furniture = furnitureDirection(target, replacement, brief);
 
   const prompt = [
-    "HOANGGIA AI — PRODUCTION PROMPT",
+    "HOANGGIA AI — FURNITURE REPLACEMENT PROMPT",
     "",
-    "DESIGN INTENT",
+    "EDIT INTENT",
+    "Replace only the selected furniture in the provided interior image.",
+    "Target: " + furniture.target,
+    "Replacement: " + replacement,
+    "",
+    "FURNITURE-SPECIFIC REASONING",
+    "Anatomy to control: " + furniture.anatomy.join(", "),
+    ...furniture.checks.map(x => "• " + x),
+    "Reference rule: " + furniture.referenceRule,
+    "",
+    "USER DIRECTION",
     brief.trim(),
     "",
-    "ARCHITECTURAL REASONING",
-    "Function: " + analysis.function,
-    "Circulation: " + analysis.circulation,
-    "Proportion: " + analysis.proportion,
-    "Style: " + analysis.style,
-    "",
-    "MATERIAL DIRECTION",
+    "MATERIAL + COLOR",
     materials.hierarchy.map(x => "• " + x).join("\n"),
     "Material rule: " + materials.rule,
     "",
-    "LIGHTING",
-    analysis.lighting,
+    "SCALE + POSITION",
+    "• Match the original furniture footprint and location unless a different size or position is explicitly requested.",
+    "• Match human-scale proportions, surrounding clearances and relationship to adjacent furniture.",
+    "",
+    "PERSPECTIVE + INTEGRATION",
+    "• " + furniture.realism,
+    "• Match perspective, depth, occlusion and floor contact exactly to the original image.",
+    "• Match existing light direction, color temperature, shadow softness and ambient bounce.",
     "",
     "CAMERA",
     cam,
     "",
-    "CONSTRUCTION REALISM",
-    ...materials.realism.map(x => "• " + x),
+    "ARCHITECTURE LOCK",
+    "• Keep walls, floor, ceiling, windows, doors, openings and built-ins unchanged.",
+    "• Keep the original camera angle, framing, focal perspective and image proportions.",
     "",
-    "AI CONSTRAINTS",
-    ...analysis.constraints.map(x => "• " + x)
+    "NON-TARGET LOCK",
+    "• Preserve every non-target furniture item, decor object and architectural element.",
+    "• Do not redesign, restyle or add unrelated objects.",
+    "",
+    "AI QUALITY CONTROL",
+    "• No warped geometry.",
+    "• No floating furniture.",
+    "• No incorrect scale.",
+    "• No duplicated legs, cushions, arms or structural parts.",
+    "• No invented decorative details that conflict with the requested model.",
+    "• The replacement must read as physically manufactured and naturally integrated into the scene."
   ].join("\n");
 
-  return { analysis, prompt };
+  return { analysis, furniture, prompt };
 }
