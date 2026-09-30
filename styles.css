@@ -14,3 +14,10 @@
 .model-controls .field{margin:0}
 .model-controls select{width:100%}
 @media(max-width:700px){.model-controls{grid-template-columns:1fr}}
+
+.furniture-advanced{grid-template-columns:repeat(2,minmax(0,1fr))}
+.furniture-advanced .field{min-width:0}
+.reference-thumb{display:flex;flex-direction:column}
+.reference-thumb img{flex:1;min-height:0}
+.reference-thumb .reference-role{position:relative;z-index:2;width:calc(100% - 12px);margin:6px;border:1px solid rgba(255,255,255,.12);background:#17181b;color:#fff;border-radius:6px;padding:7px 8px;font-size:11px}
+@media(max-width:700px){.furniture-advanced{grid-template-columns:1fr}}
