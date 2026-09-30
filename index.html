@@ -3,30 +3,30 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b0c0e">
-<meta name="description" content="HOANGGIA AI — Reference Intelligence cho prompt thay đổi đồ nội thất.">
-<title>HOANGGIA AI — Furniture Prompt Engine</title>
+<meta name="description" content="HOANGGIA AI — Architectural Decision System với bốn expert decision lenses cho nội thất.">
+<title>HOANGGIA AI — Architectural Decision System</title>
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
 <div class="app-shell">
 <aside class="sidebar">
-  <div class="brand"><div class="brand-mark">HG</div><div><strong>HOANGGIA</strong><span>AI FURNITURE</span></div></div>
+  <div class="brand"><div class="brand-mark">HG</div><div><strong>HOANGGIA</strong><span>AI DECISION SYSTEM</span></div></div>
   <nav>
     <a class="nav-item active" href="#workspace"><span>✦</span> Edit Engine</a>
     <a class="nav-item" href="#result"><span>↗</span> Prompt Output</a>
   </nav>
-  <div class="sidebar-bottom"><div class="status-dot"></div><span id="brainStatus">Reference engine ready</span></div>
+  <div class="sidebar-bottom"><div class="status-dot"></div><span id="brainStatus">Decision system ready</span></div>
 </aside>
 <main class="main">
-<header class="topbar"><div class="crumb">HOANGGIA AI <span>/</span> Reference Intelligence</div><button class="ghost-btn" id="newProject">＋ New edit</button></header>
+<header class="topbar"><div class="crumb">HOANGGIA AI <span>/</span> Architectural Decision System</div><button class="ghost-btn" id="newProject">＋ New edit</button></header>
 
 <section class="hero" id="workspace">
   <div>
-    <p class="eyebrow">INTERIOR EDIT ENGINE</p>
+    <p class="eyebrow">ARCHITECTURAL DECISION SYSTEM</p>
     <h1>Change space.<br><em>Keep the design.</em></h1>
-    <p class="hero-copy">HOANGGIA AI tạo prompt chuyên biệt để thay đổi đồ nội thất, vật liệu, ánh sáng hoặc góc nhìn — vẫn giữ đúng những gì không được yêu cầu thay đổi.</p>
+    <p class="hero-copy">HOANGGIA AI không chỉ chuyển yêu cầu thành prompt. Bốn expert decision lenses phân tích đồ nội thất, vật liệu, ánh sáng và camera trước khi xây dựng production prompt.</p>
   </div>
-  <div class="hero-badge"><span>HG</span><small>INTERIOR<br>EDIT ENGINE</small></div>
+  <div class="hero-badge"><span>HG</span><small>ARCHITECTURAL<br>INTELLIGENCE</small></div>
 </section>
 
 <section class="editor-grid">
@@ -42,7 +42,7 @@
   <div class="panel upload-panel">
     <div class="panel-head"><div><span class="kicker">02</span><h2>Ảnh tham chiếu</h2></div><span class="panel-note">Optional reference</span></div>
     <label class="upload-box" for="referenceInput">
-      <img id="referencePreview" alt="Furniture reference preview">
+      <img id="referencePreview" alt="Reference preview">
       <div id="referencePlaceholder"><strong>＋ Tải ảnh tham chiếu</strong><span>JPG / PNG · Mẫu đồ, vật liệu hoặc ánh sáng</span></div>
     </label>
     <input id="referenceInput" type="file" accept="image/png,image/jpeg" hidden>
@@ -50,8 +50,21 @@
 </section>
 
 <section class="panel reference-controls">
-  <div class="panel-head"><div><span class="kicker">03</span><h2>Chọn loại thay đổi</h2></div><span class="panel-note">Prompt only</span></div>
-  <div class="mode-grid"><button class="mode-card active" data-mode="Furniture"><strong>01</strong><span>Đồ nội thất</span><small>Sofa · bàn · ghế · tủ</small></button><button class="mode-card" data-mode="Material"><strong>02</strong><span>Vật liệu</span><small>Gỗ · đá · da · kim loại</small></button><button class="mode-card" data-mode="Lighting"><strong>03</strong><span>Ánh sáng</span><small>Daylight · warm · mood</small></button><button class="mode-card" data-mode="Camera"><strong>04</strong><span>Góc nhìn</span><small>View · lens · framing</small></button></div><div class="editor-grid">
+  <div class="panel-head"><div><span class="kicker">03</span><h2>Chọn Decision System</h2></div><span class="panel-note">Prompt only</span></div>
+  <div class="mode-grid">
+    <button class="mode-card active" data-mode="Furniture"><strong>01</strong><span>Furniture</span><small>Antonio Citterio · proportion · comfort</small></button>
+    <button class="mode-card" data-mode="Material"><strong>02</strong><span>Material</span><small>Peter Zumthor · material · atmosphere</small></button>
+    <button class="mode-card" data-mode="Lighting"><strong>03</strong><span>Lighting</span><small>Ingo Maurer · light · emotion</small></button>
+    <button class="mode-card" data-mode="Camera"><strong>04</strong><span>Camera</span><small>Iwan Baan · architecture · narrative</small></button>
+  </div>
+
+  <div class="expert-lens">
+    <div class="expert-icon">AI</div>
+    <div class="expert-copy"><span class="kicker">ACTIVE EXPERT LENS</span><strong id="expertName">Antonio Citterio</strong><small id="expertRole">Architect + furniture / industrial designer</small></div>
+    <div class="expert-source" id="expertSource">Proportion · comfort · spatial freedom · construction clarity</div>
+  </div>
+
+  <div class="editor-grid">
     <div>
       <div class="decision-intro"><span class="decision-step">01</span><div><strong>Design decision</strong><small>Không cần viết prompt. Chỉ chọn quyết định thiết kế.</small></div></div>
       <div class="field"><label id="targetLabel">Furniture target</label>
@@ -78,9 +91,9 @@
   </div>
 </section>
 
-<section class="decision-bar"><div><span class="kicker">ARCHITECTURAL DECISION SYSTEM</span><h2>HOANGGIA AI tự suy luận phần còn lại</h2><p>Ốc chỉ quyết định <b>cái gì cần thay đổi</b> và <b>hướng thiết kế</b>. Hệ thống tự khóa kiến trúc, tỷ lệ, vật liệu, ánh sáng và logic camera.</p></div><div class="decision-status"><span>DECISION</span><strong id="decisionCount">0 / 3</strong></div></section>
+<section class="decision-bar"><div><span class="kicker">ARCHITECTURAL DECISION SYSTEM</span><h2>Ốc quyết định. Expert suy luận. HOANGGIA AI kiểm soát.</h2><p>Hệ thống dùng bốn expert lenses để suy luận tỷ lệ, vật liệu, ánh sáng và camera; không tự ý thay đổi phạm vi thiết kế mà Ốc đã chọn.</p></div><div class="decision-status"><span>DECISION</span><strong id="decisionCount">0 / 3</strong></div></section>
 <section class="action-panel">
-  <div><span class="kicker">03</span><h2>Build architectural prompt</h2><p id="resultText">Ảnh không gian + mẫu tham chiếu + target → tạo prompt, không tạo ảnh.</p></div>
+  <div><span class="kicker">04</span><h2>Build architectural prompt</h2><p id="resultText">Ảnh không gian + quyết định + expert lens → tạo prompt, không tạo ảnh.</p></div>
   <button class="primary-btn" id="generate">TẠO PROMPT <span>↗</span></button>
 </section>
 
