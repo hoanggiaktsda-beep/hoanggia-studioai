@@ -53,6 +53,7 @@
   <div class="panel-head"><div><span class="kicker">03</span><h2>Chọn loại thay đổi</h2></div><span class="panel-note">Prompt only</span></div>
   <div class="mode-grid"><button class="mode-card active" data-mode="Furniture"><strong>01</strong><span>Đồ nội thất</span><small>Sofa · bàn · ghế · tủ</small></button><button class="mode-card" data-mode="Material"><strong>02</strong><span>Vật liệu</span><small>Gỗ · đá · da · kim loại</small></button><button class="mode-card" data-mode="Lighting"><strong>03</strong><span>Ánh sáng</span><small>Daylight · warm · mood</small></button><button class="mode-card" data-mode="Camera"><strong>04</strong><span>Góc nhìn</span><small>View · lens · framing</small></button></div><div class="editor-grid">
     <div>
+      <div class="decision-intro"><span class="decision-step">01</span><div><strong>Design decision</strong><small>Không cần viết prompt. Chỉ chọn quyết định thiết kế.</small></div></div>
       <div class="field"><label id="targetLabel">Furniture target</label>
         <select id="target">
           <option>Sofa</option><option>Armchair / ghế đơn</option><option>Bàn trà</option><option>Bàn ăn</option><option>Ghế ăn</option><option>Giường</option><option>Tủ / kệ</option><option>Đèn</option><option>Khác</option>
@@ -66,8 +67,10 @@
         </select>
       </div>
       <div id="modeControls" class="mode-controls"></div>
+      <div id="decisionControls" class="decision-controls"></div>
     </div>
     <div>
+      <div class="decision-intro"><span class="decision-step">02</span><div><strong>Design intent</strong><small>Chỉ mô tả điều bạn muốn thay đổi theo ngôn ngữ tự nhiên.</small></div></div>
       <label>Yêu cầu bổ sung</label>
       <textarea id="brief" placeholder="Ví dụ: đưa sofa mẫu B vào vị trí sofa hiện tại, giữ nguyên kiểu dáng mẫu B, điều chỉnh tỷ lệ vừa không gian nhưng không thay đổi kiến trúc..."></textarea>
       <div class="chips"><button data-fill="giữ nguyên thiết kế và hình dáng mẫu tham chiếu">Giữ mẫu B</button><button data-fill="giữ nguyên tỷ lệ tương đối của không gian A">Giữ tỷ lệ</button><button data-fill="giữ nguyên vật liệu và màu sắc mẫu B">Giữ vật liệu</button><button data-fill="chỉ thay đúng món đồ mục tiêu">Chỉ thay target</button></div>
@@ -75,8 +78,9 @@
   </div>
 </section>
 
+<section class="decision-bar"><div><span class="kicker">ARCHITECTURAL DECISION SYSTEM</span><h2>HOANGGIA AI tự suy luận phần còn lại</h2><p>Ốc chỉ quyết định <b>cái gì cần thay đổi</b> và <b>hướng thiết kế</b>. Hệ thống tự khóa kiến trúc, tỷ lệ, vật liệu, ánh sáng và logic camera.</p></div><div class="decision-status"><span>DECISION</span><strong id="decisionCount">0 / 3</strong></div></section>
 <section class="action-panel">
-  <div><span class="kicker">04</span><h2>Generate replacement prompt</h2><p id="resultText">Ảnh không gian + mẫu tham chiếu + target → tạo prompt, không tạo ảnh.</p></div>
+  <div><span class="kicker">03</span><h2>Build architectural prompt</h2><p id="resultText">Ảnh không gian + mẫu tham chiếu + target → tạo prompt, không tạo ảnh.</p></div>
   <button class="primary-btn" id="generate">TẠO PROMPT <span>↗</span></button>
 </section>
 
@@ -86,7 +90,7 @@
   <pre id="resultContent"></pre>
 </section>
 
-<footer><span>HOANGGIA AI — Interior Edit Engine</span><span>© 2026 Hoàng Gia</span></footer>
+<footer><span>HOANGGIA AI — Architectural Decision System</span><span>© 2026 Hoàng Gia</span></footer>
 </main>
 </div>
 <script type="module" src="./app.js"></script>
