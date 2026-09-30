@@ -9,7 +9,7 @@ const scenePreview=document.getElementById("scenePreview"),referencePreview=docu
 const scenePlaceholder=document.getElementById("scenePlaceholder"),referencePlaceholder=document.getElementById("referencePlaceholder");
 const targetSelect=document.getElementById("target"),targetLabel=document.getElementById("targetLabel");
 const modelControls=document.getElementById("modelControls");
-const referencePriority=document.getElementById("referencePriority"),modeControls=document.getElementById("modeControls");
+const modeControls=document.getElementById("modeControls");
 const decisionControls=document.getElementById("decisionControls"),reasoningSummary=document.getElementById("reasoningSummary");
 const decisionCount=document.getElementById("decisionCount"),expertName=document.getElementById("expertName"),expertRole=document.getElementById("expertRole"),expertSource=document.getElementById("expertSource");
 let currentMode="Furniture";
@@ -114,7 +114,6 @@ function renderExpert(mode){
 function populateTargets(mode){
  targetSelect.innerHTML=targetSets[mode].map(x=>"<option>"+x+"</option>").join("");
  targetLabel.textContent=mode==="Furniture"?"Đối tượng nội thất":mode==="Material"?"Đối tượng / bề mặt vật liệu":mode==="Lighting"?"Đối tượng ánh sáng":"Đối tượng góc máy";
- referencePriority.parentElement.style.display=mode==="Furniture"?"":"none";
  modelControls.parentElement.style.display=mode==="Furniture"?"":"none";
  renderModelControls();
  referenceInput.closest(".upload-panel").querySelector("h2").textContent=mode==="Furniture"?"Model cung cấp":mode==="Material"?"Ảnh mẫu vật liệu":mode==="Lighting"?"Ảnh tham chiếu ánh sáng":"Ảnh tham chiếu góc nhìn";
