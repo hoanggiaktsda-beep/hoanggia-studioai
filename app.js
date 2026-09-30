@@ -5,7 +5,7 @@ import { expertFor } from "./core/expert-decision-layer.js";
 const brief=document.getElementById("brief"),result=document.getElementById("result"),resultContent=document.getElementById("resultContent");
 const resultText=document.getElementById("resultText"),brainStatus=document.getElementById("brainStatus");
 const sceneInput=document.getElementById("sceneInput"),referenceInput=document.getElementById("referenceInput");
-const scenePreview=document.getElementById("scenePreview"),referencePreview=document.getElementById("referencePreview"),referenceGallery=document.getElementById("referenceGallery");
+const scenePreview=document.getElementById("scenePreview"),referenceGallery=document.getElementById("referenceGallery");
 const scenePlaceholder=document.getElementById("scenePlaceholder"),referencePlaceholder=document.getElementById("referencePlaceholder");
 const targetSelect=document.getElementById("target"),targetLabel=document.getElementById("targetLabel");
 const modelControls=document.getElementById("modelControls");
@@ -72,10 +72,13 @@ function renderModelControls(){
 function modelData(){return Object.fromEntries([...modelControls.querySelectorAll("[data-model]")].map(x=>[x.dataset.model,x.value]));}
 function syncModelObjectToTarget(){
  const object=modelControls?.querySelector('[data-model="modelObject"]');
- if(object && targetSelect){
-  targetSelect.value=object.value;
- }
+ if(object && targetSelect) targetSelect.value=object.value;
 }
+function syncTargetToModelObject(){
+ const object=modelControls?.querySelector('[data-model="modelObject"]');
+ if(object) object.value=targetSelect.value;
+}
+
 
 function renderReferenceGallery(){
  if(!referenceGallery)return;
@@ -128,6 +131,7 @@ function populateTargets(mode){
  referenceInput.closest(".upload-panel").querySelector("h2").textContent=mode==="Furniture"?"Model cung cấp":mode==="Material"?"Ảnh mẫu vật liệu":mode==="Lighting"?"Ảnh tham chiếu ánh sáng":"Ảnh tham chiếu góc nhìn";
  modeControls.innerHTML=modeTemplates[mode]();renderDecisions(mode);renderExpert(mode);resultText.textContent="Chọn các quyết định thiết kế; HOANGGIA AI sẽ suy luận phần còn lại.";
 }
+targetSelect.addEventListener("change",syncTargetToModelObject);
 document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-mode]").forEach(x=>x.classList.remove("active"));b.classList.add("active");currentMode=b.dataset.mode;populateTargets(currentMode);brainStatus.textContent="Hệ thống "+expertFor(currentMode).name;}));
 document.querySelectorAll("[data-fill]").forEach(b=>b.addEventListener("click",()=>{brief.value=(brief.value?brief.value+" ":"")+b.dataset.fill;brief.focus();}));
 
@@ -147,5 +151,5 @@ document.getElementById("generate").addEventListener("click",()=>{
  resultContent.textContent=prompt;result.classList.remove("hidden");brainStatus.textContent="Đã áp dụng chuyên gia "+expert.name;resultText.textContent="HOANGGIA AI đã dùng toàn bộ ảnh model cung cấp để xây dựng prompt sản xuất.";result.scrollIntoView({behavior:"smooth",block:"nearest"});
 });
 document.getElementById("copy").addEventListener("click",async()=>{await navigator.clipboard.writeText(resultContent.textContent);document.getElementById("copy").textContent="Đã sao chép ✓";setTimeout(()=>document.getElementById("copy").textContent="Sao chép prompt",1200);});
-document.getElementById("newProject").addEventListener("click",()=>{brief.value="";sceneInput.value="";referenceInput.value="";referenceFiles=[];renderReferenceGallery();sceneInput.value="";scenePreview.src="";scenePreview.classList.remove("visible");scenePlaceholder.classList.remove("hidden");scenePlaceholder.classList.remove("hidden");referencePlaceholder.classList.remove("hidden");result.classList.add("hidden");currentMode="Furniture";document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("active",x.dataset.mode==="Furniture"));populateTargets("Furniture");renderModelControls();brainStatus.textContent="Hệ thống sẵn sàng";window.scrollTo({top:0,behavior:"smooth"});});
+document.getElementById("newProject").addEventListener("click",()=>{brief.value="";sceneInput.value="";referenceInput.value="";referenceFiles=[];renderReferenceGallery();sceneInput.value="";scenePreview.src="";scenePreview.classList.remove("visible");scenePlaceholder.classList.remove("hidden");referencePlaceholder.classList.remove("hidden");result.classList.add("hidden");currentMode="Furniture";document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("active",x.dataset.mode==="Furniture"));populateTargets("Furniture");brainStatus.textContent="Hệ thống sẵn sàng";window.scrollTo({top:0,behavior:"smooth"});});
 populateTargets("Furniture");
