@@ -66,8 +66,17 @@ function renderModelControls(){
   ["modelPreservation","Mức độ bảo toàn",modelSchema.preservation],
   ["modelViews","Chuẩn hóa góc nhìn",modelSchema.views]
  ].map(([key,label,opts])=>`<div class="field"><label>${label}</label><select data-model="${key}">${opts.map((o,i)=>`<option${i===0?" selected":""}>${o}</option>`).join("")}</select></div>`).join("");
+ const object=modelControls.querySelector('[data-model="modelObject"]');
+ if(object){object.value=targetSelect.value;object.addEventListener("change",syncModelObjectToTarget);}
 }
 function modelData(){return Object.fromEntries([...modelControls.querySelectorAll("[data-model]")].map(x=>[x.dataset.model,x.value]));}
+function syncModelObjectToTarget(){
+ const object=modelControls?.querySelector('[data-model="modelObject"]');
+ if(object && targetSelect){
+  targetSelect.value=object.value;
+ }
+}
+
 function renderReferenceGallery(){
  if(!referenceGallery)return;
  referenceGallery.innerHTML="";
@@ -128,8 +137,7 @@ document.getElementById("generate").addEventListener("click",()=>{
  if(!userBrief){brief.focus();resultText.textContent="Hãy mô tả ngắn gọn ý đồ thiết kế.";return;}
  const model=modelData();
  if(currentMode==="Furniture"&&!referenceFiles.length){resultText.textContent="Hãy tải ít nhất 1 ảnh model cung cấp cho chế độ nội thất.";return;}
- if(currentMode==="Furniture"&&model.modelObject!==target){resultText.textContent="Đối tượng nội thất và đối tượng model phải trùng nhau.";return;}
- if(Object.keys(d).length<3){resultText.textContent="Hãy hoàn tất 3 quyết định thiết kế trước khi tạo prompt.";return;}
+  if(Object.keys(d).length<3){resultText.textContent="Hãy hoàn tất 3 quyết định thiết kế trước khi tạo prompt.";return;}
  const modeData=editModeDirection(currentMode,target,userBrief,p,d);
  const expert=expertFor(currentMode);
  const authority=currentMode==="Furniture"?"Ảnh A = cơ sở không gian · "+referenceFiles.length+" ảnh model cung cấp = cơ sở thiết kế nội thất · "+model.modelPriority:"Ảnh A = cơ sở không gian · Ảnh tham chiếu = định hướng hình ảnh";
@@ -139,5 +147,5 @@ document.getElementById("generate").addEventListener("click",()=>{
  resultContent.textContent=prompt;result.classList.remove("hidden");brainStatus.textContent="Đã áp dụng chuyên gia "+expert.name;resultText.textContent="HOANGGIA AI đã dùng toàn bộ ảnh model cung cấp để xây dựng prompt sản xuất.";result.scrollIntoView({behavior:"smooth",block:"nearest"});
 });
 document.getElementById("copy").addEventListener("click",async()=>{await navigator.clipboard.writeText(resultContent.textContent);document.getElementById("copy").textContent="Đã sao chép ✓";setTimeout(()=>document.getElementById("copy").textContent="Sao chép prompt",1200);});
-document.getElementById("newProject").addEventListener("click",()=>{brief.value="";sceneInput.value="";referenceInput.value="";referenceFiles=[];renderReferenceGallery();scenePreview.src="";referencePreview.src="";scenePreview.classList.remove("visible");referencePreview.classList.remove("visible");scenePlaceholder.classList.remove("hidden");referencePlaceholder.classList.remove("hidden");result.classList.add("hidden");currentMode="Furniture";document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("active",x.dataset.mode==="Furniture"));populateTargets("Furniture");renderModelControls();brainStatus.textContent="Hệ thống sẵn sàng";window.scrollTo({top:0,behavior:"smooth"});});
+document.getElementById("newProject").addEventListener("click",()=>{brief.value="";sceneInput.value="";referenceInput.value="";referenceFiles=[];renderReferenceGallery();sceneInput.value="";scenePreview.src="";scenePreview.classList.remove("visible");scenePlaceholder.classList.remove("hidden");scenePlaceholder.classList.remove("hidden");referencePlaceholder.classList.remove("hidden");result.classList.add("hidden");currentMode="Furniture";document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("active",x.dataset.mode==="Furniture"));populateTargets("Furniture");renderModelControls();brainStatus.textContent="Hệ thống sẵn sàng";window.scrollTo({top:0,behavior:"smooth"});});
 populateTargets("Furniture");
