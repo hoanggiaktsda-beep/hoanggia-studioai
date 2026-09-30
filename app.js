@@ -14,6 +14,7 @@ const decisionControls=document.getElementById("decisionControls"),reasoningSumm
 const decisionCount=document.getElementById("decisionCount"),expertName=document.getElementById("expertName"),expertRole=document.getElementById("expertRole"),expertSource=document.getElementById("expertSource");
 let currentMode="Furniture";
 let referenceFiles=[];
+let referenceMeta=[];
 
 const targetSets={
  Furniture:["Sofa","Ghế đơn","Bàn trà","Bàn ăn","Ghế ăn","Giường","Tủ / kệ","Đèn","Khác"],
@@ -26,7 +27,8 @@ const modelSchema={
  object:["Sofa","Ghế đơn","Bàn trà","Bàn ăn","Ghế ăn","Giường","Tủ / kệ","Đèn","Khác"],
  priority:["Giữ nguyên toàn bộ model cung cấp","Ưu tiên hình dáng + cấu tạo","Ưu tiên hình dáng + vật liệu","Ưu tiên ngôn ngữ thiết kế"],
  preservation:["Bảo toàn 100% hình dáng và cấu tạo","Giữ silhouette, tối ưu tỷ lệ vừa không gian","Cho phép tinh chỉnh nhẹ theo không gian"],
- views:["Nhiều góc nhìn của cùng một model","Một góc nhìn chính","Góc chính + ảnh chi tiết"]
+ views:["Nhiều góc nhìn của cùng một model","Một góc nhìn chính","Góc chính + ảnh chi tiết"],
+ roles:["Mặt chính","Góc 3/4","Mặt bên","Mặt sau","Mặt trên","Chi tiết cấu tạo","Ảnh tổng thể"]
 };
 
 const decisions={
@@ -64,7 +66,8 @@ function renderModelControls(){
   ["modelObject","Đối tượng nội thất",modelSchema.object],
   ["modelPriority","Ưu tiên model cung cấp",modelSchema.priority],
   ["modelPreservation","Mức độ bảo toàn",modelSchema.preservation],
-  ["modelViews","Chuẩn hóa góc nhìn",modelSchema.views]
+  ["modelViews","Chuẩn hóa góc nhìn",modelSchema.views],
+  ["modelRoles","Quy ước ảnh",modelSchema.roles]
  ].map(([key,label,opts])=>`<div class="field"><label>${label}</label><select data-model="${key}">${opts.map((o,i)=>`<option${i===0?" selected":""}>${o}</option>`).join("")}</select></div>`).join("");
  const object=modelControls.querySelector('[data-model="modelObject"]');
  if(object){object.value=targetSelect.value;object.addEventListener("change",syncModelObjectToTarget);}
@@ -87,15 +90,17 @@ function renderReferenceGallery(){
   const item=document.createElement("div");item.className="reference-thumb";
   const img=document.createElement("img");img.src=URL.createObjectURL(file);img.alt="Model cung cấp "+(i+1);
   const remove=document.createElement("button");remove.type="button";remove.className="reference-remove";remove.textContent="×";remove.title="Xóa ảnh";
-  remove.addEventListener("click",e=>{e.preventDefault();referenceFiles.splice(i,1);renderReferenceGallery();});
+  remove.addEventListener("click",e=>{e.preventDefault();referenceFiles.splice(i,1);referenceMeta.splice(i,1);renderReferenceGallery();});
   const index=document.createElement("span");index.textContent=i+1;
-  item.append(img,index,remove);referenceGallery.appendChild(item);
+  const role=document.createElement("select");role.className="reference-role";role.innerHTML=modelSchema.roles.map((x,n)=>`<option${(referenceMeta[i]?.role||modelSchema.roles[0])===x?" selected":""}>${x}</option>`).join("");
+  role.addEventListener("change",()=>{referenceMeta[i]={...(referenceMeta[i]||{}),role:role.value};});
+  item.append(img,index,remove,role);referenceGallery.appendChild(item);
  });
  referencePlaceholder.classList.toggle("hidden",referenceFiles.length>0);
  brainStatus.textContent=referenceFiles.length?"Đã tải "+referenceFiles.length+" ảnh model cung cấp":"Hệ thống sẵn sàng";
 }
 referenceInput.addEventListener("change",()=>{
- referenceFiles=[...referenceFiles,...Array.from(referenceInput.files||[])];
+ Array.from(referenceInput.files||[]).forEach(file=>{referenceFiles.push(file);referenceMeta.push({role:modelSchema.roles[0]});});
  referenceInput.value="";
  renderReferenceGallery();
 });
@@ -140,16 +145,17 @@ document.getElementById("generate").addEventListener("click",()=>{
  if(!sceneInput.files?.[0]){resultText.textContent="Hãy tải ảnh không gian.";return;}
  if(!userBrief){brief.focus();resultText.textContent="Hãy mô tả ngắn gọn ý đồ thiết kế.";return;}
  const model=modelData();
+ const referenceRoles=referenceMeta.map((m,i)=>`#${i+1}=${m?.role||modelSchema.roles[0]}`).join(" | ");
  if(currentMode==="Furniture"&&!referenceFiles.length){resultText.textContent="Hãy tải ít nhất 1 ảnh model cung cấp cho chế độ nội thất.";return;}
   if(Object.keys(d).length<3){resultText.textContent="Hãy hoàn tất 3 quyết định thiết kế trước khi tạo prompt.";return;}
  const modeData=editModeDirection(currentMode,target,userBrief,p,d);
  const expert=expertFor(currentMode);
  const authority=currentMode==="Furniture"?"Ảnh A = cơ sở không gian · "+referenceFiles.length+" ảnh model cung cấp = cơ sở thiết kế nội thất · "+model.modelPriority:"Ảnh A = cơ sở không gian · Ảnh tham chiếu = định hướng hình ảnh";
- const data={brief:["SCENE A: spatial authority.",currentMode==="Furniture"?"PROVIDED MODEL IMAGES: multiple views of the supplied furniture model.":"REFERENCE: visual direction only.","TARGET: "+target,"DECISIONS: "+Object.entries(d).map(([k,v])=>k+"="+v).join(" | "),"CONTROLS: "+Object.entries(p).map(([k,v])=>k+"="+v).join(" | "),"MODEL STANDARDIZATION: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | "),userBrief].join(" "),mode:currentMode,output:"Photorealistic",camera:"Preserve original camera",target,replacement:currentMode==="Furniture"?"Use ALL provided model images as the primary design authority. Treat them as multiple views of the same supplied model. Reconstruct one consistent model identity from all views; never mix parts from unrelated models. Model standardization: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | "):userBrief,params:p,decisions:d,model};
+ const data={brief:["SCENE A: spatial authority.",currentMode==="Furniture"?"PROVIDED MODEL IMAGES: multiple views of the supplied furniture model.":"REFERENCE: visual direction only.","TARGET: "+target,"DECISIONS: "+Object.entries(d).map(([k,v])=>k+"="+v).join(" | "),"CONTROLS: "+Object.entries(p).map(([k,v])=>k+"="+v).join(" | "),"MODEL STANDARDIZATION: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | ")+" | IMAGE ROLES: "+referenceRoles,userBrief].join(" "),mode:currentMode,output:"Photorealistic",camera:"Preserve original camera",target,replacement:currentMode==="Furniture"?"Use ALL provided model images as the primary design authority. Treat them as multiple views of the same supplied model. Reconstruct one consistent model identity from all views; never mix parts from unrelated models. Model standardization: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | ")+" | Image roles: "+referenceRoles:userBrief,params:p,decisions:d,model,referenceRoles};
  const {prompt,reasoning}=buildDirection(data);
  reasoningSummary.innerHTML=[["CHUYÊN GIA",expert.name+" — "+expert.role],["ĐỐI TƯỢNG",reasoning.target],["MODEL",authority],["QUYẾT ĐỊNH",Object.values(d).join(" · ")],["BẢO TOÀN",reasoning.preserve]].map(([a,b])=>`<div class="reason-card"><small>${a}</small><span>${b}</span></div>`).join("");
  resultContent.textContent=prompt;result.classList.remove("hidden");brainStatus.textContent="Đã áp dụng chuyên gia "+expert.name;resultText.textContent="HOANGGIA AI đã dùng toàn bộ ảnh model cung cấp để xây dựng prompt sản xuất.";result.scrollIntoView({behavior:"smooth",block:"nearest"});
 });
 document.getElementById("copy").addEventListener("click",async()=>{await navigator.clipboard.writeText(resultContent.textContent);document.getElementById("copy").textContent="Đã sao chép ✓";setTimeout(()=>document.getElementById("copy").textContent="Sao chép prompt",1200);});
-document.getElementById("newProject").addEventListener("click",()=>{brief.value="";sceneInput.value="";referenceInput.value="";referenceFiles=[];renderReferenceGallery();sceneInput.value="";scenePreview.src="";scenePreview.classList.remove("visible");scenePlaceholder.classList.remove("hidden");referencePlaceholder.classList.remove("hidden");result.classList.add("hidden");currentMode="Furniture";document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("active",x.dataset.mode==="Furniture"));populateTargets("Furniture");brainStatus.textContent="Hệ thống sẵn sàng";window.scrollTo({top:0,behavior:"smooth"});});
+document.getElementById("newProject").addEventListener("click",()=>{brief.value="";sceneInput.value="";referenceInput.value="";referenceFiles=[];referenceMeta=[];renderReferenceGallery();sceneInput.value="";scenePreview.src="";scenePreview.classList.remove("visible");scenePlaceholder.classList.remove("hidden");referencePlaceholder.classList.remove("hidden");result.classList.add("hidden");currentMode="Furniture";document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("active",x.dataset.mode==="Furniture"));populateTargets("Furniture");brainStatus.textContent="Hệ thống sẵn sàng";window.scrollTo({top:0,behavior:"smooth"});});
 populateTargets("Furniture");
