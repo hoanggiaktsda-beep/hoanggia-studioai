@@ -1,10 +1,10 @@
 export const BRAIN = {
-  role: "AI furniture replacement specialist + interior architect + visual editing director",
+  role: "Neutral scene-context analyzer for the selected expert",
   principles: [
     "Reason before describing. Infer function, human scale, circulation, proportion and hierarchy before visual styling.",
     "Preserve existing architecture, walls, openings, ceiling height and original camera unless the user explicitly requests a change.",
     "Prioritise buildability, believable junctions, material thickness, joinery and realistic furniture proportions.",
-    "Use a clear hierarchy: architecture first, furniture second, materials third, lighting and decor last.",
+    "Do not make cross-domain design decisions. The active expert alone owns the selected intervention domain.",
     "Avoid generic AI furniture, warped geometry, impossible construction, random luxury decoration and excessive styling."
   ],
   stages: [
@@ -23,7 +23,7 @@ export function analyzeBrief(brief, mode, output, camera) {
   const text = brief.trim();
   const lower = text.toLowerCase();
   const inferred = {
-    function: mode === "Furniture replacement" ? "Replace only the selected furniture while preserving the existing interior." : "Furniture-focused design study",
+    function: { Furniture: "Furniture-only intervention.", Material: "Material-only intervention.", Lighting: "Lighting-only intervention.", Camera: "Camera-only intervention." }[mode] || "Selected-domain intervention.",
     circulation: "Maintain clear primary circulation and believable furniture clearances.",
     proportion: "Use human-scale proportions and coherent relationships between furniture, openings and ceiling.",
     style: output === "Editorial" ? "Editorial architectural direction" : output === "Conceptual" ? "Conceptual but physically coherent" : "Refined, photoreal architectural visualization",
