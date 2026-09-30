@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b0c0e">
-<meta name="description" content="HOANGGIA AI — thay đổi đồ nội thất bằng AI, giữ nguyên không gian và góc máy.">
-<title>HOANGGIA AI — Furniture Editor</title>
+<meta name="description" content="HOANGGIA AI — Reference Intelligence cho prompt thay đổi đồ nội thất.">
+<title>HOANGGIA AI — Furniture Prompt Engine</title>
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -12,67 +12,79 @@
 <aside class="sidebar">
   <div class="brand"><div class="brand-mark">HG</div><div><strong>HOANGGIA</strong><span>AI FURNITURE</span></div></div>
   <nav>
-    <a class="nav-item active" href="#workspace"><span>✦</span> Furniture Edit</a>
-    <a class="nav-item" href="#result"><span>↗</span> Output</a>
+    <a class="nav-item active" href="#workspace"><span>✦</span> Reference Intelligence</a>
+    <a class="nav-item" href="#result"><span>↗</span> Prompt Output</a>
   </nav>
-  <div class="sidebar-bottom"><div class="status-dot"></div><span id="brainStatus">Furniture editor ready</span></div>
+  <div class="sidebar-bottom"><div class="status-dot"></div><span id="brainStatus">Reference engine ready</span></div>
 </aside>
 <main class="main">
-<header class="topbar"><div class="crumb">HOANGGIA AI <span>/</span> Furniture Editor</div><button class="ghost-btn" id="newProject">＋ New edit</button></header>
+<header class="topbar"><div class="crumb">HOANGGIA AI <span>/</span> Reference Intelligence</div><button class="ghost-btn" id="newProject">＋ New edit</button></header>
 
 <section class="hero" id="workspace">
   <div>
-    <p class="eyebrow">AI FURNITURE EDITOR</p>
-    <h1>Change furniture.<br><em>Keep the room.</em></h1>
-    <p class="hero-copy">Tải ảnh nội thất lên, chọn món đồ cần thay và mô tả món đồ mới. HOANGGIA AI giữ nguyên kiến trúc, bố cục và góc máy.</p>
+    <p class="eyebrow">REFERENCE INTELLIGENCE</p>
+    <h1>Reference in.<br><em>Prompt out.</em></h1>
+    <p class="hero-copy">Đưa ảnh không gian A và ảnh mẫu nội thất B. HOANGGIA AI phân tích mối quan hệ giữa hai ảnh để tạo prompt thay đúng món đồ, đúng tỷ lệ, đúng vật liệu và đúng góc máy — không tạo ảnh.</p>
   </div>
-  <div class="hero-badge"><span>HG</span><small>FURNITURE<br>EDITOR</small></div>
+  <div class="hero-badge"><span>A<br>→ B</span><small>REFERENCE<br>ENGINE</small></div>
 </section>
 
 <section class="editor-grid">
   <div class="panel upload-panel">
-    <div class="panel-head"><div><span class="kicker">01</span><h2>Ảnh không gian</h2></div><span class="panel-note">Reference</span></div>
-    <label class="upload-box" for="imageInput">
-      <img id="imagePreview" alt="Preview">
-      <div id="imagePlaceholder"><strong>＋ Tải ảnh nội thất</strong><span>JPG / PNG · Ảnh render hoặc ảnh chụp</span></div>
+    <div class="panel-head"><div><span class="kicker">01</span><h2>Không gian A</h2></div><span class="panel-note">Scene image</span></div>
+    <label class="upload-box" for="sceneInput">
+      <img id="scenePreview" alt="Scene preview">
+      <div id="scenePlaceholder"><strong>＋ Tải ảnh không gian</strong><span>JPG / PNG · Phòng khách, phòng ăn, phòng ngủ...</span></div>
     </label>
-    <input id="imageInput" type="file" accept="image/png,image/jpeg" hidden>
+    <input id="sceneInput" type="file" accept="image/png,image/jpeg" hidden>
   </div>
 
-  <div class="panel">
-    <div class="panel-head"><div><span class="kicker">02</span><h2>Chọn đồ cần thay</h2></div></div>
-    <div class="field"><label>Furniture target</label>
-      <select id="target">
-        <option>Sofa</option><option>Armchair / ghế đơn</option><option>Bàn trà</option><option>Bàn ăn</option><option>Ghế ăn</option><option>Giường</option><option>Tủ / kệ</option><option>Đèn</option><option>Khác</option>
-      </select>
+  <div class="panel upload-panel">
+    <div class="panel-head"><div><span class="kicker">02</span><h2>Mẫu nội thất B</h2></div><span class="panel-note">Furniture reference</span></div>
+    <label class="upload-box" for="referenceInput">
+      <img id="referencePreview" alt="Furniture reference preview">
+      <div id="referencePlaceholder"><strong>＋ Tải ảnh mẫu đồ</strong><span>JPG / PNG · Ảnh sản phẩm, render hoặc ảnh tham chiếu</span></div>
+    </label>
+    <input id="referenceInput" type="file" accept="image/png,image/jpeg" hidden>
+  </div>
+</section>
+
+<section class="panel reference-controls">
+  <div class="panel-head"><div><span class="kicker">03</span><h2>Reference Intelligence</h2></div><span class="panel-note">Prompt only</span></div>
+  <div class="editor-grid">
+    <div>
+      <div class="field"><label>Furniture target</label>
+        <select id="target">
+          <option>Sofa</option><option>Armchair / ghế đơn</option><option>Bàn trà</option><option>Bàn ăn</option><option>Ghế ăn</option><option>Giường</option><option>Tủ / kệ</option><option>Đèn</option><option>Khác</option>
+        </select>
+      </div>
+      <div class="field"><label>Reference priority</label>
+        <select id="referencePriority">
+          <option>Giữ nguyên thiết kế và hình dáng mẫu B</option>
+          <option>Giữ hình dáng, cho phép đổi vật liệu / màu</option>
+          <option>Giữ ngôn ngữ thiết kế, tối ưu theo không gian A</option>
+        </select>
+      </div>
     </div>
-    <div class="field"><label>Món đồ mới</label>
-      <select id="replacement">
-        <option>Giữ nguyên kiểu dáng tham chiếu, thay vật liệu / màu sắc</option>
-        <option>Thay bằng mẫu sofa hiện đại cao cấp</option>
-        <option>Thay bằng mẫu armchair cao cấp</option>
-        <option>Thay bằng bàn trà đá tự nhiên</option>
-        <option>Thay bằng mẫu nội thất theo ảnh tham chiếu</option>
-        <option>Thiết kế lại theo mô tả</option>
-      </select>
+    <div>
+      <label>Yêu cầu bổ sung</label>
+      <textarea id="brief" placeholder="Ví dụ: đưa sofa mẫu B vào vị trí sofa hiện tại, giữ nguyên kiểu dáng mẫu B, điều chỉnh tỷ lệ vừa không gian nhưng không thay đổi kiến trúc..."></textarea>
+      <div class="chips"><button data-fill="giữ nguyên thiết kế và hình dáng mẫu tham chiếu">Giữ mẫu B</button><button data-fill="giữ nguyên tỷ lệ tương đối của không gian A">Giữ tỷ lệ</button><button data-fill="giữ nguyên vật liệu và màu sắc mẫu B">Giữ vật liệu</button><button data-fill="chỉ thay đúng món đồ mục tiêu">Chỉ thay target</button></div>
     </div>
-    <label>Yêu cầu chi tiết</label>
-    <textarea id="brief" placeholder="Ví dụ: thay sofa bằng mẫu 3 chỗ màu nâu cognac, tay gỗ, giữ nguyên kích thước tương đối và vị trí sofa cũ..."></textarea>
-    <div class="chips"><button data-fill="giữ nguyên kích thước và vị trí">Giữ vị trí</button><button data-fill="giữ nguyên vật liệu tham chiếu">Giữ vật liệu</button><button data-fill="thay màu theo ảnh tham chiếu">Đổi màu</button><button data-fill="giữ nguyên thiết kế gốc">Giữ thiết kế</button></div>
   </div>
 </section>
 
 <section class="action-panel">
-  <div><span class="kicker">03</span><h2>Thay đồ nội thất</h2><p id="resultText">Ảnh + target + mô tả → tạo chỉ dẫn chỉnh sửa.</p></div>
-  <button class="primary-btn" id="generate">THAY ĐỒ <span>↗</span></button>
+  <div><span class="kicker">04</span><h2>Generate replacement prompt</h2><p id="resultText">Ảnh A + mẫu B + target → tạo prompt thay đồ, không tạo ảnh.</p></div>
+  <button class="primary-btn" id="generate">TẠO PROMPT <span>↗</span></button>
 </section>
 
 <section class="result-panel hidden" id="result">
-  <div class="result-head"><div><span class="kicker">OUTPUT</span><h2>Furniture Edit Prompt</h2></div><button class="copy-btn" id="copy">Copy prompt</button></div>
+  <div class="result-head"><div><span class="kicker">OUTPUT</span><h2>Reference Replacement Prompt</h2></div><button class="copy-btn" id="copy">Copy prompt</button></div>
   <pre id="resultContent"></pre>
 </section>
 
-<footer><span>HOANGGIA AI — Furniture Editor</span><span>© 2026 Hoàng Gia</span></footer>
+<footer><span>HOANGGIA AI — Furniture Prompt Engine</span><span>© 2026 Hoàng Gia</span></footer>
 </main>
 </div>
 <script type="module" src="./app.js"></script>
