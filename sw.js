@@ -1,4 +1,4 @@
-const CACHE = "hoanggia-ai-v2";
+const CACHE = "hoanggia-ai-v3";
 const CORE = [
   "./",
   "./index.html",
