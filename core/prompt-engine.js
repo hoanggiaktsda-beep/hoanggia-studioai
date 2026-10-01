@@ -1,6 +1,7 @@
 import {analyzeBrief} from "./architectural-brain.js";
 import {materialDirection, materialDecisionEngine} from "./material-engine.js";
 import {cameraDirection} from "./camera-engine.js";
+import {cameraDecisionEngine} from "./camera-decision-engine.js";
 import {furnitureDirection} from "./furniture-engine.js";
 import {editModeDirection} from "./edit-engine.js";
 import {lightingDecisionEngine} from "./lighting-engine.js";
@@ -147,14 +148,24 @@ export function buildDirection({
       ld.expertQuestions.map(x => "• " + x).join("\n")
     );
   } else {
+    const cd = cameraDecisionEngine({target, brief, decisions, params, analysis});
     body.push(
       "",
       "VIEW TARGET",
       "• " + target,
       "",
       "CAMERA INTELLIGENCE",
-      "• Reason through camera position, height, yaw, pitch, lens/FOV, framing and vanishing points.",
-      "• Preserve actual room dimensions and object positions; camera change must not become a staging change."
+      "• Reason only through camera position, height, lens/FOV, perspective, framing, vertical control, depth and spatial narrative.",
+      "• Preserve actual room dimensions and object positions; camera change must never become a staging change.",
+      "",
+      "CAMERA DECISION SEQUENCE",
+      cd.decisionSequence.join("\n"),
+      "",
+      "CAMERA REASONING",
+      cd.checks.map(x => "• " + x).join("\n"),
+      "",
+      "CAMERA EXPERT QUESTIONS",
+      cd.expertQuestions.map(x => "• " + x).join("\n")
     );
   }
 
@@ -172,6 +183,7 @@ export function buildDirection({
     ...(mode === "Furniture" ? furnitureDirection(target, replacement, brief, params, decisions, model, referenceRoles).qualityGates.map(x => "• FURNITURE GATE: " + x) : []),
     ...(mode === "Material" ? materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles}).qualityGates.map(x => "• MATERIAL GATE: " + x) : []),
     ...(mode === "Lighting" ? lightingDecisionEngine({target, brief, decisions, analysis, referenceRoles}).qualityGates.map(x => "• LIGHTING GATE: " + x) : []),
+    ...(mode === "Camera" ? cameraDecisionEngine({target, brief, decisions, params, analysis}).qualityGates.map(x => "• CAMERA GATE: " + x) : []),
     "• Keep walls, floor, ceiling, windows, doors, openings and built-ins unchanged.",
     "• Preserve every non-target object unless explicitly included in the selected expert scope.",
     "",
