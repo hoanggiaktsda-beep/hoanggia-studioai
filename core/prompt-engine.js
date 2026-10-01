@@ -230,9 +230,9 @@ function scopedEvidence(mode, brief, target, params = {}) {
   const text = (brief || "").trim();
   const scopedParams = {
     Furniture: { style: params.style || "" },
-    Material: { style: params.style || "" },
-    Lighting: { lighting: params.lighting || "" },
-    Camera: { view: params.view || "", camera: params.camera || "" }
+    Material: { spaceType: params.spaceType || "", style: params.style || "" },
+    Lighting: { spaceType: params.spaceType || "", lighting: params.lighting || "" },
+    Camera: { spaceType: params.spaceType || "", view: params.view || "", camera: params.camera || "" }
   }[mode] || {};
 
   const meanings = designIntentMeaning(params);
@@ -291,11 +291,12 @@ export function buildDirection({
 }) {
   const intentMeaning = designIntentMeaning(params);
   const relevantParams = {
-    Furniture: { style: params.style || "", styleMeaning: intentMeaning.style },
+    Furniture: { spaceType: params.spaceType || "", style: params.style || "", styleMeaning: intentMeaning.style },
     Material: { style: params.style || "", styleMeaning: intentMeaning.style },
     Lighting: { lighting: params.lighting || "", lightingMeaning: intentMeaning.lighting },
     Camera: { view: params.view || "", viewMeaning: intentMeaning.view, camera: params.camera || "", cameraMeaning: intentMeaning.camera },
     SpaceSync: {
+      spaceType: params.spaceType || "",
       style: params.style || "",
       styleMeaning: intentMeaning.style,
       lighting: params.lighting || "",
@@ -328,6 +329,7 @@ export function buildDirection({
     .join("\n");
 
   const body = [];
+  if (params.spaceType) body.push("SPACE TYPE: " + params.spaceType + ". Use this as scene-context evidence for spatial recognition, furniture logic, material use, lighting behavior and camera interpretation; do not invent missing architecture.");
   const visualSystem = visualPromptSystem({mode, target, replacement, brief, decisions, params, referenceRoles, aiTarget});
 
   const adapter = AI_PROMPT_ADAPTERS[aiTarget] || AI_PROMPT_ADAPTERS["Khác"];
