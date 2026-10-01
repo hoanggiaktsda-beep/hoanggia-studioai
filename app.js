@@ -32,7 +32,16 @@ const modelSchema={
  views:["Nhiều góc nhìn của cùng một model","Một góc nhìn chính","Góc chính + ảnh chi tiết"]
 };
 
-const decisions={Furniture:[],Material:[],Lighting:[],Camera:[]};
+const decisions={
+ Furniture:[
+  ["intervention","Mục tiêu can thiệp","Bạn muốn Expert làm gì với model trong không gian?",["Thay đúng model cung cấp","Tinh chỉnh model hiện tại","Thay bằng model tương đương"]],
+  ["identity","Mức độ giữ nhận diện","Sau khi đặt vào không gian, mức độ nhận diện model phải được giữ thế nào?",["Giữ 100% hình dáng + cấu tạo","Giữ silhouette + chi tiết đặc trưng","Giữ ngôn ngữ thiết kế"]],
+  ["fit","Tỷ lệ & kích thước","Expert được phép xử lý tỷ lệ của model với không gian ở mức nào?",["Giữ nguyên tỷ lệ model","Điều chỉnh kích thước vừa không gian","Ưu tiên ergonomics + tỷ lệ không gian"]],
+  ["placement","Vị trí & lưu thông","Khi đưa model vào, ưu tiên bố trí nào?",["Giữ đúng vị trí đồ cũ","Tối ưu khoảng lưu thông","Cho phép chọn vị trí mới"]],
+  ["construction","Mức độ bảo toàn cấu tạo","Expert phải xử lý logic cấu tạo của model thế nào?",["Bảo toàn cấu tạo nguyên bản","Bảo toàn cấu tạo + mối nối nhìn thấy","Cho phép thích nghi cấu tạo tối thiểu"]]
+ ],
+ Material:[],Lighting:[],Camera:[]
+};
 function setPreview(input,preview,placeholder,label){
  input.addEventListener("change",()=>{const f=input.files?.[0];if(!f)return;preview.src=URL.createObjectURL(f);preview.classList.add("visible");placeholder.classList.add("hidden");brainStatus.textContent=label+" đã tải";});
 }
@@ -93,14 +102,23 @@ referenceInput.addEventListener("change",()=>{
 });
 function selectedDecisions(){return Object.fromEntries([...decisionControls.querySelectorAll("[data-decision]")].map(x=>[x.dataset.decision,x.value]));}
 function renderDecisions(mode){
- const titles={Furniture:"Quyết định của Expert",Material:"Quyết định của Expert",Lighting:"Quyết định của Expert",Camera:"Quyết định của Expert"};
- if(decisionTitle) decisionTitle.textContent=titles[mode];
- if(decisionHint) decisionHint.textContent="Khu vực đang được sắp xếp lại. Chưa có quyết định nào được cấu hình.";
- decisionControls.innerHTML="";
+ const fields=decisions[mode]||[];
+ if(decisionTitle) decisionTitle.textContent=mode==="Furniture"?"Quyết định của Expert — Furniture": "Quyết định của Expert";
+ if(decisionHint) decisionHint.textContent=mode==="Furniture"
+  ?"Ốc chỉ quyết định 5 điểm cốt lõi. Citterio suy luận tỷ lệ, công năng, lưu thông và cấu tạo trong phạm vi đã chọn."
+  :"Khu vực đang được sắp xếp lại. Chưa có quyết định nào được cấu hình.";
+ decisionControls.innerHTML=fields.map(([key,label,hint,opts],i)=>`
+  <div class="decision-field">
+   <span class="decision-index">${String(i+1).padStart(2,"0")}</span>
+   <label>${label}<small>${hint}</small></label>
+   <select data-decision="${key}">${opts.map((o,j)=>`<option${j===0?" selected":""}>${o}</option>`).join("")}</select>
+  </div>`).join("");
  updateCount();
 }
 function updateCount(){
- const n=Object.values(selectedDecisions()).filter(Boolean).length;decisionCount.textContent=n+" / 3";
+ const total=(decisions[currentMode]||[]).length;
+ const n=Object.values(selectedDecisions()).filter(Boolean).length;
+ decisionCount.textContent=n+" / "+total;
 }
 decisionControls.addEventListener("change",updateCount);
 
@@ -148,7 +166,8 @@ document.getElementById("generate").addEventListener("click",()=>{
  const referenceRoles=referenceMeta.map((m,i)=>`#${i+1} model=${m?.model||modelSchema.object[0]} | priority=${m?.priority||modelSchema.priority[0]} | preservation=${m?.preservation||modelSchema.preservation[0]} | views=${m?.views||modelSchema.views[0]}${m?.note?` | note=${m.note}`:""}`).join(" || ");
  const referenceRequired=currentMode==="Furniture";
  if(referenceRequired&&!referenceFiles.length){resultText.textContent="Hãy tải ít nhất 1 ảnh model cung cấp cho chế độ nội thất.";return;}
-  if(Object.keys(d).length<3){resultText.textContent="Hãy hoàn tất 3 quyết định thiết kế trước khi tạo prompt.";return;}
+  const requiredDecisions=(decisions[currentMode]||[]).length;
+ if(requiredDecisions && Object.keys(d).length<requiredDecisions){resultText.textContent="Hãy hoàn tất các quyết định của Expert trước khi tạo prompt.";return;}
  const modeData=editModeDirection(currentMode,target,userBrief,p,d);
  const expert=expertFor(currentMode);
  const authority=currentMode==="Furniture"?"Ảnh A = cơ sở không gian · "+referenceFiles.length+" ảnh model cung cấp = cơ sở thiết kế nội thất · "+model.modelPriority:"Ảnh A = cơ sở không gian · Ảnh tham chiếu = định hướng hình ảnh";
