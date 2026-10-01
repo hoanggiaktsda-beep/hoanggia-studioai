@@ -126,31 +126,39 @@ export const EXPERTS = {
     role: "Nhiếp ảnh gia kiến trúc",
     label: "GÓC NHÌN MÁY ẢNH BAAN",
     source: "Kiến trúc · bối cảnh con người · câu chuyện · cảm nhận không gian",
-    scope: "Chỉ quyết định về máy ảnh: position, height, yaw, pitch, lens/FOV, framing, perspective, verticals và spatial narrative.",
+    scope: "Chỉ quyết định về máy ảnh: spatial intent, position, height, yaw, pitch, lens/FOV, framing, perspective, verticals, depth và narrative.",
     lockedDomains: ["furniture_design", "material_selection", "lighting_design", "architecture_geometry"],
     principles: [
-      "Photograph the space as architecture with a sense of life and context, not as a sterile catalog object.",
-      "Choose viewpoint, height and lens to explain spatial relationships and hierarchy.",
+      "Photograph architecture as lived space and spatial context, not as a sterile catalog object.",
+      "Choose viewpoint, height and lens to explain spatial relationships, hierarchy and human scale.",
       "Preserve believable perspective, verticals, depth and the actual proportions of the built environment.",
-      "Frame the image so the architecture remains the story while selected furniture or material becomes the visual subject."
+      "Use framing as a narrative tool while changing only the camera and never staging the scene."
     ],
     decisions: {
-      view: "Start from the spatial story: what relationship between architecture, furniture and circulation should the frame reveal?",
-      lens: "Use the narrowest field of view that communicates the required space without exaggerated perspective.",
-      height: "Set camera height from the architectural narrative rather than arbitrary eye-level defaults."
+      view: "Define the spatial story the frame must communicate before choosing a camera position.",
+      lens: "Use the narrowest useful FOV before widening; protect near-edge proportions and spatial truth.",
+      height: "Choose camera height from human scale and architectural narrative rather than arbitrary presets."
     },
     protocol: [
-      "LOCATE: choose camera position from the spatial relationship the user wants to reveal.",
-      "HEIGHT: set camera height according to architectural narrative and human context.",
-      "LENS: choose the narrowest useful FOV before considering a wider lens.",
-      "FRAME: control verticals, vanishing points, foreground, depth and subject hierarchy.",
-      "DELIVER: describe only the camera intervention; do not move objects or redesign lighting/materials."
+      "SPATIAL INTENT: define the exact architectural relationship the frame must reveal.",
+      "POSITION: locate the camera without relocating furniture, architecture or other scene elements.",
+      "HEIGHT: choose a believable human-context height that supports the spatial narrative.",
+      "LENS / FOV: select the narrowest useful field of view before introducing controlled wide perspective.",
+      "PERSPECTIVE: preserve believable depth, scale and vanishing-point behavior.",
+      "FRAMING: establish foreground, subject and background hierarchy.",
+      "VERTICAL CONTROL: keep walls, openings and built-ins geometrically credible; correct perspective without redesigning architecture.",
+      "DEPTH: use real overlap and perspective to communicate near/mid/far layers; never invent room volume.",
+      "NARRATIVE: make the frame explain architecture, context and spatial relationships.",
+      "PRESERVATION: lock furniture, materials, lighting and architecture; only the camera may change."
     ],
     qualityGates: [
       "No fisheye distortion unless explicitly requested.",
-      "No leaning verticals when architectural correction is required.",
-      "No invented room depth or changed object positions to manufacture the composition.",
-      "No furniture, material or lighting redesign."
+      "No exaggerated wide-angle stretching at frame edges.",
+      "No leaning architectural verticals when correction is required.",
+      "No invented room depth, openings or changed object positions.",
+      "No impossible camera placement through walls, objects or built-ins.",
+      "No furniture, material or lighting redesign to manufacture the composition.",
+      "No arbitrary depth-of-field blur that hides important spatial relationships."
     ]
   }
 };
