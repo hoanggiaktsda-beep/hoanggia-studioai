@@ -385,9 +385,13 @@ export function buildDirection({
     body.push(
       "",
       "THỰC THI ĐỒNG BỘ KHÔNG GIAN",
-      "• Điều phối trục kiến trúc, tỷ lệ, lưu thông, sightline, nhịp điệu, khoảng thở và hierarchy của toàn bộ không gian.",
-      "• Không tối ưu một thành phần theo cách làm phá vỡ quan hệ với các thành phần còn lại.",
-      "• Giữ identity, công năng và cấu tạo của từng thành phần; chỉ điều phối quan hệ không gian khi cần thiết."
+      "• LỚP 01 — CITTERIO / NỘI THẤT: kiểm soát tỷ lệ, công năng, ergonomics, silhouette, cấu tạo và lưu thông.",
+      "• LỚP 02 — ZUMTHOR / VẬT LIỆU: kiểm soát texture, chiều sâu, mối nối, phản xạ và sự hiện diện của vật liệu.",
+      "• LỚP 03 — MAURER / ÁNH SÁNG: kiểm soát nguồn sáng, hướng sáng, tương phản, bóng đổ, phản xạ và atmosphere.",
+      "• LỚP 04 — BAAN / GÓC NHÌN: kiểm soát viewpoint, chiều cao, lens, perspective, framing và narrative.",
+      "• LỚP 05 — SYNCHRONIZE: đối chiếu 4 lớp trên và giải quyết xung đột bằng sự cân bằng của toàn bộ không gian.",
+      "• Không tối ưu riêng một lớp nếu kết quả làm phá vỡ tỷ lệ, vật liệu, ánh sáng, góc nhìn hoặc công năng của các lớp còn lại.",
+      "• Giữ nguyên identity của từng thành phần; chỉ điều chỉnh quan hệ giữa các thành phần khi cần để tạo một hệ không gian thống nhất."
     );
   }
 
