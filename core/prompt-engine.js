@@ -337,58 +337,40 @@ export function buildDirection({
         ? "Change only the selected lighting system: " + target
         : mode === "Camera"
           ? "Change only the camera view: " + target
-          : "Synchronize the whole space using the combined principles of Citterio, Zumthor, Maurer and Baan: " + target;
-
-  body.push(
-    "Create and edit the image according to the following professional design direction.",
-    task + ".",
-    expert.scope,
-    expert.principles.join(" "),
-    expert.protocol.map((x,i) => (i + 1) + ") " + x).join(" "),
-    decisionLines ? "Apply these decisions exactly: " + decisionLines.replace(/• /g, "").replace(/\\n/g, "; ") + "." : "Apply the expert principles directly to the user's brief.",
-  );
+          : "Synchronize the whole space using Citterio, Zumthor, Maurer and Baan: " + target;
 
   if (mode === "Furniture") {
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
     body.push(
-      "Use only the supplied reference images for the selected furniture and reconcile all supplied views into one coherent model identity.",
+      task + ".",
+      "Use the supplied reference images as one identical furniture model; preserve 100% silhouette, proportions, construction, joints and distinctive details.",
+      "Keep original position, scale, floor contact, perspective, occlusion, circulation and functional ergonomics.",
       f.editRule + " " + f.realism + " " + f.referenceRule
     );
   } else if (mode === "Material") {
     const m = materialDirection(analysis);
     const md = materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles});
-    body.push(
-      m.rule,
-      md.checks.join(" ")
-    );
+    body.push(task + ".", m.rule, md.checks.join(" "));
   } else if (mode === "Lighting") {
     const ld = lightingDecisionEngine({target, brief, decisions, analysis, referenceRoles});
-    body.push(
-      "Control source, direction, intensity, color temperature, falloff, contrast, shadows and reflected light.",
-      ld.checks.join(" ")
-    );
+    body.push(task + ".", "Control source, direction, intensity, color temperature, falloff, contrast, shadows and reflected light.", ld.checks.join(" "));
   } else if (mode === "Camera") {
     const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
-    body.push(
-      "Control camera position, height, focal length/FOV, perspective, framing, verticals and depth.",
-      cd.checks.join(" ")
-    );
+    body.push(task + ".", "Control position, height, focal length/FOV, perspective, framing, verticals and depth.", cd.checks.join(" "));
   } else {
     body.push(
-      "Synthesize the four independent expert layers: Citterio for furniture and spatial proportion; Zumthor for material presence and junctions; Maurer for light and atmosphere; Baan for viewpoint, perspective and architectural narrative.",
-      "Synchronize the four layers without allowing one layer to damage another, without inventing architecture, and while preserving the identity of each existing component."
+      task + ".",
+      "Citterio: furniture, proportion, ergonomics and circulation. Zumthor: material presence, texture and junctions. Maurer: light, contrast, shadow and atmosphere. Baan: viewpoint, perspective and framing.",
+      "Synchronize all four layers without letting one damage another; preserve each component's identity and do not invent architecture."
     );
   }
 
   body.push(
-    "User brief: " + ((brief || "").trim() || "No additional request."),
-    "Design intent: " + (Object.entries(relevantParams).filter(([k,v]) => v && !k.endsWith("Meaning")).map(([k,v]) => k + "=" + v).join(" | ") || "Keep the existing design intent."),
-    "Professional interpretation: " + (Object.entries(relevantParams).filter(([k,v]) => v && k.endsWith("Meaning")).map(([k,v]) => v).join(" | ") || "Preserve the existing design language."),
-    modeData.safeguards.join(" "),
-    expert.qualityGates.join(" "),
-    "Preserve every area outside the requested intervention. Do not redesign unrelated furniture, architecture or other expert domains.",
-    "Target platform: " + aiTarget + ". Format the instruction for fast, advanced image editing with concise target/change/constraints, strong reference consistency and physical realism.",
-    "Generate the final edited image while preserving the supplied scene, references and selected constraints exactly."
+    "Apply selected decisions: " + (decisionLines || "use the expert principles directly") + ".",
+    "User brief: " + ((brief || "").trim() || "none") + ".",
+    "Preserve all architecture, non-target objects and all non-selected design domains exactly. No unrelated redesign, mixed references or invented geometry.",
+    "Photorealistic, physically accurate, seamless integration with the original scene.",
+    "Target: " + aiTarget + "."
   );
 
   const prompt = body.join(" ").replace(/\\s+/g, " ").trim();
