@@ -52,7 +52,8 @@ const decisions={
   ["view","Câu chuyện không gian",["Giữ góc hiện tại","Mở rộng để đọc không gian","Tập trung đối tượng","Góc chụp kiến trúc"]],
   ["lens","Tiêu cự / FOV",["Kiến trúc tự nhiên","Góc rộng có kiểm soát","35mm cân bằng","50mm chi tiết"]],
   ["height","Cao độ & khung hình",["Ngang tầm mắt","Thấp / gần trải nghiệm","Cao / đọc tổng thể","Cận chi tiết"]]
- ];
+ ]
+};
 function setPreview(input,preview,placeholder,label){
  input.addEventListener("change",()=>{const f=input.files?.[0];if(!f)return;preview.src=URL.createObjectURL(f);preview.classList.add("visible");placeholder.classList.add("hidden");brainStatus.textContent=label+" đã tải";});
 }
