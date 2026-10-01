@@ -406,3 +406,19 @@ footer{
   .creatorLinks{grid-template-columns:1fr}
   .creatorLinks a:first-child{grid-column:auto}
 }
+
+/* ===== CAMERA SCENE CONTEXT — chỉ dành cho Góc máy ===== */
+.camera-context-panel{margin-top:12px;padding:14px;background:#0b0d0e;border:1px solid #292c31;border-radius:10px}
+.camera-context-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}
+.camera-context-head .kicker{display:block;margin-bottom:5px;color:var(--accent);font-size:8px;letter-spacing:.16em;font-weight:700}
+.camera-context-head strong{display:block;color:#d9d9d4;font-size:11px;line-height:1.45;font-weight:600}
+.camera-context-head>span{flex:none;color:#777c83;font-size:8px;letter-spacing:.13em;border:1px solid #30343a;border-radius:999px;padding:5px 8px}
+.camera-context-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.context-field{min-width:0;padding:10px;background:#0f1113;border:1px solid #292c31;border-radius:8px}
+.context-field label{display:block;margin-bottom:7px;color:#858a91;font-size:8px;letter-spacing:.13em;font-weight:700}
+.context-field select,.context-field textarea{width:100%;box-sizing:border-box;background:#111316;color:#ddd;border:1px solid #292c31;border-radius:6px;padding:9px;font:11px inherit;outline:none}
+.context-field textarea{resize:vertical;line-height:1.5;min-height:72px}
+.context-field select:focus,.context-field textarea:focus{border-color:#555}
+.context-full{margin-top:8px}
+.context-field small{display:block;margin-top:7px;color:#656a71;font-size:8px;line-height:1.45}
+@media(max-width:700px){.camera-context-grid{grid-template-columns:1fr}.camera-context-head{flex-direction:column}.camera-context-head>span{align-self:flex-start}}
