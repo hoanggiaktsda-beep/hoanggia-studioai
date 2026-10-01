@@ -32,7 +32,7 @@ const intentView = document.getElementById("intentView");
 const intentCamera = document.getElementById("intentCamera");
 
 let currentMode = "Furniture";
-let selectedAITarget = "ChatGPT";
+let selectedAITarget = "ChatGPT Images";
 
 const aiTargetProfiles = {
   "ChatGPT Images": "Format for OpenAI image editing: direct conversational edit instruction, explicit target, preservation locks, spatial consistency and precise requested change.",
@@ -254,7 +254,7 @@ function renderAITargets() {
 
 document.querySelectorAll(".ai-target-option").forEach(btn => {
   btn.addEventListener("click", () => {
-    selectedAITarget = btn.dataset.aiTarget || "ChatGPT";
+    selectedAITarget = btn.dataset.aiTarget || "ChatGPT Images";
     renderAITargets();
     if (brainStatus) brainStatus.textContent = `Đầu ra: ${selectedAITarget}`;
   });
@@ -278,7 +278,7 @@ decisionControls?.addEventListener("change", updateCount);
 
 document.getElementById("newProject")?.addEventListener("click", () => {
   currentMode = "Furniture";
-  selectedAITarget = "ChatGPT";
+  selectedAITarget = "ChatGPT Images";
   renderAITargets();
   referenceFiles = [];
   referenceMeta = [];
