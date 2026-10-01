@@ -319,7 +319,9 @@ document.getElementById("generate")?.addEventListener("click", () => {
       ? "selected material surface"
       : currentMode === "Lighting"
         ? "selected lighting system"
-        : "selected camera view";
+        : currentMode === "Camera"
+          ? "selected camera view"
+          : "selected spatial system";
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
   const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}`).join(" | ");
   const params = { ...designIntent() };
