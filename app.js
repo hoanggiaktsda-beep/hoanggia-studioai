@@ -226,7 +226,7 @@ function renderExpert(mode) {
   if (expertSource) expertSource.textContent = expert.source;
   if (expertLabel) expertLabel.textContent = expert.label;
   if (expertScope) expertScope.textContent = expert.scope;
-  if (expertProtocol) expertProtocol.innerHTML = expert.protocol.map((x, i) => `<div><b>${String(i + 1).padStart(2, "0")}</b><span>${x}</span></div>`).join("");
+  if (expertProtocol) expertProtocol.innerHTML = expert.protocol.map((x, i) => `<div class="protocol-step"><span>${String(i + 1).padStart(2, "0")}</span><p>${x}</p></div>`).join("");
   if (expertLocks) expertLocks.innerHTML = expert.lockedDomains.map(x => `<span>${x}</span>`).join("");
 }
 
