@@ -12,8 +12,15 @@ function scopedEvidence(mode, brief, target, params = {}) {
   const lines = [
     `USER INTENT: ${text || "No additional direction."}`,
     `TARGET: ${target || "Unspecified"}`,
-    `MODE CONTROLS: ${Object.entries(params).map(([k,v]) => `${k}=${v}`).join(" | ") || "None"}`
+    `RELEVANT DESIGN INTENT: ${Object.entries(scopedParams).filter(([,v]) => v).map(([k,v]) => `${k}=${v}`).join(" | ") || "None"}`
   ];
+
+  const scopedParams = {
+    Furniture: { style: params.style || "" },
+    Material: { style: params.style || "" },
+    Lighting: { lighting: params.lighting || "" },
+    Camera: { view: params.view || "", camera: params.camera || "" }
+  }[mode] || {};
 
   const scope = {
     Furniture: "Read scene evidence only to fit the target furniture. Do not infer new material, lighting or camera decisions.",
@@ -37,6 +44,7 @@ export function buildDirection({
   model = {},
   referenceRoles = ""
 }) {
+  const relevantParams = { Furniture: { style: params.style || "" }, Material: { style: params.style || "" }, Lighting: { lighting: params.lighting || "" }, Camera: { view: params.view || "", camera: params.camera || "" } }[mode] || {};
   const analysis = analyzeBrief(brief, mode, output, camera);
   const modeData = editModeDirection(mode, target, brief, params, decisions);
   const expert = expertDecision(mode, decisions);
@@ -81,7 +89,7 @@ export function buildDirection({
   );
 
   if (mode === "Furniture") {
-    const f = furnitureDirection(target, replacement, brief, params, decisions, model, referenceRoles);
+    const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
     body.push(
       "",
       "FURNITURE TARGET",
@@ -148,7 +156,7 @@ export function buildDirection({
       ld.expertQuestions.map(x => "• " + x).join("\n")
     );
   } else {
-    const cd = cameraDecisionEngine({target, brief, decisions, params, analysis});
+    const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
     body.push(
       "",
       "VIEW TARGET",
