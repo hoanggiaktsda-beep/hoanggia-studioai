@@ -1,5 +1,5 @@
 /*
- * HOANGGIA AI — 4 EXPERT DECISION SYSTEMS
+ * HOANGGIA AI — 5 EXPERT DECISION SYSTEMS
  *
  * Four independent expert lenses. They never exchange decisions.
  * Each expert reads only the user's intent + scene/reference evidence
@@ -162,7 +162,50 @@ export const EXPERTS = {
       "No furniture, material or lighting redesign to manufacture the composition.",
       "No arbitrary depth-of-field blur that hides important spatial relationships."
     ]
-  }
+  },
+
+  SpaceSync: {
+    name: "Đồng bộ hóa không gian",
+    role: "Chuyên gia điều phối không gian kiến trúc – nội thất",
+    label: "GÓC NHÌN ĐỒNG BỘ KHÔNG GIAN",
+    source: "Tỷ lệ · trục · lưu thông · sightline · nhịp điệu · liên tục không gian",
+    scope: "Chỉ quyết định về sự đồng bộ của toàn bộ không gian: quan hệ giữa kiến trúc, đồ nội thất, vật liệu, ánh sáng, tầm nhìn, trục, tỷ lệ, nhịp điệu và lưu thông để tạo một hệ không gian nhất quán.",
+    lockedDomains: [],
+    principles: [
+      "Read the room as one spatial system before adjusting any individual element.",
+      "Synchronize scale, proportion, alignment, circulation, sightlines and visual hierarchy across the scene.",
+      "Use architectural grids, axes, repetition, rhythm and negative space to connect elements without forcing uniformity.",
+      "Preserve the identity and function of each element while resolving conflicts through spatial coordination rather than arbitrary styling."
+    ],
+    decisions: {
+      alignment: "Establish the dominant architectural axes and align furniture, built-ins, openings and visual anchors to them where appropriate.",
+      circulation: "Protect primary and secondary movement paths, clearances, thresholds and functional zones.",
+      proportion: "Balance furniture scale against room volume, ceiling height, openings and adjacent elements.",
+      sightline: "Coordinate focal points, openings and layered views so the eye moves naturally through the space.",
+      continuity: "Connect material, form, rhythm, lighting and architectural language across zones without making every element identical.",
+      hierarchy: "Resolve primary, secondary and supporting visual roles so the space has a clear composition."
+    },
+    protocol: [
+      "READ: map architecture, fixed elements, furniture, openings, circulation, focal points and visual layers.",
+      "GRID: identify dominant axes, datum lines, alignments, centers and proportional relationships.",
+      "FLOW: verify entry, movement, pause, transition and functional clearances through the space.",
+      "SIGHTLINE: coordinate what is seen first, what is revealed later and which elements become visual anchors.",
+      "PROPORTION: reconcile object scale with room volume, ceiling height, openings and neighboring elements.",
+      "CONTINUITY: synchronize repeated forms, material language, lighting relationships and negative space without forced matching.",
+      "HIERARCHY: establish a clear primary-secondary-supporting visual order.",
+      "PRESERVE: keep the function and identity of existing elements unless the brief explicitly authorizes a change.",
+      "DELIVER: describe only the spatial synchronization required; do not silently redesign an individual domain."
+    ],
+    qualityGates: [
+      "No isolated element should be optimized if that creates a spatial conflict elsewhere.",
+      "No blocked primary circulation, unsafe clearance or impossible functional relationship.",
+      "No arbitrary relocation of fixed architecture, openings or built-ins.",
+      "No forced symmetry when the architecture calls for balanced asymmetry.",
+      "No visual continuity achieved by making every material, furniture form or light source identical.",
+      "No invented architecture or room volume unsupported by the supplied scene.",
+      "Preserve coherent scale, axes, sightlines, hierarchy and negative space across the whole composition."
+    ]
+  },
 };
 
 export function expertFor(mode) {
