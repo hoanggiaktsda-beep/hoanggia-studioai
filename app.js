@@ -351,7 +351,7 @@ document.getElementById("copy")?.addEventListener("click", async () => {
     const copyButton = document.getElementById("copy");
     if (copyButton) {
       copyButton.textContent = "✓ Đã sao chép";
-      setTimeout(() => { copyButton.textContent = "Sao chép prompt"; }, 1600);
+      setTimeout(() => { copyButton.textContent = "Sao chép yêu cầu AI"; }, 1600);
     }
     if (brainStatus) brainStatus.textContent = "Đã sao chép yêu cầu AI";
   } catch {
