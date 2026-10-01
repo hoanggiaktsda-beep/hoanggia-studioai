@@ -78,6 +78,34 @@
 <option>Khác / tự nhập</option></select></div>
 </div><label>Yêu cầu bổ sung</label><textarea id="brief" placeholder="Mô tả điều Ốc muốn thay đổi. Expert sẽ chỉ sử dụng phần liên quan đến phạm vi của mình..."></textarea><div class="chips"><button data-fill="giữ nguyên thiết kế">Giữ thiết kế</button><button data-fill="giữ tỷ lệ không gian">Giữ tỷ lệ</button><button data-fill="giữ nguyên model cung cấp">Giữ mẫu</button><button data-fill="không thay đổi ngoài phạm vi">Khóa ngoài phạm vi</button></div></div></div>
 </section>
+<section class="panel space-sync-panel hidden" id="spaceSyncPanel">
+  <div class="panel-head">
+    <div><span class="kicker">02</span><h2>Đồng bộ hóa không gian</h2></div>
+    <span class="panel-note">1 ảnh tham chiếu · nhiều ảnh cần đồng bộ</span>
+  </div>
+  <div class="space-sync-grid">
+    <div class="sync-reference-card">
+      <div class="sync-card-head"><strong>Ảnh tham chiếu</strong><span>01 · Cố định</span></div>
+      <label class="sync-upload-box" for="syncReferenceInput">
+        <img id="syncReferencePreview" alt="Ảnh tham chiếu">
+        <div id="syncReferencePlaceholder"><strong>＋ Tải 1 ảnh tham chiếu</strong><span>Ảnh chuẩn để hệ thống đọc ngôn ngữ không gian</span></div>
+      </label>
+      <input id="syncReferenceInput" type="file" accept="image/png,image/jpeg" hidden>
+      <p class="sync-help">Ảnh này được giữ cố định và dùng làm chuẩn chung cho tất cả ảnh cần đồng bộ.</p>
+    </div>
+    <div class="sync-target-card">
+      <div class="sync-card-head"><strong>Ảnh cần đồng bộ</strong><span id="syncTargetCount">0 ảnh</span></div>
+      <div class="sync-upload-box sync-target-upload" id="syncTargetUploadBox">
+        <div id="syncTargetGallery" class="sync-target-gallery"></div>
+        <button type="button" class="upload-trigger" id="syncTargetTrigger">＋ Thêm ảnh cần đồng bộ</button>
+        <span>Thêm nhiều ảnh khác nhau · mỗi ảnh sẽ nhận một câu prompt riêng</span>
+      </div>
+      <input id="syncTargetInput" type="file" accept="image/png,image/jpeg" multiple hidden>
+      <p class="sync-help">Mỗi ảnh được xử lý như một nhiệm vụ riêng để tránh lặp lại cùng một prompt cho nhiều ảnh.</p>
+    </div>
+  </div>
+  <div class="sync-rule"><strong>NGUYÊN TẮC</strong><span>Ảnh tham chiếu = chuẩn cố định. Ảnh cần đồng bộ = từng nhiệm vụ riêng. HOANGGIA AI tự tạo prompt riêng cho từng ảnh.</span></div>
+</section>
 <section class="decision-bar"><div><span class="kicker">HỆ THỐNG QUYẾT ĐỊNH KIẾN TRÚC</span><h2>Ốc quyết định. Chuyên gia suy luận. HOANGGIA AI kiểm soát.</h2><p>Bốn chuyên gia hoạt động độc lập. Mỗi chuyên gia chỉ suy luận trong phạm vi chuyên môn đã chọn và không tự ý thay đổi phạm vi thiết kế.</p></div><div class="decision-status"><span>QUYẾT ĐỊNH</span><strong id="decisionCount">0 / 5</strong></div></section>
 <section class="action-panel"><div class="action-main"><span class="kicker">04</span><h2>Xây dựng yêu cầu AI</h2><p id="resultText">Ảnh không gian + mẫu cung cấp + quyết định → tạo yêu cầu AI, không tạo ảnh.</p><div class="ai-target"><div class="ai-target-head"><span>NỀN TẢNG AI ĐẦU RA</span><small>Chọn nền tảng để định hình yêu cầu AI</small></div><div class="ai-target-options"><button type="button" class="ai-target-option active" data-ai-target="ChatGPT Images">ChatGPT Images</button><button type="button" class="ai-target-option" data-ai-target="GPT Image 2.5">GPT Image 2.5</button><button type="button" class="ai-target-option" data-ai-target="Nano Banana Pro">Nano Banana Pro</button><button type="button" class="ai-target-option" data-ai-target="Nano Banana 2">Nano Banana 2</button><button type="button" class="ai-target-option" data-ai-target="FLUX.2 Pro">FLUX.2 Pro</button><button type="button" class="ai-target-option" data-ai-target="Midjourney">Midjourney</button><button type="button" class="ai-target-option" data-ai-target="Seedream 5.0">Seedream 5.0</button><button type="button" class="ai-target-option" data-ai-target="Adobe Firefly">Adobe Firefly</button><button type="button" class="ai-target-option" data-ai-target="Ideogram">Ideogram</button><button type="button" class="ai-target-option" data-ai-target="Lovart">Lovart</button><button type="button" class="ai-target-option" data-ai-target="Nano Banana">Nano Banana</button><button type="button" class="ai-target-option" data-ai-target="Khác">Khác</button></div></div></div><button class="primary-btn" id="generate">TẠO YÊU CẦU AI <span>↗</span></button></section>
 <section class="result-panel hidden" id="result"><div class="result-head"><div><span class="kicker">KẾT QUẢ YÊU CẦU AI</span><h2>Yêu cầu AI hoàn chỉnh</h2></div><button class="copy-btn" id="copy">Sao chép yêu cầu AI</button></div><div id="reasoningSummary" class="reasoning-summary"></div><pre id="resultContent"></pre></section>
