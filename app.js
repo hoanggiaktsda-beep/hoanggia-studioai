@@ -81,6 +81,14 @@ const decisions = {
     ["contrast","Tương phản","Giữ hierarchy giữa sáng và tối.",["Tương phản tự nhiên","Tăng chiều sâu vùng sáng / tối","Tương phản nghệ thuật có kiểm soát"]],
     ["shadow","Bóng & phản xạ","Bảo đảm bóng, contact shadow và bounce hợp lý.",["Bảo toàn bóng vật lý","Làm rõ contact shadow","Ưu tiên chiều sâu bằng bóng và bounce"]]
   ],
+  SpaceSync: [
+    ["alignment","Trục & căn chỉnh","Đồng bộ các trục kiến trúc và đường chuẩn.",["Ưu tiên trục kiến trúc hiện hữu","Căn chỉnh đồ nội thất + kiến trúc","Cho phép tinh chỉnh nhẹ theo hệ trục"]],
+    ["circulation","Lưu thông & khoảng thở","Bảo vệ đường đi và vùng sử dụng.",["Giữ nguyên lưu thông hiện tại","Tối ưu luồng di chuyển","Ưu tiên khoảng thở và chuyển tiếp"]],
+    ["proportion","Tỷ lệ toàn không gian","Cân bằng đồ vật với thể tích phòng.",["Giữ tỷ lệ hiện hữu","Cân bằng theo thể tích phòng","Ưu tiên tỷ lệ con người + kiến trúc"]],
+    ["sightline","Tầm nhìn & điểm nhấn","Điều phối thứ tự nhìn và các lớp không gian.",["Giữ sightline hiện tại","Tối ưu điểm nhìn chính","Tạo chuỗi nhìn xuyên không gian"]],
+    ["continuity","Liên tục & nhịp điệu","Kết nối hình thức, vật liệu, ánh sáng và khoảng trống.",["Giữ ngôn ngữ hiện hữu","Tăng tính liên tục","Ưu tiên nhịp điệu và lặp có kiểm soát"]],
+    ["hierarchy","Phân cấp thị giác","Xác định vai trò chính, phụ và nền.",["Giữ hierarchy hiện tại","Làm rõ điểm nhấn chính","Tối ưu hierarchy toàn cảnh"]]
+  ],
   Camera: [
     ["view","Ý đồ khung hình","Xác định câu chuyện không gian trước khi đặt máy.",["Toàn cảnh không gian","Tập trung khu vực chính","Nhấn mạnh một chi tiết kiến trúc / nội thất"]],
     ["position","Vị trí máy","Xác định điểm đứng mà không thay đổi scene.",["Giữ vị trí máy gần hiện tại","Tối ưu vị trí để đọc không gian","Cho phép chọn góc mới"]],
@@ -105,6 +113,11 @@ const intentByMode = {
     hint: "Chỉ mô tả ánh sáng mong muốn. Maurer suy luận nguồn, hướng, falloff, tương phản và bóng.",
     placeholder: "Ví dụ: tạo ánh sáng chiều ấm, giữ nguyên toàn bộ đèn và đồ nội thất, tăng chiều sâu bóng...",
     chips: ["giữ nguồn sáng","ánh sáng ấm","tăng chiều sâu bóng","không đổi vật liệu / đồ nội thất"]
+  },
+  SpaceSync: {
+    hint: "Mô tả cách Ốc muốn toàn bộ không gian đồng bộ. Expert sẽ điều phối trục, tỷ lệ, lưu thông, tầm nhìn và hierarchy.",
+    placeholder: "Ví dụ: đồng bộ sofa, bàn trà, đèn và vách theo trục kiến trúc, giữ lối đi và tạo hierarchy rõ...",
+    chips: ["đồng bộ theo trục kiến trúc","giữ lưu thông","cân bằng tỷ lệ toàn không gian","giữ identity từng thành phần"]
   },
   Camera: {
     hint: "Chỉ mô tả góc nhìn. Baan suy luận vị trí, chiều cao, lens, framing và phối cảnh.",
@@ -194,7 +207,7 @@ function selectedDecisions() {
 function renderDecisions(mode) {
   const fields = decisions[mode] || [];
   const intent = intentByMode[mode];
-  if (decisionTitle) decisionTitle.textContent = `Quyết định của Expert — ${mode}`;
+  if (decisionTitle) decisionTitle.textContent = `Quyết định của Expert — ${mode === "SpaceSync" ? "Đồng bộ hóa không gian" : mode}`;
   if (decisionHint) decisionHint.textContent = intent.hint;
   decisionControls.innerHTML = fields.map(([key, label, hint, opts], i) => `
     <div class="decision-field">
