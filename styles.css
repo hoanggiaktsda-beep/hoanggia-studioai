@@ -314,27 +314,59 @@ button,.nav-item,.mode-card,.ai-target-option,.copy-btn,.ghost-btn,.primary-btn,
 @media(max-width:600px){.sync-target-gallery{grid-template-columns:1fr}.sync-upload-box{min-height:180px}.sync-upload-box img{height:180px}.sync-rule{align-items:flex-start;flex-direction:column;gap:5px}}
 
 
-/* Footer — Hoàng Gia / HOANGGIA AI */
-footer{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+/* Footer — responsive: phone / tablet / iPad / PC */
+footer{
+  display:grid;
+  grid-template-columns:minmax(250px,1.15fr) minmax(300px,1fr) auto;
+  align-items:center;
+  column-gap:32px;
+  row-gap:14px;
+  width:100%;
+  box-sizing:border-box;
+}
 .footer-brand{display:flex;align-items:center;gap:10px;min-width:0}
 .footer-brand img{width:28px;height:28px;border:1px solid #76633f;border-radius:3px;object-fit:cover;flex:0 0 auto}
 .footer-brand-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
 .footer-brand-copy strong{color:var(--gold2);font-size:10px;font-weight:700;letter-spacing:.16em;line-height:1}
 .footer-brand-copy small{color:#737a76;font-size:8px;letter-spacing:.045em;line-height:1.35;white-space:nowrap}
-.footer-contact{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.footer-contact strong{font-size:9px;color:#d9d5cb;letter-spacing:.05em}
-.footer-link{display:inline-flex;align-items:center;gap:5px;color:#858d85;text-decoration:none;font-size:9px;transition:color .18s}
-.footer-link svg{width:13px;height:13px;fill:currentColor;display:block}
+.footer-contact{display:flex;align-items:center;justify-content:flex-start;gap:14px;flex-wrap:wrap;min-width:0}
+.footer-contact strong{font-size:9px;color:#d9d5cb;letter-spacing:.05em;white-space:nowrap}
+.footer-link{display:inline-flex;align-items:center;gap:5px;color:#858d85;text-decoration:none;font-size:9px;transition:color .18s;white-space:nowrap}
+.footer-link svg{width:13px;height:13px;fill:currentColor;display:block;flex:0 0 auto}
 .footer-link:hover{color:var(--gold2)}
-.footer-copy{margin-left:auto;color:#555b58;font-size:8px;letter-spacing:.04em}
-@media(max-width:900px){
+.footer-copy{justify-self:end;color:#555b58;font-size:8px;letter-spacing:.04em;white-space:nowrap}
+
+/* Laptop / small desktop */
+@media (max-width:1199px){
+  footer{grid-template-columns:1fr 1.2fr;align-items:center;column-gap:22px}
+  .footer-copy{grid-column:1 / -1;justify-self:end}
   .footer-brand-copy small{white-space:normal}
-  footer{gap:16px}
-  .footer-copy{margin-left:0}
 }
-@media(max-width:600px){
-  footer{align-items:flex-start;gap:12px}
+
+/* iPad / tablet portrait + landscape */
+@media (max-width:900px){
+  footer{grid-template-columns:1fr;gap:12px;padding-top:4px}
+  .footer-contact{gap:10px 18px}
+  .footer-copy{grid-column:auto;justify-self:start}
+}
+
+/* Phone */
+@media (max-width:600px){
+  footer{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
   .footer-brand{width:100%}
-  .footer-brand-copy small{font-size:7.5px}
-  .footer-contact{width:100%;gap:9px 15px}
+  .footer-brand img{width:26px;height:26px}
+  .footer-brand-copy strong{font-size:9px}
+  .footer-brand-copy small{font-size:7px;letter-spacing:.025em;white-space:normal}
+  .footer-contact{width:100%;gap:10px 16px}
+  .footer-contact strong{width:100%;font-size:8px}
+  .footer-link{font-size:8px}
+  .footer-link svg{width:12px;height:12px}
+  .footer-copy{font-size:7px}
+}
+
+/* Very small phones */
+@media (max-width:380px){
+  .footer-contact{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+  .footer-contact strong{grid-column:1 / -1}
+  .footer-link{font-size:7.5px}
 }
