@@ -70,3 +70,14 @@
 .model-standardization{transition:border-color .18s}
 .model-standardization .decision-intro{margin:-4px 0 14px}
 @media(max-width:900px){.decision-controls{grid-template-columns:1fr}.decision-field{min-height:0}.expert-advanced summary{align-items:flex-start}.expert-advanced summary small{max-width:48%;text-align:right}}
+
+
+/* Design Intent — shared context, scoped independently per Expert */
+.design-intent-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0 14px}
+.intent-field{min-width:0;padding:12px;background:#0d0f11;border:1px solid #292c31;border-radius:9px;transition:border-color .18s,transform .18s}
+.intent-field:focus-within{border-color:#51575f;transform:translateY(-1px)}
+.intent-field label{display:block;margin:0 0 8px;color:#858a91;font-size:8px;letter-spacing:.14em;font-weight:700}
+.intent-field select{width:100%;min-height:38px;padding:9px 10px;background:#111316;color:#d7d9dc;border:1px solid #24272c;border-radius:7px;font:10px inherit;outline:none}
+.intent-field select:focus{border-color:#5b626b}
+.design-intent-grid + label{display:block;margin-top:2px;color:#858a91;font-size:8px;letter-spacing:.14em;font-weight:700}
+@media(max-width:900px){.design-intent-grid{grid-template-columns:1fr}}
