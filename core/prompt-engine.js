@@ -259,6 +259,21 @@ function scopedEvidence(mode, brief, target, params = {}) {
   return [...lines, `EXPERT SCOPE: ${scope}`];
 }
 
+const AI_PROMPT_ADAPTERS = {
+  "ChatGPT Images": { format: "Yêu cầu chỉnh sửa ảnh trực tiếp, tự nhiên, nêu rõ đối tượng, thao tác, khóa bảo toàn và tiêu chí chân thực.", order: ["ĐỐI TƯỢNG","THAY ĐỔI","KHÓA BẢO TOÀN","TÍNH CHÂN THỰC","BỐI CẢNH"] },
+  "GPT Image 2.5": { format: "Yêu cầu chỉnh sửa chính xác, cô lập đúng phạm vi can thiệp và bảo toàn toàn bộ phần ngoài phạm vi.", order: ["MỤC TIÊU","CAN THIỆP","RANH GIỚI","BẢO TOÀN","CHẤT LƯỢNG"] },
+  "Nano Banana Pro": { format: "Yêu cầu xử lý nhiều ảnh tham chiếu, nhấn mạnh nhận diện model, tính nhất quán không gian và vật liệu.", order: ["MODEL / THAM CHIẾU","CAN THIỆP","NHẤT QUÁN KHÔNG GIAN","BẢO TOÀN","CHÂN THỰC"] },
+  "Nano Banana 2": { format: "Yêu cầu ngắn gọn, rõ mục tiêu và ràng buộc, ưu tiên tính nhất quán đối tượng và hiện thực vật lý.", order: ["ĐỐI TƯỢNG","THAY ĐỔI","RÀNG BUỘC","BẢO TOÀN","CHÂN THỰC"] },
+  "FLUX.2 Pro": { format: "Chỉ dẫn sản xuất súc tích, giữ liên tục bố cục, hình học và vật liệu trong khi giới hạn biến đổi.", order: ["BỐI CẢNH","CAN THIỆP","LIÊN TỤC HÌNH HỌC","BẢO TOÀN","ĐẦU RA"] },
+  "Midjourney": { format: "Chỉ dẫn art direction cô đọng, ưu tiên bố cục, ngôn ngữ hình ảnh, vật liệu, không khí và ý đồ thị giác.", order: ["Ý ĐỒ HÌNH ẢNH","BỐ CỤC","ĐỐI TƯỢNG","VẬT LIỆU / KHÔNG KHÍ","BẢO TOÀN"] },
+  "Seedream 5.0": { format: "Yêu cầu chỉnh sửa độ trung thực cao, xác định rõ đối tượng, nhận diện, không gian và các giới hạn biến đổi.", order: ["ĐỐI TƯỢNG","NHẬN DIỆN","CAN THIỆP","KHÓA","ĐỘ TRUNG THỰC"] },
+  "Adobe Firefly": { format: "Chỉ dẫn chỉnh sửa rõ ràng, xác định vùng tác động và giới hạn bảo toàn phù hợp quy trình sản xuất.", order: ["VÙNG CHỈNH SỬA","THAY ĐỔI","BẢO TOÀN","KẾT QUẢ MONG MUỐN"] },
+  "Ideogram": { format: "Yêu cầu ngắn gọn, cụ thể về bố cục và đối tượng; ưu tiên mô tả chính xác các chi tiết cần giữ.", order: ["ĐỐI TƯỢNG","BỐ CỤC","CHỈNH SỬA","CHI TIẾT","BẢO TOÀN"] },
+  "Lovart": { format: "Chỉ thị sản xuất cô đọng cho quy trình thiết kế, tách rõ hành động, vật liệu/đối tượng và khóa bảo toàn.", order: ["MỤC TIÊU","HÀNH ĐỘNG","ĐIỀU KIỆN THIẾT KẾ","KHÓA","ĐẦU RA"] },
+  "Nano Banana": { format: "Yêu cầu chỉnh sửa trực tiếp với phạm vi thay đổi chính xác và khóa bảo toàn mạnh.", order: ["CHỈNH SỬA","BẢO TOÀN","CHI TIẾT","CHẤT LƯỢNG","BỐI CẢNH"] },
+  "Khác": { format: "Yêu cầu sản xuất sẵn sàng sử dụng, nêu rõ đối tượng, thay đổi, bảo toàn và tính chân thực.", order: ["ĐỐI TƯỢNG","THAY ĐỔI","BẢO TOÀN","CHẤT LƯỢNG","BỐI CẢNH"] }
+};
+
 export function buildDirection({
   brief,
   mode,
