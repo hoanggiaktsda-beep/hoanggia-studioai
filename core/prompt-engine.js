@@ -294,7 +294,13 @@ export function buildDirection({
     Furniture: { spaceType: params.spaceType || "", style: params.style || "", styleMeaning: intentMeaning.style },
     Material: { style: params.style || "", styleMeaning: intentMeaning.style },
     Lighting: { lighting: params.lighting || "", lightingMeaning: intentMeaning.lighting },
-    Camera: { view: params.view || "", viewMeaning: intentMeaning.view, camera: params.camera || "", cameraMeaning: intentMeaning.camera },
+    Camera: {
+      view: params.view || "",
+      viewMeaning: intentMeaning.view,
+      camera: params.camera || "",
+      cameraMeaning: intentMeaning.camera,
+      cameraContext: params.cameraContext || null
+    },
     SpaceSync: {
       spaceType: params.spaceType || "",
       style: params.style || "",
@@ -355,7 +361,23 @@ export function buildDirection({
     body.push(task + ".", "Control source, direction, intensity, color temperature, falloff, contrast and shadows.", ld.checks.join(" "));
   } else if (mode === "Camera") {
     const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
-    body.push(task + ".", "Control position, height, focal length/FOV, perspective and framing.", cd.checks.join(" "));
+    const cc = relevantParams.cameraContext || {};
+    const contextParts = [
+      ["weather", cc.weather],
+      ["time", cc.time],
+      ["characters", cc.characters],
+      ["activity", cc.activity],
+      ["atmosphere", cc.atmosphere],
+      ["lifeLevel", cc.lifeLevel],
+      ["exterior", cc.exterior],
+      ["story", cc.story],
+      ["characterDescription", cc.characterDescription],
+      ["sceneDescription", cc.sceneDescription]
+    ].filter(([,value]) => value && !/^Không xác định/.test(value));
+    const contextLine = contextParts.length
+      ? "CAMERA SCENE CONTEXT: " + contextParts.map(([key,value]) => key + "=" + value).join(" | ") + ". Use this only to determine viewpoint, framing, spatial narrative, human scale, depth and photographic timing. Do not change furniture, materials or lighting decisions."
+      : "CAMERA SCENE CONTEXT: No additional scene context specified. Infer only what is visibly supported by the image.";
+    body.push(task + ".", "Control position, height, focal length/FOV, perspective and framing.", contextLine, cd.checks.join(" "));
   } else {
     body.push(
       "EDIT TARGET IMAGE TO MATCH FIXED REFERENCE IMAGE.",
