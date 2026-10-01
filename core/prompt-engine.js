@@ -3,6 +3,7 @@ import {materialDirection, materialDecisionEngine} from "./material-engine.js";
 import {cameraDirection} from "./camera-engine.js";
 import {furnitureDirection} from "./furniture-engine.js";
 import {editModeDirection} from "./edit-engine.js";
+import {lightingDecisionEngine} from "./lighting-engine.js";
 import {expertDecision} from "./expert-decision-layer.js";
 
 function scopedEvidence(mode, brief, target, params = {}) {
@@ -126,6 +127,7 @@ export function buildDirection({
       md.expertQuestions.map(x => "• " + x).join("\n")
     );
   } else if (mode === "Lighting") {
+    const ld = lightingDecisionEngine({target, brief, decisions, analysis, referenceRoles});
     body.push(
       "",
       "LIGHTING TARGET",
@@ -133,7 +135,16 @@ export function buildDirection({
       "",
       "LIGHTING INTELLIGENCE",
       "• Reason through source hierarchy, direction, falloff, exposure, bounce, contrast and contact shadows.",
-      "• Preserve the physical origin of visible emitters, reflections and shadows."
+      "• Preserve the physical origin of visible emitters, reflections and shadows.",
+      "",
+      "LIGHTING DECISION SEQUENCE",
+      ld.decisionSequence.join("\n"),
+      "",
+      "LIGHTING REASONING",
+      ld.checks.map(x => "• " + x).join("\n"),
+      "",
+      "LIGHTING EXPERT QUESTIONS",
+      ld.expertQuestions.map(x => "• " + x).join("\n")
     );
   } else {
     body.push(
@@ -160,6 +171,7 @@ export function buildDirection({
     ...expert.qualityGates.map(x => "• QUALITY GATE: " + x),
     ...(mode === "Furniture" ? furnitureDirection(target, replacement, brief, params, decisions, model, referenceRoles).qualityGates.map(x => "• FURNITURE GATE: " + x) : []),
     ...(mode === "Material" ? materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles}).qualityGates.map(x => "• MATERIAL GATE: " + x) : []),
+    ...(mode === "Lighting" ? lightingDecisionEngine({target, brief, decisions, analysis, referenceRoles}).qualityGates.map(x => "• LIGHTING GATE: " + x) : []),
     "• Keep walls, floor, ceiling, windows, doors, openings and built-ins unchanged.",
     "• Preserve every non-target object unless explicitly included in the selected expert scope.",
     "",
