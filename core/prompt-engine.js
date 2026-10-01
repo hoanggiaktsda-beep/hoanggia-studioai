@@ -67,152 +67,89 @@ export function buildDirection({
     .join("\n");
 
   const body = [];
+
   body.push(
-    "HOANGGIA AI — " + expert.label,
+    "EXPERT",
+    expert.name + " — " + expert.role,
+    "FOCUS",
+    expert.scope,
     "",
-    "EXPERT DECISION SYSTEM",
-    "• Expert: " + expert.name + " — " + expert.role,
-    "• Decision philosophy: " + expert.source,
-    "• Scope: " + expert.scope,
-    "• Independence: this expert cannot redesign another domain.",
-    "• This is a design lens, not a literal simulation of the named expert.",
+    "TASK",
+    mode === "Furniture" ? "Replace only the selected furniture: " + target :
+    mode === "Material" ? "Change only the selected material surface: " + target :
+    mode === "Lighting" ? "Change only the selected lighting system: " + target :
+    "Change only the camera view: " + target,
     "",
-    "EXPERT PRINCIPLES",
+    "DESIGN LOGIC",
     expert.principles.map(x => "• " + x).join("\n"),
     "",
-    "EXPERT PROTOCOL",
-    expert.protocol.map((x,i) => (i+1) + ". " + x).join("\n"),
+    "PROCESS",
+    expert.protocol.map((x,i) => (i + 1) + ". " + x).join("\n"),
     "",
-    "DESIGN DECISIONS",
-    decisionLines || "• Apply the expert principles to the user's intent.",
-    "",
-    "EXPERT DECISION LOGIC",
-    expert.applied.length ? expert.applied.map(x => "• " + x).join("\n") : "• Apply the expert principles to the user's intent."
+    "DECISIONS",
+    decisionLines || "• Apply expert principles to the user's intent."
   );
 
   if (mode === "Furniture") {
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
     body.push(
       "",
-      "FURNITURE TARGET",
-      "Replace only: " + target,
+      "REFERENCE",
+      "• Use supplied model images only for the selected furniture.",
+      "• Reconcile multiple views into one coherent model.",
+      "• Preserve identity, silhouette and construction according to the selected decisions.",
       "",
-      "REFERENCE INTELLIGENCE",
-      "• Scene A controls architecture, spatial context and non-target objects.",
-      "• All supplied model images control only the selected furniture identity.",
-      "• Reconcile multiple views into one coherent model; never mix unrelated models.",
-      "",
-      "FURNITURE DECISION SEQUENCE",
-      f.decisionSequence.join("\n"),
-      "",
-      "FURNITURE REASONING",
-      "• " + f.anatomy.join(", "),
-      f.checks.map(x => "• " + x).join("\n"),
-      "• " + f.referenceRule,
+      "EXECUTION",
       "• " + f.editRule,
       "• " + f.realism,
-      "",
-      "FURNITURE EXPERT QUESTIONS",
-      f.expertQuestions.map(x => "• " + x).join("\n")
+      "• " + f.referenceRule
     );
   } else if (mode === "Material") {
     const m = materialDirection(analysis);
     const md = materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles});
     body.push(
       "",
-      "MATERIAL TARGET",
-      "Change only: " + target,
-      "",
-      "MATERIAL INTELLIGENCE",
-      m.hierarchy.map(x => "• " + x).join("\n"),
+      "EXECUTION",
       "• " + m.rule,
       "• " + m.realism.join("\n• "),
-      "",
-      "MATERIAL DECISION SEQUENCE",
-      md.decisionSequence.join("\n"),
-      "",
-      "MATERIAL REASONING",
-      md.checks.map(x => "• " + x).join("\n"),
-      "",
-      "MATERIAL EXPERT QUESTIONS",
-      md.expertQuestions.map(x => "• " + x).join("\n")
+      ...md.checks.map(x => "• " + x)
     );
   } else if (mode === "Lighting") {
     const ld = lightingDecisionEngine({target, brief, decisions, analysis, referenceRoles});
     body.push(
       "",
-      "LIGHTING TARGET",
-      "• " + target,
-      "",
-      "LIGHTING INTELLIGENCE",
-      "• Reason through source hierarchy, direction, falloff, exposure, bounce, contrast and contact shadows.",
-      "• Preserve the physical origin of visible emitters, reflections and shadows.",
-      "",
-      "LIGHTING DECISION SEQUENCE",
-      ld.decisionSequence.join("\n"),
-      "",
-      "LIGHTING REASONING",
-      ld.checks.map(x => "• " + x).join("\n"),
-      "",
-      "LIGHTING EXPERT QUESTIONS",
-      ld.expertQuestions.map(x => "• " + x).join("\n")
+      "EXECUTION",
+      "• Design source, direction, intensity, temperature, falloff, contrast, shadow and bounce.",
+      "• " + ld.checks.join("\n• ")
     );
   } else {
     const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
     body.push(
       "",
-      "VIEW TARGET",
-      "• " + target,
-      "",
-      "CAMERA INTELLIGENCE",
-      "• Reason only through camera position, height, lens/FOV, perspective, framing, vertical control, depth and spatial narrative.",
-      "• Preserve actual room dimensions and object positions; camera change must never become a staging change.",
-      "",
-      "CAMERA DECISION SEQUENCE",
-      cd.decisionSequence.join("\n"),
-      "",
-      "CAMERA REASONING",
-      cd.checks.map(x => "• " + x).join("\n"),
-      "",
-      "CAMERA EXPERT QUESTIONS",
-      cd.expertQuestions.map(x => "• " + x).join("\n")
+      "EXECUTION",
+      "• Determine position, height, lens/FOV, perspective, framing, verticals and depth.",
+      "• " + cd.checks.join("\n• ")
     );
   }
 
   body.push(
     "",
-    "SCOPED EVIDENCE",
-    scopedEvidence(mode, brief, target, params).map(x => "• " + x).join("\n"),
+    "CONTEXT",
+    "• User intent: " + ((brief || "").trim() || "No additional direction."),
+    "• Design intent: " + (Object.entries(relevantParams).filter(([,v]) => v).map(([k,v]) => k + "=" + v).join(" | ") || "None"),
     "",
-    "USER INTENT",
-    (brief || "").trim(),
-    "",
-    "PRESERVATION LOCK",
+    "PRESERVE",
     ...modeData.safeguards.map(x => "• " + x),
-    ...expert.qualityGates.map(x => "• QUALITY GATE: " + x),
-    ...(mode === "Furniture" ? furnitureDirection(target, replacement, brief, params, decisions, model, referenceRoles).qualityGates.map(x => "• FURNITURE GATE: " + x) : []),
-    ...(mode === "Material" ? materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles}).qualityGates.map(x => "• MATERIAL GATE: " + x) : []),
-    ...(mode === "Lighting" ? lightingDecisionEngine({target, brief, decisions, analysis, referenceRoles}).qualityGates.map(x => "• LIGHTING GATE: " + x) : []),
-    ...(mode === "Camera" ? cameraDecisionEngine({target, brief, decisions, params, analysis}).qualityGates.map(x => "• CAMERA GATE: " + x) : []),
-    "• Keep walls, floor, ceiling, windows, doors, openings and built-ins unchanged.",
-    "• Preserve every non-target object unless explicitly included in the selected expert scope.",
+    ...expert.qualityGates.map(x => "• " + x),
+    "• Keep all non-target domains unchanged.",
+    "• Do not solve problems by changing another expert's domain.",
     "",
-    "MODEL / REFERENCE DATA",
-    Object.keys(model).length ? Object.entries(model).map(([k,v]) => "• " + k + ": " + v).join("\n") : "• No standardized model data.",
-    referenceRoles ? "• IMAGE ROLES: " + referenceRoles : "• No image-role metadata.",
-    "",
-    "AI QUALITY CONTROL",
-    "• Photorealistic architectural visualization.",
-    "• No warped geometry, impossible construction or invented unrelated details.",
-    "• Preserve physically coherent scale, contact, occlusion and perspective.",
-    "• Never solve a problem in a locked domain by changing that domain.",
-    "",
-    "AI OUTPUT TARGET",
-    "• Platform: " + aiTarget,
+    "AI FORMAT",
+    "• Target platform: " + aiTarget,
     "• " + (aiProfile || "Use concise production-ready image-editing instructions."),
     "",
-    "OUTPUT RULE",
-    "Return a production-ready image-editing prompt only. Do not generate the image."
+    "OUTPUT",
+    "Return one concise production-ready image-editing prompt only. Do not generate the image."
   );
 
   return {analysis, reasoning, prompt: body.join("\n")};
