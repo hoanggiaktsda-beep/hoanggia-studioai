@@ -11,6 +11,7 @@ const targetSelect=document.getElementById("target"),targetLabel=document.getEle
 const modelControls=document.getElementById("modelControls");
 const modeControls=document.getElementById("modeControls");
 const decisionControls=document.getElementById("decisionControls"),reasoningSummary=document.getElementById("reasoningSummary");
+const decisionTitle=document.getElementById("decisionTitle"),decisionHint=document.getElementById("decisionHint");
 const decisionCount=document.getElementById("decisionCount"),expertName=document.getElementById("expertName"),expertRole=document.getElementById("expertRole"),expertSource=document.getElementById("expertSource");
 const expertLabel=document.getElementById("expertLabel"),expertScope=document.getElementById("expertScope"),expertProtocol=document.getElementById("expertProtocol"),expertLocks=document.getElementById("expertLocks");
 let currentMode="Furniture";
@@ -112,6 +113,9 @@ referenceInput.addEventListener("change",()=>{
 });
 function selectedDecisions(){return Object.fromEntries([...decisionControls.querySelectorAll("[data-decision]")].map(x=>[x.dataset.decision,x.value]));}
 function renderDecisions(mode){
+ const titles={Furniture:["Quyết định nội thất Citterio","Model → tỷ lệ & công năng → vị trí & lưu thông."],Material:["Quyết định vật liệu Zumthor","Phạm vi → bề mặt → liên kết vật liệu."],Lighting:["Quyết định ánh sáng Maurer","Không khí → nguồn sáng → tương phản & bóng."],Camera:["Quyết định camera Baan","Câu chuyện không gian → tiêu cự → cao độ & khung hình."]};
+ if(decisionTitle) decisionTitle.textContent=titles[mode][0];
+ if(decisionHint) decisionHint.textContent=titles[mode][1]+" Chỉ chọn 3 quyết định cốt lõi; Expert suy luận phần còn lại.";
  decisionControls.innerHTML=decisions[mode].map(([key,label,opts])=>`<div class="decision-field"><label>${label}</label><select data-decision="${key}"><option value="">Chọn quyết định…</option>${opts.map(o=>`<option>${o}</option>`).join("")}</select></div>`).join("");
  updateCount();
 }
