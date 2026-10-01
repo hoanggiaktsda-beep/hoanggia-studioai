@@ -35,10 +35,17 @@ let currentMode = "Furniture";
 let selectedAITarget = "ChatGPT";
 
 const aiTargetProfiles = {
-  ChatGPT: "Format for ChatGPT image editing: use direct natural-language visual instructions, explicit preservation constraints and a clear target intervention.",
-  Gemini: "Format for Gemini image editing: use concise visual instructions with explicit target, preservation and physical realism constraints.",
-  Lovart: "Format for Lovart: use compact production directives, clear material/object/camera actions and strict preservation rules.",
-  "Nano Banana": "Format for Nano Banana image editing: use explicit image-editing instructions, precise target boundaries and strong preservation constraints.",
+  "ChatGPT Images": "Format for OpenAI image editing: direct conversational edit instruction, explicit target, preservation locks, spatial consistency and precise requested change.",
+  "GPT Image 2.5": "Format for high-precision image editing: isolate the requested intervention, preserve everything else, state exact edit boundaries and realism constraints.",
+  "Nano Banana Pro": "Format for complex professional image editing: explicit multi-reference handling, target identity, spatial consistency, material fidelity and preservation.",
+  "Nano Banana 2": "Format for fast advanced image editing: concise target/change/constraints with strong object consistency and physical realism.",
+  "FLUX.2 Pro": "Format for production image editing: concise contextual instructions, composition continuity, geometry/material consistency and controlled transformation.",
+  "Midjourney": "Format for Midjourney image direction: compact visual art direction, reference intent, composition, material, atmosphere and controlled style language.",
+  "Seedream 5.0": "Format for high-fidelity image editing: explicit target, identity preservation, spatial/material consistency and detailed visual constraints.",
+  "Adobe Firefly": "Format for Adobe Firefly: clear generative-edit instruction with precise edit scope, preservation boundaries and production-safe visual language.",
+  "Ideogram": "Format for Ideogram: concise image-editing direction with precise composition, object details and typography-aware constraints.",
+  Lovart: "Format for Lovart: compact production directives, clear material/object/camera actions and strict preservation rules.",
+  "Nano Banana": "Format for legacy Nano Banana image editing: explicit image-editing instructions, precise target boundaries and strong preservation constraints.",
   "Khác": "Format as a concise production-ready image-editing prompt that clearly states the target, changes, preservation and realism."
 };
 let referenceFiles = [];
