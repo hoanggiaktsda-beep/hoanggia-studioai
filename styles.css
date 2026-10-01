@@ -312,3 +312,12 @@ button,.nav-item,.mode-card,.ai-target-option,.copy-btn,.ghost-btn,.primary-btn,
 .sync-rule span{color:var(--muted,#aaa)}
 @media(max-width:900px){.space-sync-grid{grid-template-columns:1fr}}
 @media(max-width:600px){.sync-target-gallery{grid-template-columns:1fr}.sync-upload-box{min-height:180px}.sync-upload-box img{height:180px}.sync-rule{align-items:flex-start;flex-direction:column;gap:5px}}
+
+
+/* Footer profile — Hoàng Gia */
+footer{align-items:flex-end;gap:24px;flex-wrap:wrap}
+.footer-brand,.footer-owner{display:flex;flex-direction:column;gap:4px}
+.footer-brand small,.footer-owner small{font-size:8px;color:#5f646b;letter-spacing:.04em}
+.footer-owner{text-align:right;margin-left:auto}
+.footer-owner span{color:var(--gold2);font-size:10px;font-weight:700;letter-spacing:.16em}
+@media(max-width:600px){.footer-owner{margin-left:0;text-align:left;margin-top:8px}.footer-brand small,.footer-owner small{font-size:8px}}
