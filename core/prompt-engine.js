@@ -6,6 +6,7 @@ import {furnitureDirection} from "./furniture-engine.js";
 import {editModeDirection} from "./edit-engine.js";
 import {lightingDecisionEngine} from "./lighting-engine.js";
 import {expertDecision} from "./expert-decision-layer.js";
+import {visualPromptSystem} from "./visual-prompt-system.js";
 
 const DESIGN_INTENT_LIBRARY = {
   style: {
@@ -327,6 +328,7 @@ export function buildDirection({
     .join("\n");
 
   const body = [];
+  const visualSystem = visualPromptSystem({mode, target, replacement, brief, decisions, params, aiTarget});
 
   const adapter = AI_PROMPT_ADAPTERS[aiTarget] || AI_PROMPT_ADAPTERS["Khác"];
   const task = mode === "Furniture"
@@ -361,6 +363,7 @@ export function buildDirection({
   }
 
   body.push(
+    visualSystem,
     "Apply selected decisions: " + (decisionLines || "use the expert principles directly") + ".",
     "User brief: " + ((brief || "").trim() || "none") + ".",
     "Preserve all non-target elements and non-selected domains.",
