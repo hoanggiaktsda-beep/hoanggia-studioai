@@ -32,28 +32,7 @@ const modelSchema={
  views:["Nhiều góc nhìn của cùng một model","Một góc nhìn chính","Góc chính + ảnh chi tiết"]
 };
 
-const decisions={
- Furniture:[
-  ["identity","Mục tiêu thay đồ",["Thay đúng model cung cấp","Thay model tương đương","Tinh chỉnh model hiện tại"]],
-  ["fit","Tỷ lệ & công năng",["Giữ nguyên tỷ lệ model","Điều chỉnh vừa không gian","Ưu tiên công thái học"]],
-  ["placement","Vị trí & lưu thông",["Giữ footprint hiện tại","Tối ưu khoảng lưu thông","Khớp chính xác vị trí đồ cũ"]]
- ],
- Material:[
-  ["boundary","Phạm vi vật liệu",["Chỉ thay bề mặt","Thay toàn bộ hệ vật liệu","Đổi vật liệu nhưng giữ cấu tạo"]],
-  ["finish","Bề mặt & phản xạ",["Tự nhiên / mờ","Bán bóng","Bóng cao"]],
-  ["junction","Liên kết vật liệu",["Giữ nguyên mối nối","Ưu tiên liên tục vân / mạch","Nhấn mạnh chi tiết cạnh / khe"]]
- ],
- Lighting:[
-  ["mood","Không khí ánh sáng",["Sang trọng ấm áp","Tự nhiên trung tính","Mềm như ảnh biên tập","Tương phản mạnh"]],
-  ["source","Thứ bậc nguồn sáng",["Giữ nguồn sáng hiện tại","Tự nhiên chủ đạo","Nhân tạo chủ đạo","Chiếu sáng nhiều lớp"]],
-  ["contrast","Tương phản & bóng",["Mềm","Cân bằng","Mạnh"]]
- ],
- Camera:[
-  ["view","Câu chuyện không gian",["Giữ góc hiện tại","Mở rộng để đọc không gian","Tập trung đối tượng","Góc chụp kiến trúc"]],
-  ["lens","Tiêu cự / FOV",["Kiến trúc tự nhiên","Góc rộng có kiểm soát","35mm cân bằng","50mm chi tiết"]],
-  ["height","Cao độ & khung hình",["Ngang tầm mắt","Thấp / gần trải nghiệm","Cao / đọc tổng thể","Cận chi tiết"]]
- ]
-};
+const decisions={Furniture:[],Material:[],Lighting:[],Camera:[]};
 function setPreview(input,preview,placeholder,label){
  input.addEventListener("change",()=>{const f=input.files?.[0];if(!f)return;preview.src=URL.createObjectURL(f);preview.classList.add("visible");placeholder.classList.add("hidden");brainStatus.textContent=label+" đã tải";});
 }
