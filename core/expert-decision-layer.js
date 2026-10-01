@@ -24,9 +24,9 @@ export const EXPERTS = {
       "Adapt the furniture to the room without destroying the identity of the selected model."
     ],
     decisions: {
-      direction: "Establish the furniture typology and silhouette before refining proportion, comfort and detail.",
-      fit: "Check footprint, clearances, seat depth/height and relationship to surrounding architecture.",
-      character: "Keep the form restrained; luxury comes from proportion, material discipline and construction clarity."
+      identity: "Lock the supplied model identity first; only change typology or silhouette when the user explicitly allows it.",
+      fit: "Resolve proportion, ergonomics, footprint and circulation without redesigning the selected model.",
+      placement: "Place the object with believable contact, clearance and circulation while preserving the surrounding scene."
     },
     protocol: [
       "IDENTIFY: determine the exact target object and its functional typology.",
@@ -57,9 +57,9 @@ export const EXPERTS = {
       "Let material hierarchy reinforce the architecture and atmosphere of the room."
     ],
     decisions: {
-      change: "Define the exact material boundary first; change the surface without erasing the object's construction.",
-      finish: "Control roughness, sheen, texture scale, grain/vein direction and edge response as one material system.",
-      character: "Prefer depth and tactile coherence over excessive contrast or decorative noise."
+      boundary: "Define the exact material boundary first and keep geometry and construction outside that boundary locked.",
+      finish: "Control roughness, sheen, texture scale, grain or vein direction and edge response as one material system.",
+      junction: "Resolve seams, corners, edge returns, reveals and material continuity without redesigning the object."
     },
     protocol: [
       "BOUNDARY: isolate the exact surface, layer or material system allowed to change.",
@@ -96,9 +96,9 @@ export const EXPERTS = {
       "Use light to reveal material, form and spatial hierarchy without flattening the scene."
     ],
     decisions: {
-      mood: "Define the emotional atmosphere first, then build the light hierarchy.",
+      mood: "Define the intended atmosphere first, then shape it through light rather than object or material changes.",
       source: "Separate daylight, architectural and decorative sources and give each a clear role.",
-      contrast: "Protect meaningful shadows and gradients; avoid the uniformly illuminated AI look."
+      contrast: "Protect meaningful shadows, gradients and falloff; avoid the uniformly illuminated AI look."
     },
     protocol: [
       "LIGHT SOURCE: identify daylight, architectural, decorative and ambient sources before changing intensity.",
@@ -135,9 +135,9 @@ export const EXPERTS = {
       "Use framing as a narrative tool while changing only the camera and never staging the scene."
     ],
     decisions: {
-      view: "Define the spatial story the frame must communicate before choosing a camera position.",
-      lens: "Use the narrowest useful FOV before widening; protect near-edge proportions and spatial truth.",
-      height: "Choose camera height from human scale and architectural narrative rather than arbitrary presets."
+      view: "Define the spatial story the frame must communicate before choosing camera position and framing.",
+      lens: "Use the narrowest useful FOV that reveals the intended relationship while protecting spatial truth.",
+      height: "Choose camera height and framing from human scale and architectural narrative rather than arbitrary presets."
     },
     protocol: [
       "SPATIAL INTENT: define the exact architectural relationship the frame must reveal.",
