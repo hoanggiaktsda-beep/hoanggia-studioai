@@ -23,7 +23,7 @@ export function analyzeBrief(brief, mode, output, camera) {
   const text = brief.trim();
   const lower = text.toLowerCase();
   const inferred = {
-    function: { Furniture: "Furniture-only intervention.", Material: "Material-only intervention.", Lighting: "Lighting-only intervention.", Camera: "Camera-only intervention." }[mode] || "Selected-domain intervention.",
+    function: { Furniture: "Furniture-only intervention.", Material: "Material-only intervention.", Lighting: "Lighting-only intervention.", Camera: "Camera-only intervention.", SpaceSync: "Whole-space synchronization intervention." }[mode] || "Selected-domain intervention.",
     circulation: "Maintain clear primary circulation and believable furniture clearances.",
     proportion: "Use human-scale proportions and coherent relationships between furniture, openings and ceiling.",
     style: output === "Editorial" ? "Editorial architectural direction" : output === "Conceptual" ? "Conceptual but physically coherent" : "Refined, photoreal architectural visualization",
