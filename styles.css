@@ -41,3 +41,11 @@
 .evidence-row .evidence-lock{color:var(--accent);border-color:#39452a}
 @media(max-width:900px){.reference-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.reference-gallery{grid-template-columns:1fr}.evidence-card>img{height:210px}}
+
+/* Expert-specific decision hierarchy */
+.expert-controls-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:16px 0 8px;padding-top:12px;border-top:1px solid #202328}
+.expert-controls-head span{font-size:8px;letter-spacing:.16em;color:#777c83;font-weight:700}
+.expert-controls-head small{font-size:8px;color:#555a61}
+.decision-controls .decision-field{min-height:92px}
+.decision-controls .decision-field label{display:block;margin-bottom:7px!important;color:#a7abb1!important;font-size:8px!important;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){.decision-controls{grid-template-columns:1fr}}
