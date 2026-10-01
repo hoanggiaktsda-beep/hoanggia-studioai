@@ -341,12 +341,7 @@ export function buildDirection({
 
   if (mode === "Furniture") {
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
-    body.push(
-      task + ".",
-      "Use the supplied reference images as one identical furniture model; preserve silhouette, proportions, construction and distinctive details.",
-      "Keep original position, scale, floor contact and perspective.",
-      f.editRule + " " + f.realism + " " + f.referenceRule
-    );
+    body.push(task + ".", "Use supplied reference images as one identical furniture model; preserve silhouette, proportions, construction and distinctive details.", "Keep original position, scale, floor contact and perspective.", f.editRule + " " + f.realism + " " + f.referenceRule);
   } else if (mode === "Material") {
     const m = materialDirection(analysis);
     const md = materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles});
@@ -359,41 +354,17 @@ export function buildDirection({
     body.push(task + ".", "Control position, height, focal length/FOV, perspective and framing.", cd.checks.join(" "));
   } else {
     body.push(
-      "Edit each target image to match the fixed reference image. Preserve the target image architecture and camera unless required for visual consistency.",
-      "Match the reference's furniture, materials, lighting, proportions, composition and atmosphere using Citterio, Zumthor, Maurer and Baan.",
-      "Do not copy unrelated geometry, invent architecture or mix target images. Produce one independent synchronization prompt for this target."
-    );
-  }
-
-  body.push(
-      task + ".",
-      "Use the supplied reference images as one identical furniture model; preserve 100% silhouette, proportions, construction, joints and distinctive details.",
-      "Keep original position, scale, floor contact, perspective, occlusion, circulation and functional ergonomics.",
-      f.editRule + " " + f.realism + " " + f.referenceRule
-    );
-  } else if (mode === "Material") {
-    const m = materialDirection(analysis);
-    const md = materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles});
-    body.push(task + ".", m.rule, md.checks.join(" "));
-  } else if (mode === "Lighting") {
-    const ld = lightingDecisionEngine({target, brief, decisions, analysis, referenceRoles});
-    body.push(task + ".", "Control source, direction, intensity, color temperature, falloff, contrast, shadows and reflected light.", ld.checks.join(" "));
-  } else if (mode === "Camera") {
-    const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
-    body.push(task + ".", "Control position, height, focal length/FOV, perspective, framing, verticals and depth.", cd.checks.join(" "));
-  } else {
-    body.push(
-      task + ".",
-      "Citterio: furniture, proportion, ergonomics and circulation. Zumthor: material presence, texture and junctions. Maurer: light, contrast, shadow and atmosphere. Baan: viewpoint, perspective and framing.",
-      "Synchronize all four layers without letting one damage another; preserve each component's identity and do not invent architecture."
+      "Edit this target image to match the fixed reference image.",
+      "Match the reference furniture, materials, lighting, proportions, composition and atmosphere. Preserve target architecture unless needed for the match.",
+      "No unrelated changes, invented geometry or mixed references."
     );
   }
 
   body.push(
     "Apply selected decisions: " + (decisionLines || "use the expert principles directly") + ".",
     "User brief: " + ((brief || "").trim() || "none") + ".",
-    "Preserve all architecture, non-target objects and all non-selected design domains exactly. No unrelated redesign, mixed references or invented geometry.",
-    "Photorealistic, physically accurate, seamless integration with the original scene.",
+    "Preserve all non-target elements and non-selected domains.",
+    "Photorealistic, physically accurate, seamless integration.",
     "Target: " + aiTarget + "."
   );
 
