@@ -32,6 +32,17 @@ const intentStyle = document.getElementById("intentStyle");
 const intentLighting = document.getElementById("intentLighting");
 const intentView = document.getElementById("intentView");
 const intentCamera = document.getElementById("intentCamera");
+const cameraContextPanel = document.getElementById("cameraContextPanel");
+const cameraWeather = document.getElementById("cameraWeather");
+const cameraTime = document.getElementById("cameraTime");
+const cameraCharacters = document.getElementById("cameraCharacters");
+const cameraActivity = document.getElementById("cameraActivity");
+const cameraAtmosphere = document.getElementById("cameraAtmosphere");
+const cameraLifeLevel = document.getElementById("cameraLifeLevel");
+const cameraExterior = document.getElementById("cameraExterior");
+const cameraStory = document.getElementById("cameraStory");
+const cameraCharacterDescription = document.getElementById("cameraCharacterDescription");
+const cameraSceneDescription = document.getElementById("cameraSceneDescription");
 const spaceSyncPanel = document.getElementById("spaceSyncPanel");
 const syncReferenceInput = document.getElementById("syncReferenceInput");
 const syncReferencePreview = document.getElementById("syncReferencePreview");
@@ -283,13 +294,29 @@ function updateCount() {
   if (decisionCount) decisionCount.textContent = count + " / " + total;
 }
 
+function cameraSceneContext() {
+  return {
+    weather: cameraWeather?.value || "",
+    time: cameraTime?.value || "",
+    characters: cameraCharacters?.value || "",
+    activity: cameraActivity?.value || "",
+    atmosphere: cameraAtmosphere?.value || "",
+    lifeLevel: cameraLifeLevel?.value || "",
+    exterior: cameraExterior?.value || "",
+    story: cameraStory?.value || "",
+    characterDescription: cameraCharacterDescription?.value?.trim() || "",
+    sceneDescription: cameraSceneDescription?.value?.trim() || ""
+  };
+}
+
 function designIntent() {
   return {
     spaceType: intentSpaceType?.value || "",
     style: intentStyle?.value || "",
     lighting: intentLighting?.value || "",
     view: intentView?.value || "",
-    camera: intentCamera?.value || ""
+    camera: intentCamera?.value || "",
+    cameraContext: currentMode === "Camera" ? cameraSceneContext() : null
   };
 }
 
@@ -335,6 +362,7 @@ document.querySelectorAll(".ai-target-option").forEach(btn => {
 
 function renderMode(mode) {
   if (spaceSyncPanel) spaceSyncPanel.classList.toggle("hidden", mode !== "SpaceSync");
+  if (cameraContextPanel) cameraContextPanel.classList.toggle("hidden", mode !== "Camera");
   currentMode = mode;
   document.querySelectorAll(".mode-card").forEach(card => card.classList.toggle("active", card.dataset.mode === mode));
   renderExpert(mode);
@@ -368,6 +396,9 @@ document.getElementById("newProject")?.addEventListener("click", () => {
   scenePlaceholder?.classList.remove("hidden");
   renderReferenceGallery();
   if (brief) brief.value = "";
+  [cameraWeather,cameraTime,cameraCharacters,cameraActivity,cameraAtmosphere,cameraLifeLevel,cameraExterior,cameraStory].forEach(el => { if (el) el.selectedIndex = 0; });
+  if (cameraCharacterDescription) cameraCharacterDescription.value = "";
+  if (cameraSceneDescription) cameraSceneDescription.value = "";
   result?.classList.add("hidden");
   renderAITargets();
 renderMode("Furniture");
