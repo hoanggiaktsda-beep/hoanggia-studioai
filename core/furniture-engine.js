@@ -100,11 +100,11 @@ function decisionValue(decisions, key) {
 
 function resolvePolicy(params = {}, decisions = {}) {
   return {
-    replacementMethod: params.replacementMethod || decisionValue(decisions, "direction") || "Thay đúng model cung cấp",
-    identityLock: params.identityLock || "Khóa tuyệt đối silhouette + cấu tạo",
+    replacementMethod: params.replacementMethod || decisionValue(decisions, "intervention") || "Thay đúng model cung cấp",
+    identityLock: params.identityLock || decisionValue(decisions, "identity") || "Giữ 100% hình dáng + cấu tạo",
     scalePolicy: params.scalePolicy || decisionValue(decisions, "fit") || "Giữ nguyên tỷ lệ model",
-    placementPolicy: params.placementPolicy || "Khớp đúng vị trí đồ cũ",
-    construction: params.construction || "Kiến trúc / có thể thi công",
+    placementPolicy: params.placementPolicy || decisionValue(decisions, "placement") || "Giữ đúng vị trí đồ cũ",
+    construction: params.construction || decisionValue(decisions, "construction") || "Bảo toàn cấu tạo nguyên bản",
     modelMaterial: params.modelMaterial || "Giữ nguyên vật liệu model",
     priority: params.modelPriority || ""
   };
@@ -130,11 +130,11 @@ function buildReasoning(target, profile, policy, model = {}, referenceRoles = ""
   const reference = hasReference("", "", model);
 
   const identity = reference || intervention.exactModel
-    ? "Reference model is the primary furniture identity; reconcile all supplied views into one consistent object."
-    : "No reference identity is available; follow the user's explicit furniture brief without inventing unnecessary design changes.";
+    ? "The supplied model is the primary furniture identity; reconcile all supplied views into one consistent object and stop at the selected identity boundary."
+    : "Follow the user's explicit furniture brief and the selected identity boundary without inventing unnecessary design changes.";
 
   const proportion = intervention.fitAdjustment
-    ? "Fit may be adjusted only to the selected intervention level; change scale/placement only as needed for believable room fit."
+    ? "Adjust size only within the selected fit policy, then validate ergonomics, human scale and relationship to surrounding furniture."
     : "Keep the model's original proportions and do not resize it merely to fill the room.";
 
   const placement = normalize(policy.placementPolicy).includes("lưu thông")
@@ -148,7 +148,7 @@ function buildReasoning(target, profile, policy, model = {}, referenceRoles = ""
     identity,
     proportion,
     placement,
-    construction: "Validate seat/table/bed/cabinet/fixture dimensions according to the selected object profile; preserve visible structural logic.",
+    construction: "Validate the selected object profile against the chosen construction-fidelity level; preserve support, joints, thickness, contact and visible structural logic.",
     circulation: profile.circulation.join(", "),
     ergonomics: profile.ergonomics.join(", "),
     referenceRoles: referenceRoles || "No image-role metadata.",
@@ -203,6 +203,7 @@ export function furnitureDirection(target, replacement = "", brief = "", params 
       "Never change the furniture into a generic AI substitute when a supplied model exists.",
       "Never alter architecture or non-target objects to make the furniture fit.",
       "Never solve a furniture problem by changing material, lighting or camera.",
+      "Never let a model-reference preference silently override the five explicit Furniture decisions.",
       "Never create impossible human-scale dimensions, unsupported structure or blocked circulation.",
       "Never add decorative details that are not justified by the supplied model or user brief."
     ]
