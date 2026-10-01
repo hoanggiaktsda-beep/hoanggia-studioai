@@ -294,7 +294,16 @@ export function buildDirection({
     Material: { style: params.style || "", styleMeaning: intentMeaning.style },
     Lighting: { lighting: params.lighting || "", lightingMeaning: intentMeaning.lighting },
     Camera: { view: params.view || "", viewMeaning: intentMeaning.view, camera: params.camera || "", cameraMeaning: intentMeaning.camera },
-    SpaceSync: { style: params.style || "", styleMeaning: intentMeaning.style }
+    SpaceSync: {
+      style: params.style || "",
+      styleMeaning: intentMeaning.style,
+      lighting: params.lighting || "",
+      lightingMeaning: intentMeaning.lighting,
+      view: params.view || "",
+      viewMeaning: intentMeaning.view,
+      camera: params.camera || "",
+      cameraMeaning: intentMeaning.camera
+    }
   }[mode] || {};
   const analysis = analyzeBrief(brief, mode, output, camera);
   const modeData = editModeDirection(mode, target, brief, params, decisions);
@@ -308,7 +317,9 @@ export function buildDirection({
     preserve: "Kiến trúc, các đối tượng không được chọn và mọi lĩnh vực ngoài phạm vi chỉnh sửa",
     expert: expert.name,
     expertRole: expert.role,
-    independence: `Chỉ ${expert.name} quyết định trong phạm vi ${mode}. Các lĩnh vực khác được khóa.`
+    independence: mode === "SpaceSync"
+      ? "Lớp tổng hợp của 4 Expert: Citterio + Zumthor + Maurer + Baan."
+      : `Chỉ ${expert.name} quyết định trong phạm vi ${mode}. Các lĩnh vực khác được khóa.`
   };
 
   const decisionLines = Object.entries(decisions)
@@ -329,7 +340,8 @@ export function buildDirection({
     mode === "Furniture" ? "Replace only the selected furniture: " + target :
     mode === "Material" ? "Change only the selected material surface: " + target :
     mode === "Lighting" ? "Change only the selected lighting system: " + target :
-    "Change only the camera view: " + target,
+    mode === "Camera" ? "Change only the camera view: " + target :
+    "Synchronize the whole space using the combined principles of Citterio, Zumthor, Maurer and Baan: " + target,
     "",
     "LOGIC THIẾT KẾ",
     expert.principles.map(x => "• " + x).join("\n"),
@@ -406,7 +418,7 @@ export function buildDirection({
     ...modeData.safeguards.map(x => "• " + x),
     ...expert.qualityGates.map(x => "• " + x),
     "• Giữ nguyên toàn bộ các lĩnh vực không nằm trong phạm vi chỉnh sửa.",
-    "• Không giải quyết vấn đề bằng cách thay đổi phạm vi chuyên môn của chuyên gia khác.",
+    "• Không giải quyết vấn đề bằng cách thay đổi phạm vi chuyên môn của một Expert riêng lẻ; SpaceSync chỉ tổng hợp và cân bằng 4 lớp.",
     "",
     "ĐỊNH DẠNG THEO NỀN TẢNG AI",
     "• Nền tảng AI: " + aiTarget,
