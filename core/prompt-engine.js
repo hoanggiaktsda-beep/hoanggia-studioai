@@ -373,14 +373,21 @@ export function buildDirection({
       "• Xử lý nguồn sáng, hướng sáng, cường độ, nhiệt độ màu, độ suy giảm, tương phản, bóng đổ và ánh sáng phản xạ.",
       "• " + ld.checks.join("\n• ")
     );
-  } else {
+  } else if (mode === "Camera") {
     const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
-    if (mode === "SpaceSync") { cd.checks = ["Điều phối trục, tỷ lệ, lưu thông, tầm nhìn, nhịp điệu, khoảng thở và hierarchy của toàn bộ không gian."]; }
     body.push(
       "",
       "THỰC THI CHỈNH SỬA",
       "• Xác định vị trí, độ cao, tiêu cự/FOV, phối cảnh, bố cục, đường đứng và chiều sâu.",
       "• " + cd.checks.join("\n• ")
+    );
+  } else {
+    body.push(
+      "",
+      "THỰC THI ĐỒNG BỘ KHÔNG GIAN",
+      "• Điều phối trục kiến trúc, tỷ lệ, lưu thông, sightline, nhịp điệu, khoảng thở và hierarchy của toàn bộ không gian.",
+      "• Không tối ưu một thành phần theo cách làm phá vỡ quan hệ với các thành phần còn lại.",
+      "• Giữ identity, công năng và cấu tạo của từng thành phần; chỉ điều phối quan hệ không gian khi cần thiết."
     );
   }
 
