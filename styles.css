@@ -116,3 +116,5 @@ body{
 .expert-lens,.expert-system,.decision-bar,.action-panel,.result-panel{border-color:#2f3029!important}
 .kicker,.panel-note,.decision-index,.expert-source{color:#b99a5c!important}
 textarea:focus,select:focus,input:focus{border-color:#88734a!important;box-shadow:0 0 0 2px rgba(185,154,92,.07)!important}
+
+.upload-trigger{appearance:none;border:0;background:transparent;color:var(--text);font:inherit;font-weight:600;cursor:pointer;padding:0}.upload-trigger:hover{color:var(--gold2)}#referencePlaceholder{display:flex;flex-direction:column;align-items:center;gap:7px}
