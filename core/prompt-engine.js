@@ -328,7 +328,7 @@ export function buildDirection({
     .join("\n");
 
   const body = [];
-  const visualSystem = visualPromptSystem({mode, target, replacement, brief, decisions, params, aiTarget});
+  const visualSystem = visualPromptSystem({mode, target, replacement, brief, decisions, params, referenceRoles, aiTarget});
 
   const adapter = AI_PROMPT_ADAPTERS[aiTarget] || AI_PROMPT_ADAPTERS["Khác"];
   const task = mode === "Furniture"
@@ -356,20 +356,33 @@ export function buildDirection({
     body.push(task + ".", "Control position, height, focal length/FOV, perspective and framing.", cd.checks.join(" "));
   } else {
     body.push(
-      "Edit this target image to match the fixed reference image.",
-      "Match the reference furniture, materials, lighting, proportions, composition and atmosphere. Preserve target architecture unless needed for the match.",
-      "No unrelated changes, invented geometry or mixed references."
+      "EDIT TARGET IMAGE TO MATCH FIXED REFERENCE IMAGE.",
+      "Reference image is the visual authority for furniture, interior design language, materials, colors, styling, lighting, atmosphere and overall hierarchy.",
+      "Transfer the reference furniture character, design style, material palette and lighting setup into this target image.",
+      "Preserve the target architecture, walls, ceiling, openings, floor plan, room geometry, camera position and perspective unless a selected synchronization decision explicitly requires otherwise.",
+      "Do not copy the reference architecture or camera into the target. Adapt the reference design language to the target space.",
+      "Reference: " + (referenceRoles || "fixed reference image") + ".",
+      "Target: " + target + ".",
+      "No mixed references, invented geometry, duplicated objects or unrelated changes."
     );
   }
 
-  body.push(
-    visualSystem,
-    "Apply selected decisions: " + (decisionLines || "use the expert principles directly") + ".",
-    "User brief: " + ((brief || "").trim() || "none") + ".",
-    "Preserve all non-target elements and non-selected domains.",
-    "Photorealistic, physically accurate, seamless integration.",
-    "Target: " + aiTarget + "."
-  );
+  if (mode !== "SpaceSync") {
+    body.push(
+      visualSystem,
+      "Apply selected decisions: " + (decisionLines || "use the expert principles directly") + ".",
+      "User brief: " + ((brief || "").trim() || "none") + ".",
+      "Preserve all non-target elements and non-selected domains.",
+      "Photorealistic, physically accurate, seamless integration.",
+      "Target: " + aiTarget + "."
+    );
+  } else {
+    body.push(
+      "Apply the selected synchronization decisions only where relevant; the fixed reference remains the source of truth for furniture, style, materials and lighting.",
+      "Photorealistic interior edit, physically accurate materials and lighting, seamless integration, natural proportions.",
+      "Do not redesign the architecture."
+    );
+  }
 
   const prompt = body.join(" ").replace(/\\s+/g, " ").trim();
   return {analysis, reasoning, prompt: body.join("\n")};
