@@ -83,24 +83,50 @@ function syncTargetToModelObject(){
 }
 
 
+function referenceDecisionDefaults(role){
+ const map={
+  "Mặt chính":["Xác định silhouette và tỷ lệ tổng thể","Chuẩn hóa theo model duy nhất; lấy ảnh này làm mặt chuẩn","Silhouette + cấu tạo"],
+  "Góc 3/4":["Kiểm chứng chiều sâu, tay vịn và khối tích","Đồng bộ với mặt chính, không tạo model thứ hai","Chiều sâu + chi tiết đặc trưng"],
+  "Mặt bên":["Xác định chiều sâu, chân và tiếp xúc","Chuẩn hóa trục bên và tỷ lệ theo model chuẩn","Chiều sâu + chân / tiếp xúc"],
+  "Mặt sau":["Kiểm chứng cấu tạo phía sau và hoàn thiện","Đồng bộ mặt sau với cùng một model","Cấu tạo phía sau"],
+  "Mặt trên":["Kiểm chứng mặt bằng, bo góc và tỷ lệ","Chuẩn hóa theo trục và kích thước model","Mặt bằng + tỷ lệ"],
+  "Chi tiết cấu tạo":["Xác định mối nối, đường may, chân hoặc chi tiết nhận diện","Chuẩn hóa chi tiết như bằng chứng cấu tạo, không suy diễn hình tổng thể","Chi tiết cấu tạo"],
+  "Ảnh tổng thể":["Kiểm chứng quan hệ model và tỷ lệ với bối cảnh","Chuẩn hóa footprint và tỷ lệ tương đối","Tỷ lệ với không gian"]
+ };
+ return map[role]||map["Mặt chính"];
+}
+function referenceMetaDefaults(role){const d=referenceDecisionDefaults(role);return {role,decision:d[0],standardization:d[1],lock:d[2],note:""};}
 function renderReferenceGallery(){
  if(!referenceGallery)return;
  referenceGallery.innerHTML="";
+ const decisionsByRole={
+  "Mặt chính":"Xác định silhouette và tỷ lệ tổng thể","Góc 3/4":"Kiểm chứng chiều sâu, tay vịn và khối tích","Mặt bên":"Xác định chiều sâu, chân và tiếp xúc","Mặt sau":"Kiểm chứng cấu tạo phía sau và hoàn thiện","Mặt trên":"Kiểm chứng mặt bằng, bo góc và tỷ lệ","Chi tiết cấu tạo":"Xác định mối nối, đường may, chân hoặc chi tiết nhận diện","Ảnh tổng thể":"Kiểm chứng quan hệ model và tỷ lệ với bối cảnh"
+ };
+ const allDecisions=Object.values(decisionsByRole);
+ const standards=["Chuẩn hóa theo model duy nhất; lấy ảnh này làm mặt chuẩn","Đồng bộ với mặt chính, không tạo model thứ hai","Chuẩn hóa trục bên và tỷ lệ theo model chuẩn","Đồng bộ mặt sau với cùng một model","Chuẩn hóa theo trục và kích thước model","Chuẩn hóa chi tiết như bằng chứng cấu tạo, không suy diễn hình tổng thể","Chuẩn hóa footprint và tỷ lệ tương đối"];
  referenceFiles.forEach((file,i)=>{
-  const item=document.createElement("div");item.className="reference-thumb";
-  const img=document.createElement("img");img.src=URL.createObjectURL(file);img.alt="Model cung cấp "+(i+1);
-  const remove=document.createElement("button");remove.type="button";remove.className="reference-remove";remove.textContent="×";remove.title="Xóa ảnh";
-  remove.addEventListener("click",e=>{e.preventDefault();referenceFiles.splice(i,1);referenceMeta.splice(i,1);renderReferenceGallery();});
-  const index=document.createElement("span");index.textContent=i+1;
-  const role=document.createElement("select");role.className="reference-role";role.innerHTML=modelSchema.roles.map((x,n)=>`<option${(referenceMeta[i]?.role||modelSchema.roles[0])===x?" selected":""}>${x}</option>`).join("");
-  role.addEventListener("change",()=>{referenceMeta[i]={...(referenceMeta[i]||{}),role:role.value};});
-  item.append(img,index,remove,role);referenceGallery.appendChild(item);
+  const meta=referenceMeta[i]||referenceMetaDefaults(modelSchema.roles[0]); referenceMeta[i]=meta;
+  const d=document.createElement("div");d.className="reference-thumb evidence-card";
+  d.innerHTML=`<img src="${URL.createObjectURL(file)}" alt="Model cung cấp ${i+1}"><span>${String(i+1).padStart(2,"0")}</span><button type="button" class="reference-remove" title="Xóa ảnh">×</button>
+  <div class="evidence-details">
+   <div class="evidence-row"><label>VAI TRÒ ẢNH</label><select class="reference-role">${modelSchema.roles.map(x=>`<option${meta.role===x?" selected":""}>${x}</option>`).join("")}</select></div>
+   <div class="evidence-row"><label>DECISION</label><select class="evidence-decision">${allDecisions.map(x=>`<option${meta.decision===x?" selected":""}>${x}</option>`).join("")}</select></div>
+   <div class="evidence-row"><label>STANDARDIZATION</label><select class="evidence-standard">${standards.map(x=>`<option${meta.standardization===x?" selected":""}>${x}</option>`).join("")}</select></div>
+   <div class="evidence-row"><label>LOCK</label><input class="evidence-lock" value="${meta.lock||""}" placeholder="Silhouette + cấu tạo"></div>
+   <div class="evidence-row"><label>GHI CHÚ</label><input class="evidence-note" value="${meta.note||""}" placeholder="Ghi chú riêng cho ảnh (tuỳ chọn)"></div>
+  </div>`;
+  d.querySelector(".reference-remove").addEventListener("click",e=>{e.preventDefault();referenceFiles.splice(i,1);referenceMeta.splice(i,1);renderReferenceGallery();});
+  const role=d.querySelector(".reference-role"),decision=d.querySelector(".evidence-decision"),standard=d.querySelector(".evidence-standard"),lock=d.querySelector(".evidence-lock"),note=d.querySelector(".evidence-note");
+  const save=()=>{referenceMeta[i]={role:role.value,decision:decision.value,standardization:standard.value,lock:lock.value.trim(),note:note.value.trim()};};
+  role.addEventListener("change",()=>{const x=referenceDecisionDefaults(role.value);decision.value=x[0];standard.value=x[1];lock.value=x[2];save();});
+  [decision,standard,lock,note].forEach(x=>x.addEventListener("input",save));
+  referenceGallery.appendChild(d);
  });
  referencePlaceholder.classList.toggle("hidden",referenceFiles.length>0);
- brainStatus.textContent=referenceFiles.length?"Đã tải "+referenceFiles.length+" ảnh model cung cấp":"Hệ thống sẵn sàng";
+ brainStatus.textContent=referenceFiles.length?"Đã chuẩn hóa "+referenceFiles.length+" Model Evidence Card":"Hệ thống sẵn sàng";
 }
 referenceInput.addEventListener("change",()=>{
- Array.from(referenceInput.files||[]).forEach(file=>{referenceFiles.push(file);referenceMeta.push({role:modelSchema.roles[0]});});
+ Array.from(referenceInput.files||[]).forEach(file=>{referenceFiles.push(file);referenceMeta.push(referenceMetaDefaults(modelSchema.roles[0]));});
  referenceInput.value="";
  renderReferenceGallery();
 });
@@ -156,14 +182,14 @@ document.getElementById("generate").addEventListener("click",()=>{
  if(!sceneInput.files?.[0]){resultText.textContent="Hãy tải ảnh không gian.";return;}
  if(!userBrief){brief.focus();resultText.textContent="Hãy mô tả ngắn gọn ý đồ thiết kế.";return;}
  const model=modelData();
- const referenceRoles=referenceMeta.map((m,i)=>`#${i+1}=${m?.role||modelSchema.roles[0]}`).join(" | ");
+ const referenceRoles=referenceMeta.map((m,i)=>`#${i+1} role=${m?.role||modelSchema.roles[0]} | decision=${m?.decision||""} | standardization=${m?.standardization||""} | lock=${m?.lock||""}${m?.note?` | note=${m.note}`:""}`).join(" || ");
  const referenceRequired=currentMode==="Furniture";
  if(referenceRequired&&!referenceFiles.length){resultText.textContent="Hãy tải ít nhất 1 ảnh model cung cấp cho chế độ nội thất.";return;}
   if(Object.keys(d).length<3){resultText.textContent="Hãy hoàn tất 3 quyết định thiết kế trước khi tạo prompt.";return;}
  const modeData=editModeDirection(currentMode,target,userBrief,p,d);
  const expert=expertFor(currentMode);
  const authority=currentMode==="Furniture"?"Ảnh A = cơ sở không gian · "+referenceFiles.length+" ảnh model cung cấp = cơ sở thiết kế nội thất · "+model.modelPriority:"Ảnh A = cơ sở không gian · Ảnh tham chiếu = định hướng hình ảnh";
- const data={brief:["SCENE A: spatial authority.",currentMode==="Furniture"?"PROVIDED MODEL IMAGES: multiple views of the supplied furniture model.":"REFERENCE: visual direction only.","TARGET: "+target,"DECISIONS: "+Object.entries(d).map(([k,v])=>k+"="+v).join(" | "),"CONTROLS: "+Object.entries(p).map(([k,v])=>k+"="+v).join(" | "),"MODEL STANDARDIZATION: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | ")+" | IMAGE ROLES: "+referenceRoles,userBrief].join(" "),mode:currentMode,output:"Photorealistic",camera:"Preserve original camera",target,replacement:currentMode==="Furniture"?"Use ALL provided model images as the primary design authority. Treat them as multiple views of the same supplied model. Reconstruct one consistent model identity from all views; never mix parts from unrelated models. Model standardization: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | ")+" | Image roles: "+referenceRoles:userBrief,params:p,decisions:d,model,referenceRoles};
+ const data={brief:["SCENE A: spatial authority.",currentMode==="Furniture"?"PROVIDED MODEL IMAGES: multiple views of the supplied furniture model.":"REFERENCE: visual direction only.","TARGET: "+target,"DECISIONS: "+Object.entries(d).map(([k,v])=>k+"="+v).join(" | "),"CONTROLS: "+Object.entries(p).map(([k,v])=>k+"="+v).join(" | "),"MODEL STANDARDIZATION: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | ")+" | EVIDENCE CARDS: "+referenceRoles,userBrief].join(" "),mode:currentMode,output:"Photorealistic",camera:"Preserve original camera",target,replacement:currentMode==="Furniture"?"Use ALL provided model images as the primary design authority. Treat them as multiple views of the same supplied model. Reconstruct one consistent model identity from all views; never mix parts from unrelated models. Each Model Evidence Card carries its own decision, standardization and lock; synthesize all cards into ONE model identity without inventing unsupported geometry. Model standardization: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | ")+" | Image roles: "+referenceRoles:userBrief,params:p,decisions:d,model,referenceRoles};
  const {prompt,reasoning}=buildDirection(data);
  reasoningSummary.innerHTML=[["CHUYÊN GIA",expert.name+" — "+expert.role],["ĐỐI TƯỢNG",reasoning.target],["MODEL",authority],["QUYẾT ĐỊNH",Object.values(d).join(" · ")],["BẢO TOÀN",reasoning.preserve]].map(([a,b])=>`<div class="reason-card"><small>${a}</small><span>${b}</span></div>`).join("");
  resultContent.textContent=prompt;result.classList.remove("hidden");brainStatus.textContent="Đã áp dụng chuyên gia "+expert.name;resultText.textContent="HOANGGIA AI đã dùng toàn bộ ảnh model cung cấp để xây dựng prompt sản xuất.";result.scrollIntoView({behavior:"smooth",block:"nearest"});
