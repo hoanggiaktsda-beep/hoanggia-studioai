@@ -136,7 +136,7 @@ function renderExpert(mode){
  if(expertSource) expertSource.textContent=e.source;
  if(expertLabel) expertLabel.textContent=e.label;
  if(expertScope) expertScope.textContent=e.scope;
- if(expertProtocol) expertProtocol.innerHTML=e.protocol.map((step,i)=>`<div class="protocol-step"><span>${String(i+1).padStart(2,"0")}</span><p>${step.replace(/^\\w+[^:]*:\\s*/,"")}</p></div>`).join("");
+ if(expertProtocol) expertProtocol.innerHTML=e.protocol.map((step,i)=>`<div class="protocol-step"><span>${String(i+1).padStart(2,"0")}</span><p>${step.includes(": ") ? step.split(": ").slice(1).join(": ") : step}</p></div>`).join("");
  if(expertLocks) expertLocks.innerHTML=e.lockedDomains.map(x=>`<span>${x.replaceAll("_"," ")}</span>`).join("");
 }
 function populateTargets(mode){
