@@ -375,6 +375,7 @@ export function buildDirection({
     );
   } else {
     const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
+    if (mode === "SpaceSync") { cd.checks = ["Điều phối trục, tỷ lệ, lưu thông, tầm nhìn, nhịp điệu, khoảng thở và hierarchy của toàn bộ không gian."]; }
     body.push(
       "",
       "THỰC THI CHỈNH SỬA",
