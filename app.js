@@ -26,6 +26,10 @@ const expertScope = document.getElementById("expertScope");
 const expertProtocol = document.getElementById("expertProtocol");
 const expertLocks = document.getElementById("expertLocks");
 const modeControls = document.getElementById("modeControls");
+const intentStyle = document.getElementById("intentStyle");
+const intentLighting = document.getElementById("intentLighting");
+const intentView = document.getElementById("intentView");
+const intentCamera = document.getElementById("intentCamera");
 
 let currentMode = "Furniture";
 let referenceFiles = [];
@@ -191,6 +195,15 @@ function updateCount() {
   if (decisionCount) decisionCount.textContent = count + " / " + total;
 }
 
+function designIntent() {
+  return {
+    style: intentStyle?.value || "",
+    lighting: intentLighting?.value || "",
+    view: intentView?.value || "",
+    camera: intentCamera?.value || ""
+  };
+}
+
 function renderIntentPanel() {
   const intent = intentByMode[currentMode];
   const second = document.querySelector(".decision-intro .decision-step");
@@ -261,7 +274,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
         : "selected camera view";
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
   const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}`).join(" | ");
-  const params = {};
+  const params = { ...designIntent() };
   const output = "production prompt";
   const camera = {};
   const replacement = brief?.value?.trim() || "";
