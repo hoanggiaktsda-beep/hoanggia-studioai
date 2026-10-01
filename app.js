@@ -12,6 +12,7 @@ const modelControls=document.getElementById("modelControls");
 const modeControls=document.getElementById("modeControls");
 const decisionControls=document.getElementById("decisionControls"),reasoningSummary=document.getElementById("reasoningSummary");
 const decisionCount=document.getElementById("decisionCount"),expertName=document.getElementById("expertName"),expertRole=document.getElementById("expertRole"),expertSource=document.getElementById("expertSource");
+const expertLabel=document.getElementById("expertLabel"),expertScope=document.getElementById("expertScope"),expertProtocol=document.getElementById("expertProtocol"),expertLocks=document.getElementById("expertLocks");
 let currentMode="Furniture";
 let referenceFiles=[];
 let referenceMeta=[];
@@ -124,7 +125,7 @@ const modeTemplates={
  </div>`,
  Material:()=>`<div class="mode-control-grid"><div class="field"><label>Tỷ lệ vân / texture</label><select data-param="texture"><option>Tỷ lệ thực tế theo kiến trúc</option><option>Vân mịn</option><option>Vân / đường đá nổi bật</option></select></div><div class="field"><label>Ưu tiên vật liệu</label><select data-param="materialPriority"><option>Ưu tiên tính chân thực</option><option>Ưu tiên ảnh tham chiếu</option><option>Ưu tiên tính liên tục kiến trúc</option></select></div></div>`,
  Lighting:()=>`<div class="mode-control-grid"><div class="field"><label>Nhiệt độ màu</label><select data-param="temperature"><option>2700–3000K · ấm</option><option>3500–4000K · trung tính</option><option>5000–6500K · ánh sáng ban ngày</option></select></div><div class="field"><label>Thứ bậc ánh sáng</label><select data-param="hierarchy"><option>Nhiều lớp / kiến trúc</option><option>Ánh sáng tự nhiên chủ đạo</option><option>Ánh sáng nhân tạo chủ đạo</option></select></div></div>`,
- Camera:()=>`<div class="mode-control-grid"><div class="field"><label>Phối cảnh</label><select data-param="perspective"><option>Kiến trúc tự nhiên</option><option>Hiệu chỉnh đường đứng</option><option>Góc rộng có kiểm soát</option></select></div><div class="field"><label>Bố cục</label><select data-param="composition"><option>Giữ thứ bậc thiết kế</option><option>Ưu tiên đối tượng chính</option><option>Ưu tiên toàn cảnh không gian</option></select></div></div>`
+ Camera:()=>`<div class="mode-control-grid camera-advanced"><div class="field"><label>Phối cảnh</label><select data-param="perspective"><option>Kiến trúc tự nhiên</option><option>Hiệu chỉnh đường đứng</option><option>Góc rộng có kiểm soát</option></select></div><div class="field"><label>Bố cục</label><select data-param="composition"><option>Giữ thứ bậc thiết kế</option><option>Ưu tiên đối tượng chính</option><option>Ưu tiên toàn cảnh không gian</option></select></div><div class="field"><label>Chiều sâu</label><select data-param="depth"><option>Tiền · trung · hậu cảnh rõ</option><option>Ưu tiên chiều sâu tự nhiên</option><option>Tập trung lớp chủ thể</option></select></div><div class="field"><label>Đường đứng</label><select data-param="verticalControl"><option>Giữ thẳng kiến trúc</option><option>Hiệu chỉnh phối cảnh</option><option>Tự nhiên theo góc máy</option></select></div></div>`
 };
 
 function params(){return Object.fromEntries([...modeControls.querySelectorAll("[data-param]")].map(x=>[x.dataset.param,x.value]));}
@@ -133,6 +134,10 @@ function renderExpert(mode){
  if(expertName) expertName.textContent=e.name;
  if(expertRole) expertRole.textContent=e.role;
  if(expertSource) expertSource.textContent=e.source;
+ if(expertLabel) expertLabel.textContent=e.label;
+ if(expertScope) expertScope.textContent=e.scope;
+ if(expertProtocol) expertProtocol.innerHTML=e.protocol.map((step,i)=>`<div class="protocol-step"><span>${String(i+1).padStart(2,"0")}</span><p>${step.replace(/^\\w+[^:]*:\\s*/,"")}</p></div>`).join("");
+ if(expertLocks) expertLocks.innerHTML=e.lockedDomains.map(x=>`<span>${x.replaceAll("_"," ")}</span>`).join("");
 }
 function populateTargets(mode){
  targetSelect.innerHTML=targetSets[mode].map(x=>"<option>"+x+"</option>").join("");
@@ -152,7 +157,8 @@ document.getElementById("generate").addEventListener("click",()=>{
  if(!userBrief){brief.focus();resultText.textContent="Hãy mô tả ngắn gọn ý đồ thiết kế.";return;}
  const model=modelData();
  const referenceRoles=referenceMeta.map((m,i)=>`#${i+1}=${m?.role||modelSchema.roles[0]}`).join(" | ");
- if(currentMode==="Furniture"&&!referenceFiles.length){resultText.textContent="Hãy tải ít nhất 1 ảnh model cung cấp cho chế độ nội thất.";return;}
+ const referenceRequired=currentMode==="Furniture";
+ if(referenceRequired&&!referenceFiles.length){resultText.textContent="Hãy tải ít nhất 1 ảnh model cung cấp cho chế độ nội thất.";return;}
   if(Object.keys(d).length<3){resultText.textContent="Hãy hoàn tất 3 quyết định thiết kế trước khi tạo prompt.";return;}
  const modeData=editModeDirection(currentMode,target,userBrief,p,d);
  const expert=expertFor(currentMode);
