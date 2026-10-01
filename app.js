@@ -13,6 +13,7 @@ const scenePreview = document.getElementById("scenePreview");
 const referenceGallery = document.getElementById("referenceGallery");
 const scenePlaceholder = document.getElementById("scenePlaceholder");
 const referencePlaceholder = document.getElementById("referencePlaceholder");
+const referenceTrigger = document.getElementById("referenceTrigger");
 const decisionControls = document.getElementById("decisionControls");
 const reasoningSummary = document.getElementById("reasoningSummary");
 const decisionTitle = document.getElementById("decisionTitle");
@@ -176,6 +177,7 @@ function renderReferenceGallery() {
   if (brainStatus) brainStatus.textContent = referenceFiles.length ? `Đã chuẩn bị ${referenceFiles.length} thẻ bằng chứng mẫu` : "Hệ thống sẵn sàng";
 }
 
+referenceTrigger?.addEventListener("click", () => referenceInput?.click());
 referenceInput?.addEventListener("change", () => {
   Array.from(referenceInput.files || []).forEach(file => {
     referenceFiles.push(file);
@@ -266,7 +268,7 @@ function renderMode(mode) {
   renderExpert(mode);
   renderDecisions(mode);
   renderIntentPanel();
-  if (resultText) resultText.textContent = `Ảnh không gian + yêu cầu + quyết định ${mode} → tạo prompt, không tạo ảnh.`;
+  if (resultText) resultText.textContent = `Ảnh không gian + yêu cầu + quyết định ${mode} → tạo yêu cầu AI, không tạo ảnh.`;
   if (brainStatus) brainStatus.textContent = `${expertFor(mode).name} đang hoạt động độc lập`;
 }
 
