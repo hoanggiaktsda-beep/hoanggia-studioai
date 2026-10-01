@@ -68,6 +68,8 @@ export function buildDirection({
 
   const body = [];
 
+  const adapter = AI_PROMPT_ADAPTERS[aiTarget] || AI_PROMPT_ADAPTERS["Khác"];
+
   body.push(
     "EXPERT",
     expert.name + " — " + expert.role,
@@ -146,7 +148,9 @@ export function buildDirection({
     "",
     "AI FORMAT",
     "• Target platform: " + aiTarget,
-    "• " + (aiProfile || "Use concise production-ready image-editing instructions."),
+    "• Format: " + adapter.format,
+    "• Structure: " + adapter.order.join(" → "),
+    "• Adapter: " + (aiProfile || "Use the selected platform structure."),
     "",
     "OUTPUT",
     "Return one concise production-ready image-editing prompt only. Do not generate the image."
