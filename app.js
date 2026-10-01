@@ -93,10 +93,10 @@ referenceInput.addEventListener("change",()=>{
 });
 function selectedDecisions(){return Object.fromEntries([...decisionControls.querySelectorAll("[data-decision]")].map(x=>[x.dataset.decision,x.value]));}
 function renderDecisions(mode){
- const titles={Furniture:["Quyết định nội thất Citterio","Model → tỷ lệ & công năng → vị trí & lưu thông."],Material:["Quyết định vật liệu Zumthor","Phạm vi → bề mặt → liên kết vật liệu."],Lighting:["Quyết định ánh sáng Maurer","Không khí → nguồn sáng → tương phản & bóng."],Camera:["Quyết định camera Baan","Câu chuyện không gian → tiêu cự → cao độ & khung hình."]};
- if(decisionTitle) decisionTitle.textContent=titles[mode][0];
- if(decisionHint) decisionHint.textContent=titles[mode][1]+" Chỉ chọn 3 quyết định cốt lõi; Expert suy luận phần còn lại.";
- decisionControls.innerHTML=decisions[mode].map(([key,label,opts],i)=>`<div class="decision-field"><div class="decision-index">0${i+1}</div><label>${label}</label><select data-decision="${key}"><option value="">Chọn quyết định…</option>${opts.map(o=>`<option>${o}</option>`).join("")}</select></div>`).join("");
+ const titles={Furniture:"Quyết định của Expert",Material:"Quyết định của Expert",Lighting:"Quyết định của Expert",Camera:"Quyết định của Expert"};
+ if(decisionTitle) decisionTitle.textContent=titles[mode];
+ if(decisionHint) decisionHint.textContent="Khu vực đang được sắp xếp lại. Chưa có quyết định nào được cấu hình.";
+ decisionControls.innerHTML="";
  updateCount();
 }
 function updateCount(){
