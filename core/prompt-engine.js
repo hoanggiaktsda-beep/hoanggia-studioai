@@ -16,6 +16,12 @@ function scopedEvidence(mode, brief, target, params = {}) {
     Camera: { view: params.view || "", camera: params.camera || "" }
   }[mode] || {};
 
+  const lines = [
+    `USER INTENT: ${text || "No additional direction."}`,
+    `TARGET: ${target || "Unspecified"}`,
+    `RELEVANT DESIGN INTENT: ${Object.entries(scopedParams).filter(([,v]) => v).map(([k,v]) => `${k}=${v}`).join(" | ") || "None"}`
+  ];
+
   const scope = {
     Furniture: "Read scene evidence only to fit the target furniture. Do not infer new material, lighting or camera decisions.",
     Material: "Read scene evidence only to locate and construct the target material system. Do not infer new furniture, lighting or camera decisions.",
