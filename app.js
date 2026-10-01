@@ -152,7 +152,7 @@ function renderReferenceGallery() {
         <div class="evidence-row"><label>ƯU TIÊN MODEL CUNG CẤP</label><select class="evidence-priority">${referenceOptions.priority.map(x => `<option${meta.priority === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>MỨC ĐỘ BẢO TOÀN</label><select class="evidence-preservation">${referenceOptions.preservation.map(x => `<option${meta.preservation === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>CHUẨN HÓA GÓC NHÌN</label><select class="evidence-views">${referenceOptions.views.map(x => `<option${meta.views === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
-        <div class="evidence-row"><label>GHI CHÚ</label><input class="evidence-note" value="${meta.note || ""}" placeholder="Ghi chú riêng cho ảnh (tuỳ chọn)"></div>
+        <div class="evidence-row"><label>GHI CHÚ</label><input class="evidence-note" value="${meta.note || ""}" placeholder="Ghi chú riêng cho ảnh (tùy chọn)"></div>
       </div>`;
     card.querySelector(".reference-remove").addEventListener("click", e => {
       e.preventDefault();
@@ -173,7 +173,7 @@ function renderReferenceGallery() {
     referenceGallery.appendChild(card);
   });
   referencePlaceholder?.classList.toggle("hidden", referenceFiles.length > 0);
-  if (brainStatus) brainStatus.textContent = referenceFiles.length ? `Đã chuẩn bị ${referenceFiles.length} Model Evidence Card` : "Hệ thống sẵn sàng";
+  if (brainStatus) brainStatus.textContent = referenceFiles.length ? `Đã chuẩn bị ${referenceFiles.length} thẻ bằng chứng mẫu` : "Hệ thống sẵn sàng";
 }
 
 referenceInput?.addEventListener("change", () => {
@@ -330,15 +330,15 @@ document.getElementById("generate")?.addEventListener("click", () => {
     if (reasoningSummary) reasoningSummary.innerHTML = `
       <div><b>${built.reasoning.expert}</b><span>${built.reasoning.expertRole}</span></div>
       <div><b>${built.reasoning.independence}</b><span>Không suy luận chéo sang expert khác.</span></div>
-      <div><b>${selectedAITarget}</b><span>Prompt được định hình cho nền tảng đã chọn.</span></div>
-      <div><b>${Object.keys(decisionsNow).length} quyết định</b><span>Được áp dụng trực tiếp vào prompt sản xuất.</span></div>`;
+      <div><b>${selectedAITarget}</b><span>Yêu cầu AI được định hình cho nền tảng đã chọn.</span></div>
+      <div><b>${Object.keys(decisionsNow).length} quyết định</b><span>Được áp dụng trực tiếp vào yêu cầu AI hoàn chỉnh.</span></div>`;
     result?.classList.remove("hidden");
     result?.scrollIntoView({ behavior: "smooth", block: "start" });
-    if (brainStatus) brainStatus.textContent = `${expert.name} đã xây dựng prompt`;
+    if (brainStatus) brainStatus.textContent = `${expert.name} đã xây dựng yêu cầu AI`;
   } catch (error) {
     console.error(error);
-    if (brainStatus) brainStatus.textContent = "Có lỗi khi xây dựng prompt";
-    if (resultContent) resultContent.textContent = "Không thể tạo prompt. Kiểm tra lại cấu hình Expert.";
+    if (brainStatus) brainStatus.textContent = "Có lỗi khi xây dựng yêu cầu AI";
+    if (resultContent) resultContent.textContent = "Không thể tạo yêu cầu AI. Kiểm tra lại cấu hình chuyên gia.";
     result?.classList.remove("hidden");
   }
 });
@@ -351,7 +351,7 @@ document.getElementById("copy")?.addEventListener("click", async () => {
       copyButton.textContent = "✓ Đã sao chép";
       setTimeout(() => { copyButton.textContent = "Sao chép prompt"; }, 1600);
     }
-    if (brainStatus) brainStatus.textContent = "Đã sao chép prompt";
+    if (brainStatus) brainStatus.textContent = "Đã sao chép yêu cầu AI";
   } catch {
     if (brainStatus) brainStatus.textContent = "Không thể sao chép tự động";
   }
