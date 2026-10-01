@@ -83,43 +83,26 @@ function syncTargetToModelObject(){
 }
 
 
-function referenceDecisionDefaults(role){
- const map={
-  "Mặt chính":["Xác định silhouette và tỷ lệ tổng thể","Chuẩn hóa theo model duy nhất; lấy ảnh này làm mặt chuẩn","Silhouette + cấu tạo"],
-  "Góc 3/4":["Kiểm chứng chiều sâu, tay vịn và khối tích","Đồng bộ với mặt chính, không tạo model thứ hai","Chiều sâu + chi tiết đặc trưng"],
-  "Mặt bên":["Xác định chiều sâu, chân và tiếp xúc","Chuẩn hóa trục bên và tỷ lệ theo model chuẩn","Chiều sâu + chân / tiếp xúc"],
-  "Mặt sau":["Kiểm chứng cấu tạo phía sau và hoàn thiện","Đồng bộ mặt sau với cùng một model","Cấu tạo phía sau"],
-  "Mặt trên":["Kiểm chứng mặt bằng, bo góc và tỷ lệ","Chuẩn hóa theo trục và kích thước model","Mặt bằng + tỷ lệ"],
-  "Chi tiết cấu tạo":["Xác định mối nối, đường may, chân hoặc chi tiết nhận diện","Chuẩn hóa chi tiết như bằng chứng cấu tạo, không suy diễn hình tổng thể","Chi tiết cấu tạo"],
-  "Ảnh tổng thể":["Kiểm chứng quan hệ model và tỷ lệ với bối cảnh","Chuẩn hóa footprint và tỷ lệ tương đối","Tỷ lệ với không gian"]
- };
- return map[role]||map["Mặt chính"];
-}
 function referenceMetaDefaults(){return {model:targetSelect?.value||modelSchema.object[0],priority:modelSchema.priority[0],preservation:modelSchema.preservation[0],views:modelSchema.views[0],note:""};}
 function renderReferenceGallery(){
  if(!referenceGallery)return;
  referenceGallery.innerHTML="";
- const decisionsByRole={
-  "Mặt chính":"Xác định silhouette và tỷ lệ tổng thể","Góc 3/4":"Kiểm chứng chiều sâu, tay vịn và khối tích","Mặt bên":"Xác định chiều sâu, chân và tiếp xúc","Mặt sau":"Kiểm chứng cấu tạo phía sau và hoàn thiện","Mặt trên":"Kiểm chứng mặt bằng, bo góc và tỷ lệ","Chi tiết cấu tạo":"Xác định mối nối, đường may, chân hoặc chi tiết nhận diện","Ảnh tổng thể":"Kiểm chứng quan hệ model và tỷ lệ với bối cảnh"
- };
- const allDecisions=Object.values(decisionsByRole);
- const standards=["Chuẩn hóa theo model duy nhất; lấy ảnh này làm mặt chuẩn","Đồng bộ với mặt chính, không tạo model thứ hai","Chuẩn hóa trục bên và tỷ lệ theo model chuẩn","Đồng bộ mặt sau với cùng một model","Chuẩn hóa theo trục và kích thước model","Chuẩn hóa chi tiết như bằng chứng cấu tạo, không suy diễn hình tổng thể","Chuẩn hóa footprint và tỷ lệ tương đối"];
  referenceFiles.forEach((file,i)=>{
-  const meta=referenceMeta[i]||referenceMetaDefaults(modelSchema.roles[0]); referenceMeta[i]=meta;
+  const meta=referenceMeta[i]||referenceMetaDefaults(); referenceMeta[i]=meta;
   const d=document.createElement("div");d.className="reference-thumb evidence-card";
   d.innerHTML=`<img src="${URL.createObjectURL(file)}" alt="Model cung cấp ${i+1}"><span>${String(i+1).padStart(2,"0")}</span><button type="button" class="reference-remove" title="Xóa ảnh">×</button>
   <div class="evidence-details">
-   <div class="evidence-row"><label>VAI TRÒ ẢNH</label><select class="reference-role">${modelSchema.roles.map(x=>`<option${meta.role===x?" selected":""}>${x}</option>`).join("")}</select></div>
-   <div class="evidence-row"><label>DECISION</label><select class="evidence-decision">${allDecisions.map(x=>`<option${meta.decision===x?" selected":""}>${x}</option>`).join("")}</select></div>
-   <div class="evidence-row"><label>STANDARDIZATION</label><select class="evidence-standard">${standards.map(x=>`<option${meta.standardization===x?" selected":""}>${x}</option>`).join("")}</select></div>
-   <div class="evidence-row"><label>LOCK</label><input class="evidence-lock" value="${meta.lock||""}" placeholder="Silhouette + cấu tạo"></div>
+   <div class="evidence-row"><label>MODEL</label><select class="evidence-model">${modelSchema.object.map(x=>`<option${meta.model===x?" selected":""}>${x}</option>`).join("")}</select></div>
+   <div class="evidence-row"><label>ƯU TIÊN MODEL CUNG CẤP</label><select class="evidence-priority">${modelSchema.priority.map(x=>`<option${meta.priority===x?" selected":""}>${x}</option>`).join("")}</select></div>
+   <div class="evidence-row"><label>MỨC ĐỘ BẢO TOÀN</label><select class="evidence-preservation">${modelSchema.preservation.map(x=>`<option${meta.preservation===x?" selected":""}>${x}</option>`).join("")}</select></div>
+   <div class="evidence-row"><label>CHUẨN HÓA GÓC NHÌN</label><select class="evidence-views">${modelSchema.views.map(x=>`<option${meta.views===x?" selected":""}>${x}</option>`).join("")}</select></div>
    <div class="evidence-row"><label>GHI CHÚ</label><input class="evidence-note" value="${meta.note||""}" placeholder="Ghi chú riêng cho ảnh (tuỳ chọn)"></div>
   </div>`;
   d.querySelector(".reference-remove").addEventListener("click",e=>{e.preventDefault();referenceFiles.splice(i,1);referenceMeta.splice(i,1);renderReferenceGallery();});
-  const role=d.querySelector(".reference-role"),decision=d.querySelector(".evidence-decision"),standard=d.querySelector(".evidence-standard"),lock=d.querySelector(".evidence-lock"),note=d.querySelector(".evidence-note");
-  const save=()=>{referenceMeta[i]={role:role.value,decision:decision.value,standardization:standard.value,lock:lock.value.trim(),note:note.value.trim()};};
-  role.addEventListener("change",()=>{const x=referenceDecisionDefaults(role.value);decision.value=x[0];standard.value=x[1];lock.value=x[2];save();});
-  [decision,standard,lock,note].forEach(x=>x.addEventListener("input",save));
+  const model=d.querySelector(".evidence-model"),priority=d.querySelector(".evidence-priority"),preservation=d.querySelector(".evidence-preservation"),views=d.querySelector(".evidence-views"),note=d.querySelector(".evidence-note");
+  const save=()=>{referenceMeta[i]={model:model.value,priority:priority.value,preservation:preservation.value,views:views.value,note:note.value.trim()};};
+  [model,priority,preservation,views,note].forEach(x=>x.addEventListener("change",save));
+  note.addEventListener("input",save);
   referenceGallery.appendChild(d);
  });
  referencePlaceholder.classList.toggle("hidden",referenceFiles.length>0);
