@@ -392,6 +392,52 @@ document.getElementById("generate")?.addEventListener("click", () => {
   const camera = {};
   const replacement = brief?.value?.trim() || "";
   try {
+    if (currentMode === "SpaceSync" && syncTargetFiles.length) {
+      if (!syncReferenceFile) {
+        throw new Error("Đồng bộ hóa không gian cần 1 ảnh tham chiếu cố định.");
+      }
+      const prompts = syncTargetFiles.map((file, index) => {
+        const note = syncTargetNotes[index]?.trim() || "Không có ghi chú riêng.";
+        const syncBrief = [
+          "ẢNH THAM CHIẾU CỐ ĐỊNH: " + syncReferenceFile.name,
+          "ẢNH CẦN ĐỒNG BỘ: " + file.name,
+          "ĐÂY LÀ NHIỆM VỤ ĐỘC LẬP SỐ " + (index + 1) + "/" + syncTargetFiles.length + ".",
+          "Chỉ tạo yêu cầu cho ảnh đích này; không sao chép prompt của ảnh đích khác.",
+          "GHI CHÚ RIÊNG: " + note,
+          replacement ? "YÊU CẦU CHUNG: " + replacement : ""
+        ].filter(Boolean).join("\n");
+        return buildDirection({
+          brief: syncBrief,
+          mode: "SpaceSync",
+          output,
+          camera,
+          target: "Ảnh cần đồng bộ " + (index + 1),
+          replacement: syncBrief,
+          params,
+          decisions: decisionsNow,
+          model: {},
+          referenceRoles: "Ảnh tham chiếu cố định: " + syncReferenceFile.name + " | Ảnh đích riêng: " + file.name + " | Nhiệm vụ " + (index + 1) + "/" + syncTargetFiles.length,
+          aiTarget: selectedAITarget,
+          aiProfile: aiTargetProfiles[selectedAITarget] || aiTargetProfiles["Khác"]
+        }).prompt;
+      });
+      if (resultContent) resultContent.textContent = prompts.map((prompt, i) =>
+        "════════════════════════════════════════\n" +
+        "PROMPT " + String(i + 1).padStart(2, "0") + " — ẢNH CẦN ĐỒNG BỘ: " + syncTargetFiles[i].name + "\n" +
+        "════════════════════════════════════════\n" + prompt
+      ).join("\n\n");
+      if (reasoningSummary) reasoningSummary.innerHTML =
+        "<div><b>ĐỒNG BỘ HÓA KHÔNG GIAN</b><span>4 Expert được tổng hợp cho từng ảnh đích.</span></div>" +
+        "<div><b>" + syncTargetFiles.length + " prompt riêng</b><span>Mỗi ảnh đích có một yêu cầu độc lập, không dùng lại nguyên prompt của ảnh khác.</span></div>" +
+        "<div><b>" + selectedAITarget + "</b><span>Định dạng theo nền tảng AI đã chọn.</span></div>";
+      result?.classList.remove("hidden");
+      result?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (brainStatus) brainStatus.textContent = "Đã tạo " + prompts.length + " prompt đồng bộ riêng";
+      return;
+    }
+    if (currentMode === "SpaceSync" && !syncTargetFiles.length) {
+      throw new Error("Hãy thêm ít nhất 1 ảnh cần đồng bộ.");
+    }
     const built = buildDirection({
       brief: brief?.value || "",
       mode: currentMode,
