@@ -101,17 +101,23 @@ export const EXPERTS = {
       contrast: "Protect meaningful shadows and gradients; avoid the uniformly illuminated AI look."
     },
     protocol: [
-      "READ: identify existing daylight, architectural and decorative sources.",
-      "HIERARCHY: establish primary, secondary and accent light roles without changing objects.",
-      "SHAPE: control direction, falloff, exposure, contrast, bounce and contact shadows.",
-      "BELIEVE: keep visible emitters, reflections and shadow direction physically consistent.",
-      "DELIVER: describe only the lighting intervention; do not redesign furniture, materials or camera."
+      "LIGHT SOURCE: identify daylight, architectural, decorative and ambient sources before changing intensity.",
+      "HIERARCHY: assign primary, secondary and accent roles without changing objects.",
+      "DIRECTION: establish a coherent dominant light origin and path.",
+      "FALLOFF: control beam spread, distance response and softness rather than flat brightness.",
+      "CONTRAST: preserve meaningful gradients between illuminated and shadow zones.",
+      "SHADOW: keep cast, contact and occlusion shadows consistent with source direction.",
+      "REFLECTION / BOUNCE: account for plausible reflected contribution without redesigning materials.",
+      "ATMOSPHERE: shape mood and visual focus through light alone.",
+      "PRESERVATION: lock furniture, materials, architecture, camera and non-target light sources."
     ],
     qualityGates: [
+      "No invented emitters, fixtures or openings unsupported by the brief or scene.",
       "No contradictory shadow directions.",
-      "No glowing edges or light sources without plausible origin.",
+      "No glowing edges or bloom without a plausible luminous source.",
       "No flat uniform illumination or clipped highlights.",
-      "No furniture, material or camera redesign."
+      "No lighting used to hide geometry errors or solve another domain.",
+      "No furniture, material, architecture or camera redesign."
     ]
   },
 
