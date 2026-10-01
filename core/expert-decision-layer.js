@@ -166,46 +166,47 @@ export const EXPERTS = {
 
   SpaceSync: {
     name: "Đồng bộ hóa không gian",
-    role: "Chuyên gia điều phối không gian kiến trúc – nội thất",
+    role: "Hệ thống tổng hợp 4 Expert — Citterio · Zumthor · Maurer · Baan",
     label: "GÓC NHÌN ĐỒNG BỘ KHÔNG GIAN",
-    source: "Tỷ lệ · trục · lưu thông · sightline · nhịp điệu · liên tục không gian",
-    scope: "Chỉ quyết định về sự đồng bộ của toàn bộ không gian: quan hệ giữa kiến trúc, đồ nội thất, vật liệu, ánh sáng, tầm nhìn, trục, tỷ lệ, nhịp điệu và lưu thông để tạo một hệ không gian nhất quán.",
+    source: "Tổng hợp: tỷ lệ & công năng · hiện diện vật liệu · ánh sáng · kiến trúc & nhiếp ảnh",
+    scope: "Tổng hợp có chủ đích từ 4 Expert độc lập trước đó để đọc và đồng bộ toàn bộ không gian như một hệ thống. Không phải Expert thứ 5 độc lập về trường phái; đây là lớp tổng hợp các nguyên tắc Citterio, Zumthor, Maurer và Baan.",
     lockedDomains: [],
+    composedOf: ["Furniture — Antonio Citterio", "Material — Peter Zumthor", "Lighting — Ingo Maurer", "Camera — Iwan Baan"],
     principles: [
-      "Read the room as one spatial system before adjusting any individual element.",
-      "Synchronize scale, proportion, alignment, circulation, sightlines and visual hierarchy across the scene.",
-      "Use architectural grids, axes, repetition, rhythm and negative space to connect elements without forcing uniformity.",
-      "Preserve the identity and function of each element while resolving conflicts through spatial coordination rather than arbitrary styling."
+      "Citterio: kiểm soát tỷ lệ, công năng, ergonomics, silhouette, cấu tạo và tự do lưu thông của nội thất.",
+      "Zumthor: kiểm soát quan hệ vật liệu, texture, chiều sâu, mối nối, phản xạ và sự hiện diện xúc giác.",
+      "Maurer: kiểm soát nguồn sáng, hướng sáng, tương phản, bóng đổ, phản xạ và không khí của không gian.",
+      "Baan: kiểm soát vị trí nhìn, chiều cao, tiêu cự, phối cảnh, khung hình và câu chuyện không gian.",
+      "Tổng hợp 4 lớp thành một hệ đồng bộ: không tối ưu một lớp nếu làm phá vỡ sự cân bằng của các lớp còn lại."
     ],
     decisions: {
-      alignment: "Establish the dominant architectural axes and align furniture, built-ins, openings and visual anchors to them where appropriate.",
-      circulation: "Protect primary and secondary movement paths, clearances, thresholds and functional zones.",
-      proportion: "Balance furniture scale against room volume, ceiling height, openings and adjacent elements.",
-      sightline: "Coordinate focal points, openings and layered views so the eye moves naturally through the space.",
-      continuity: "Connect material, form, rhythm, lighting and architectural language across zones without making every element identical.",
-      hierarchy: "Resolve primary, secondary and supporting visual roles so the space has a clear composition."
+      alignment: "Đồng bộ trục kiến trúc, vị trí nội thất, điểm nhấn vật liệu, nguồn sáng và logic khung nhìn.",
+      proportion: "Cân bằng tỷ lệ nội thất theo thể tích kiến trúc, vật liệu và cảm nhận qua góc nhìn.",
+      circulation: "Bảo vệ công năng, ergonomics, khoảng lưu thông và khoảng thở của toàn bộ không gian.",
+      material: "Điều phối hierarchy vật liệu, texture, mối nối và phản xạ để hỗ trợ hình khối và ánh sáng.",
+      lighting: "Điều phối nguồn sáng, tương phản, bóng đổ và phản xạ để làm rõ hình khối và vật liệu.",
+      camera: "Điều phối viewpoint, chiều cao, lens, perspective và framing để thể hiện đúng hệ không gian.",
+      hierarchy: "Thiết lập hierarchy chung giữa kiến trúc, nội thất, vật liệu, ánh sáng và góc nhìn."
     },
     protocol: [
-      "READ: map architecture, fixed elements, furniture, openings, circulation, focal points and visual layers.",
-      "GRID: identify dominant axes, datum lines, alignments, centers and proportional relationships.",
-      "FLOW: verify entry, movement, pause, transition and functional clearances through the space.",
-      "SIGHTLINE: coordinate what is seen first, what is revealed later and which elements become visual anchors.",
-      "PROPORTION: reconcile object scale with room volume, ceiling height, openings and neighboring elements.",
-      "CONTINUITY: synchronize repeated forms, material language, lighting relationships and negative space without forced matching.",
-      "HIERARCHY: establish a clear primary-secondary-supporting visual order.",
-      "PRESERVE: keep the function and identity of existing elements unless the brief explicitly authorizes a change.",
-      "DELIVER: describe only the spatial synchronization required; do not silently redesign an individual domain."
+      "01 — CITTERIO / NỘI THẤT: đọc tỷ lệ, công năng, ergonomics, cấu tạo và lưu thông.",
+      "02 — ZUMTHOR / VẬT LIỆU: đọc chất liệu, texture, chiều sâu, mối nối và phản ứng giữa các bề mặt.",
+      "03 — MAURER / ÁNH SÁNG: đọc nguồn sáng, hướng sáng, tương phản, bóng đổ, phản xạ và atmosphere.",
+      "04 — BAAN / GÓC NHÌN: đọc viewpoint, chiều cao, lens, perspective, framing và narrative.",
+      "05 — SYNCHRONIZE: đối chiếu 4 lớp và giải quyết xung đột bằng quan hệ không gian, không bằng cách xóa bỏ identity của từng lớp.",
+      "06 — HIERARCHY: xác định vai trò chính, phụ và nền cho toàn bộ không gian.",
+      "07 — PRESERVE: giữ kiến trúc, công năng, identity và các chi tiết được chỉ định.",
+      "08 — DELIVER: xuất một yêu cầu chỉnh sửa thống nhất, trong đó 4 Expert hỗ trợ nhau nhưng không biến thành 4 thay đổi rời rạc."
     ],
     qualityGates: [
-      "No isolated element should be optimized if that creates a spatial conflict elsewhere.",
-      "No blocked primary circulation, unsafe clearance or impossible functional relationship.",
-      "No arbitrary relocation of fixed architecture, openings or built-ins.",
-      "No forced symmetry when the architecture calls for balanced asymmetry.",
-      "No visual continuity achieved by making every material, furniture form or light source identical.",
-      "No invented architecture or room volume unsupported by the supplied scene.",
-      "Preserve coherent scale, axes, sightlines, hierarchy and negative space across the whole composition."
+      "Không được gọi đây là một trường phái hay cá nhân thiết kế thứ năm.",
+      "Mọi quyết định tổng hợp phải truy được về ít nhất một trong 4 Expert: Citterio, Zumthor, Maurer hoặc Baan.",
+      "Không để nội thất, vật liệu, ánh sáng hoặc camera phá vỡ tỷ lệ và logic của các lớp còn lại.",
+      "Không dùng đồng bộ hóa để tự ý thay đổi kiến trúc hoặc tạo ra hình học không có trong ảnh.",
+      "Giữ identity của các thành phần được cung cấp và chỉ điều chỉnh quan hệ giữa chúng khi cần.",
+      "Nếu 4 lớp xung đột, ưu tiên giải pháp cân bằng toàn không gian thay vì tối ưu riêng một lớp."
     ]
-  },
+  }
 };
 
 export function expertFor(mode) {
