@@ -293,7 +293,8 @@ export function buildDirection({
     Furniture: { style: params.style || "", styleMeaning: intentMeaning.style },
     Material: { style: params.style || "", styleMeaning: intentMeaning.style },
     Lighting: { lighting: params.lighting || "", lightingMeaning: intentMeaning.lighting },
-    Camera: { view: params.view || "", viewMeaning: intentMeaning.view, camera: params.camera || "", cameraMeaning: intentMeaning.camera }
+    Camera: { view: params.view || "", viewMeaning: intentMeaning.view, camera: params.camera || "", cameraMeaning: intentMeaning.camera },
+    SpaceSync: { style: params.style || "", styleMeaning: intentMeaning.style }
   }[mode] || {};
   const analysis = analyzeBrief(brief, mode, output, camera);
   const modeData = editModeDirection(mode, target, brief, params, decisions);
