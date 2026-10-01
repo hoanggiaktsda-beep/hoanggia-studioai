@@ -49,3 +49,24 @@
 .decision-controls .decision-field{min-height:92px}
 .decision-controls .decision-field label{display:block;margin-bottom:7px!important;color:#a7abb1!important;font-size:8px!important;letter-spacing:.08em;text-transform:uppercase}
 @media(max-width:900px){.decision-controls{grid-template-columns:1fr}}
+
+
+/* Decision System v2 — clear hierarchy, expert-first */
+.decision-controls{gap:10px;margin-top:10px}
+.decision-field{position:relative;min-height:108px;padding:13px;background:#0d0f11;border:1px solid #292c31;border-radius:9px;transition:border-color .18s,transform .18s}
+.decision-field:focus-within{border-color:#51575f;transform:translateY(-1px)}
+.decision-index{position:absolute;right:10px;top:10px;color:#4f555c;font:8px ui-monospace,monospace;letter-spacing:.12em}
+.decision-field label{display:block!important;max-width:82%;margin:0 0 10px!important;color:#d7d9dc!important;font-size:9px!important;letter-spacing:.08em!important}
+.decision-field select{min-height:38px;padding:9px 10px;font-size:10px;border-color:#24272c}
+.decision-field select:focus{border-color:#5b626b;outline:none}
+.expert-advanced{margin-top:12px;border-top:1px solid #202328}
+.expert-advanced summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 2px;cursor:pointer;color:#858a91}
+.expert-advanced summary::-webkit-details-marker{display:none}
+.expert-advanced summary::after{content:"+";width:20px;height:20px;display:grid;place-items:center;border:1px solid #30343a;border-radius:50%;color:#777c83;font-size:12px}
+.expert-advanced[open] summary::after{content:"−";color:var(--accent);border-color:#39452a}
+.expert-advanced summary span{font-size:8px;letter-spacing:.16em;font-weight:700}
+.expert-advanced summary small{margin-left:auto;color:#555a61;font-size:8px}
+.expert-advanced .mode-control-grid{padding:4px 0 2px}
+.model-standardization{transition:border-color .18s}
+.model-standardization .decision-intro{margin:-4px 0 14px}
+@media(max-width:900px){.decision-controls{grid-template-columns:1fr}.decision-field{min-height:0}.expert-advanced summary{align-items:flex-start}.expert-advanced summary small{max-width:48%;text-align:right}}
