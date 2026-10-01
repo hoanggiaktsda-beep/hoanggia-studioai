@@ -32,6 +32,15 @@ const intentView = document.getElementById("intentView");
 const intentCamera = document.getElementById("intentCamera");
 
 let currentMode = "Furniture";
+let selectedAITarget = "ChatGPT";
+
+const aiTargetProfiles = {
+  ChatGPT: "Format for ChatGPT image editing: use direct natural-language visual instructions, explicit preservation constraints and a clear target intervention.",
+  Gemini: "Format for Gemini image editing: use concise visual instructions with explicit target, preservation and physical realism constraints.",
+  Lovart: "Format for Lovart: use compact production directives, clear material/object/camera actions and strict preservation rules.",
+  "Nano Banana": "Format for Nano Banana image editing: use explicit image-editing instructions, precise target boundaries and strong preservation constraints.",
+  "Khác": "Format as a concise production-ready image-editing prompt that clearly states the target, changes, preservation and realism."
+};
 let referenceFiles = [];
 let referenceMeta = [];
 
@@ -230,6 +239,20 @@ function renderExpert(mode) {
   if (expertLocks) expertLocks.innerHTML = expert.lockedDomains.map(x => `<span>${x}</span>`).join("");
 }
 
+function renderAITargets() {
+  document.querySelectorAll(".ai-target-option").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.aiTarget === selectedAITarget);
+  });
+}
+
+document.querySelectorAll(".ai-target-option").forEach(btn => {
+  btn.addEventListener("click", () => {
+    selectedAITarget = btn.dataset.aiTarget || "ChatGPT";
+    renderAITargets();
+    if (brainStatus) brainStatus.textContent = `Đầu ra: ${selectedAITarget}`;
+  });
+});
+
 function renderMode(mode) {
   currentMode = mode;
   document.querySelectorAll(".mode-card").forEach(card => card.classList.toggle("active", card.dataset.mode === mode));
@@ -248,6 +271,8 @@ decisionControls?.addEventListener("change", updateCount);
 
 document.getElementById("newProject")?.addEventListener("click", () => {
   currentMode = "Furniture";
+  selectedAITarget = "ChatGPT";
+  renderAITargets();
   referenceFiles = [];
   referenceMeta = [];
   if (sceneInput) sceneInput.value = "";
@@ -257,7 +282,8 @@ document.getElementById("newProject")?.addEventListener("click", () => {
   renderReferenceGallery();
   if (brief) brief.value = "";
   result?.classList.add("hidden");
-  renderMode("Furniture");
+  renderAITargets();
+renderMode("Furniture");
   if (brainStatus) brainStatus.textContent = "Hệ thống sẵn sàng";
 });
 
@@ -289,12 +315,15 @@ document.getElementById("generate")?.addEventListener("click", () => {
       params,
       decisions: decisionsNow,
       model,
-      referenceRoles
+      referenceRoles,
+      aiTarget: selectedAITarget,
+      aiProfile: aiTargetProfiles[selectedAITarget] || aiTargetProfiles["Khác"]
     });
     if (resultContent) resultContent.textContent = built.prompt;
     if (reasoningSummary) reasoningSummary.innerHTML = `
       <div><b>${built.reasoning.expert}</b><span>${built.reasoning.expertRole}</span></div>
       <div><b>${built.reasoning.independence}</b><span>Không suy luận chéo sang expert khác.</span></div>
+      <div><b>${selectedAITarget}</b><span>Prompt được định hình cho nền tảng đã chọn.</span></div>
       <div><b>${Object.keys(decisionsNow).length} quyết định</b><span>Được áp dụng trực tiếp vào prompt sản xuất.</span></div>`;
     result?.classList.remove("hidden");
     result?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -310,6 +339,11 @@ document.getElementById("generate")?.addEventListener("click", () => {
 document.getElementById("copy")?.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(resultContent?.textContent || "");
+    const copyButton = document.getElementById("copy");
+    if (copyButton) {
+      copyButton.textContent = "✓ Đã sao chép";
+      setTimeout(() => { copyButton.textContent = "Sao chép prompt"; }, 1600);
+    }
     if (brainStatus) brainStatus.textContent = "Đã sao chép prompt";
   } catch {
     if (brainStatus) brainStatus.textContent = "Không thể sao chép tự động";
