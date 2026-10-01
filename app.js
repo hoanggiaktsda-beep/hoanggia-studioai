@@ -95,7 +95,7 @@ function referenceDecisionDefaults(role){
  };
  return map[role]||map["Mặt chính"];
 }
-function referenceMetaDefaults(role){const d=referenceDecisionDefaults(role);return {role,decision:d[0],standardization:d[1],lock:d[2],note:""};}
+function referenceMetaDefaults(){return {model:targetSelect?.value||modelSchema.object[0],priority:modelSchema.priority[0],preservation:modelSchema.preservation[0],views:modelSchema.views[0],note:""};}
 function renderReferenceGallery(){
  if(!referenceGallery)return;
  referenceGallery.innerHTML="";
@@ -126,7 +126,7 @@ function renderReferenceGallery(){
  brainStatus.textContent=referenceFiles.length?"Đã chuẩn hóa "+referenceFiles.length+" Model Evidence Card":"Hệ thống sẵn sàng";
 }
 referenceInput.addEventListener("change",()=>{
- Array.from(referenceInput.files||[]).forEach(file=>{referenceFiles.push(file);referenceMeta.push(referenceMetaDefaults(modelSchema.roles[0]));});
+ Array.from(referenceInput.files||[]).forEach(file=>{referenceFiles.push(file);referenceMeta.push(referenceMetaDefaults());});
  referenceInput.value="";
  renderReferenceGallery();
 });
@@ -182,14 +182,14 @@ document.getElementById("generate").addEventListener("click",()=>{
  if(!sceneInput.files?.[0]){resultText.textContent="Hãy tải ảnh không gian.";return;}
  if(!userBrief){brief.focus();resultText.textContent="Hãy mô tả ngắn gọn ý đồ thiết kế.";return;}
  const model=modelData();
- const referenceRoles=referenceMeta.map((m,i)=>`#${i+1} role=${m?.role||modelSchema.roles[0]} | decision=${m?.decision||""} | standardization=${m?.standardization||""} | lock=${m?.lock||""}${m?.note?` | note=${m.note}`:""}`).join(" || ");
+ const referenceRoles=referenceMeta.map((m,i)=>`#${i+1} model=${m?.model||modelSchema.object[0]} | priority=${m?.priority||modelSchema.priority[0]} | preservation=${m?.preservation||modelSchema.preservation[0]} | views=${m?.views||modelSchema.views[0]}${m?.note?` | note=${m.note}`:""}`).join(" || ");
  const referenceRequired=currentMode==="Furniture";
  if(referenceRequired&&!referenceFiles.length){resultText.textContent="Hãy tải ít nhất 1 ảnh model cung cấp cho chế độ nội thất.";return;}
   if(Object.keys(d).length<3){resultText.textContent="Hãy hoàn tất 3 quyết định thiết kế trước khi tạo prompt.";return;}
  const modeData=editModeDirection(currentMode,target,userBrief,p,d);
  const expert=expertFor(currentMode);
  const authority=currentMode==="Furniture"?"Ảnh A = cơ sở không gian · "+referenceFiles.length+" ảnh model cung cấp = cơ sở thiết kế nội thất · "+model.modelPriority:"Ảnh A = cơ sở không gian · Ảnh tham chiếu = định hướng hình ảnh";
- const data={brief:["SCENE A: spatial authority.",currentMode==="Furniture"?"PROVIDED MODEL IMAGES: multiple views of the supplied furniture model.":"REFERENCE: visual direction only.","TARGET: "+target,"DECISIONS: "+Object.entries(d).map(([k,v])=>k+"="+v).join(" | "),"CONTROLS: "+Object.entries(p).map(([k,v])=>k+"="+v).join(" | "),"MODEL STANDARDIZATION: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | ")+" | EVIDENCE CARDS: "+referenceRoles,userBrief].join(" "),mode:currentMode,output:"Photorealistic",camera:"Preserve original camera",target,replacement:currentMode==="Furniture"?"Use ALL provided model images as the primary design authority. Treat them as multiple views of the same supplied model. Reconstruct one consistent model identity from all views; never mix parts from unrelated models. Each Model Evidence Card carries its own decision, standardization and lock; synthesize all cards into ONE model identity without inventing unsupported geometry. Model standardization: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | ")+" | Image roles: "+referenceRoles:userBrief,params:p,decisions:d,model,referenceRoles};
+ const data={brief:["SCENE A: spatial authority.",currentMode==="Furniture"?"PROVIDED MODEL IMAGES: multiple views of the supplied furniture model.":"REFERENCE: visual direction only.","TARGET: "+target,"DECISIONS: "+Object.entries(d).map(([k,v])=>k+"="+v).join(" | "),"CONTROLS: "+Object.entries(p).map(([k,v])=>k+"="+v).join(" | "),"MODEL STANDARDIZATION: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | ")+" | EVIDENCE CARDS: "+referenceRoles,userBrief].join(" "),mode:currentMode,output:"Photorealistic",camera:"Preserve original camera",target,replacement:currentMode==="Furniture"?"Use ALL provided model images as the primary design authority. Treat them as multiple views of the same supplied model. Reconstruct one consistent model identity from all views; never mix parts from unrelated models. Each Model Evidence Card carries its own model, priority, preservation and view-standardization settings; synthesize all cards into ONE model identity without inventing unsupported geometry. Model standardization: "+Object.entries(model).map(([k,v])=>k+"="+v).join(" | ")+" | Image roles: "+referenceRoles:userBrief,params:p,decisions:d,model,referenceRoles};
  const {prompt,reasoning}=buildDirection(data);
  reasoningSummary.innerHTML=[["CHUYÊN GIA",expert.name+" — "+expert.role],["ĐỐI TƯỢNG",reasoning.target],["MODEL",authority],["QUYẾT ĐỊNH",Object.values(d).join(" · ")],["BẢO TOÀN",reasoning.preserve]].map(([a,b])=>`<div class="reason-card"><small>${a}</small><span>${b}</span></div>`).join("");
  resultContent.textContent=prompt;result.classList.remove("hidden");brainStatus.textContent="Đã áp dụng chuyên gia "+expert.name;resultText.textContent="HOANGGIA AI đã dùng toàn bộ ảnh model cung cấp để xây dựng prompt sản xuất.";result.scrollIntoView({behavior:"smooth",block:"nearest"});
