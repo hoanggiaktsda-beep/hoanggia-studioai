@@ -27,6 +27,7 @@ const expertScope = document.getElementById("expertScope");
 const expertProtocol = document.getElementById("expertProtocol");
 const expertLocks = document.getElementById("expertLocks");
 const modeControls = document.getElementById("modeControls");
+const intentSpaceType = document.getElementById("intentSpaceType");
 const intentStyle = document.getElementById("intentStyle");
 const intentLighting = document.getElementById("intentLighting");
 const intentView = document.getElementById("intentView");
@@ -284,6 +285,7 @@ function updateCount() {
 
 function designIntent() {
   return {
+    spaceType: intentSpaceType?.value || "",
     style: intentStyle?.value || "",
     lighting: intentLighting?.value || "",
     view: intentView?.value || "",
