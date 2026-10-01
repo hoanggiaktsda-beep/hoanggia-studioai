@@ -343,6 +343,30 @@ export function buildDirection({
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
     body.push(
       task + ".",
+      "Use the supplied reference images as one identical furniture model; preserve silhouette, proportions, construction and distinctive details.",
+      "Keep original position, scale, floor contact and perspective.",
+      f.editRule + " " + f.realism + " " + f.referenceRule
+    );
+  } else if (mode === "Material") {
+    const m = materialDirection(analysis);
+    const md = materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles});
+    body.push(task + ".", m.rule, md.checks.join(" "));
+  } else if (mode === "Lighting") {
+    const ld = lightingDecisionEngine({target, brief, decisions, analysis, referenceRoles});
+    body.push(task + ".", "Control source, direction, intensity, color temperature, falloff, contrast and shadows.", ld.checks.join(" "));
+  } else if (mode === "Camera") {
+    const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
+    body.push(task + ".", "Control position, height, focal length/FOV, perspective and framing.", cd.checks.join(" "));
+  } else {
+    body.push(
+      "Edit each target image to match the fixed reference image. Preserve the target image architecture and camera unless required for visual consistency.",
+      "Match the reference's furniture, materials, lighting, proportions, composition and atmosphere using Citterio, Zumthor, Maurer and Baan.",
+      "Do not copy unrelated geometry, invent architecture or mix target images. Produce one independent synchronization prompt for this target."
+    );
+  }
+
+  body.push(
+      task + ".",
       "Use the supplied reference images as one identical furniture model; preserve 100% silhouette, proportions, construction, joints and distinctive details.",
       "Keep original position, scale, floor contact, perspective, occlusion, circulation and functional ergonomics.",
       f.editRule + " " + f.realism + " " + f.referenceRule
