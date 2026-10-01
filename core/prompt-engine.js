@@ -1,5 +1,5 @@
 import {analyzeBrief} from "./architectural-brain.js";
-import {materialDirection} from "./material-engine.js";
+import {materialDirection, materialDecisionEngine} from "./material-engine.js";
 import {cameraDirection} from "./camera-engine.js";
 import {furnitureDirection} from "./furniture-engine.js";
 import {editModeDirection} from "./edit-engine.js";
@@ -105,6 +105,7 @@ export function buildDirection({
     );
   } else if (mode === "Material") {
     const m = materialDirection(analysis);
+    const md = materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles});
     body.push(
       "",
       "MATERIAL TARGET",
@@ -113,7 +114,16 @@ export function buildDirection({
       "MATERIAL INTELLIGENCE",
       m.hierarchy.map(x => "• " + x).join("\n"),
       "• " + m.rule,
-      "• " + m.realism.join("\n• ")
+      "• " + m.realism.join("\n• "),
+      "",
+      "MATERIAL DECISION SEQUENCE",
+      md.decisionSequence.join("\n"),
+      "",
+      "MATERIAL REASONING",
+      md.checks.map(x => "• " + x).join("\n"),
+      "",
+      "MATERIAL EXPERT QUESTIONS",
+      md.expertQuestions.map(x => "• " + x).join("\n")
     );
   } else if (mode === "Lighting") {
     body.push(
@@ -149,6 +159,7 @@ export function buildDirection({
     ...modeData.safeguards.map(x => "• " + x),
     ...expert.qualityGates.map(x => "• QUALITY GATE: " + x),
     ...(mode === "Furniture" ? furnitureDirection(target, replacement, brief, params, decisions, model, referenceRoles).qualityGates.map(x => "• FURNITURE GATE: " + x) : []),
+    ...(mode === "Material" ? materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles}).qualityGates.map(x => "• MATERIAL GATE: " + x) : []),
     "• Keep walls, floor, ceiling, windows, doors, openings and built-ins unchanged.",
     "• Preserve every non-target object unless explicitly included in the selected expert scope.",
     "",
