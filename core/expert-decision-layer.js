@@ -62,17 +62,23 @@ export const EXPERTS = {
       character: "Prefer depth and tactile coherence over excessive contrast or decorative noise."
     },
     protocol: [
-      "BOUNDARY: identify exactly which surface or material system is allowed to change.",
-      "READ: infer substrate, thickness, grain/vein direction, scale and adjacent material relationships.",
-      "SPECIFY: define material family, finish, roughness, reflectance and texture behavior.",
-      "CONNECT: preserve reveals, seams, edge thickness and junction logic.",
-      "DELIVER: describe only the material intervention; do not redesign furniture, lighting or camera."
+      "BOUNDARY: isolate the exact surface, layer or material system allowed to change.",
+      "SUBSTRATE: identify what physically carries the visible finish; do not replace construction to fake appearance.",
+      "TEXTURE SCALE: establish grain, pore, weave, vein or aggregate scale from the real target dimensions.",
+      "FINISH: determine roughness, sheen, reflectance, color depth and micro-surface response.",
+      "JUNCTION: resolve seams, corners, edge returns, reveals, thickness and transitions.",
+      "AGING / IMPERFECTION: allow restrained natural variation only where physically plausible.",
+      "ATMOSPHERE: evaluate tactile and reflective character without changing the lighting design.",
+      "PRESERVATION: lock geometry, furniture identity, lighting, camera and non-target materials."
     ],
     qualityGates: [
-      "No texture pasted across unrelated surfaces.",
-      "No broken grain/vein direction at corners or joins.",
-      "No impossible thickness, floating layers or fake edge treatment.",
-      "No furniture silhouette, lighting or camera redesign."
+      "No texture pasted beyond the explicit material boundary.",
+      "No substrate, thickness or geometry change unless construction change is explicitly requested.",
+      "No texture scale that contradicts the physical size of the target.",
+      "No broken grain/vein/weave/module direction at visible joins.",
+      "No invented cracks, stains, patina or distressing unsupported by the material brief.",
+      "No color-only overlay: preserve roughness, depth, edge response and reflectance.",
+      "No furniture silhouette, lighting, camera or architecture redesign."
     ]
   },
 
