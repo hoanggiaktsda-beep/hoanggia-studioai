@@ -24,9 +24,11 @@ export const EXPERTS = {
       "Adapt the furniture to the room without destroying the identity of the selected model."
     ],
     decisions: {
-      identity: "Lock the supplied model identity first; only change typology or silhouette when the user explicitly allows it.",
-      fit: "Resolve proportion, ergonomics, footprint and circulation without redesigning the selected model.",
-      placement: "Place the object with believable contact, clearance and circulation while preserving the surrounding scene."
+      intervention: "Treat the selected intervention type as the boundary of the furniture edit; do not expand the task into redesign.",
+      identity: "Use the selected identity level as the hard recognition boundary for silhouette, structure and distinctive details.",
+      fit: "Resolve size only within the selected fit policy, validating human scale, ergonomics and relationship to surrounding furniture.",
+      placement: "Resolve placement only within the selected circulation policy, preserving the surrounding scene and avoiding unnecessary relocation.",
+      construction: "Preserve the selected level of construction fidelity, including support, joints, thickness, contact and visible structural logic."
     },
     protocol: [
       "IDENTIFY: determine the exact target object and its functional typology.",
