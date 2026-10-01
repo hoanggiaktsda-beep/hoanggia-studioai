@@ -462,9 +462,10 @@ document.getElementById("generate")?.addEventListener("click", () => {
     result?.scrollIntoView({ behavior: "smooth", block: "start" });
     if (brainStatus) brainStatus.textContent = `${expert.name} đã xây dựng yêu cầu AI`;
   } catch (error) {
-    console.error(error);
+    console.error("[HOANGGIA AI] Lỗi tạo yêu cầu:", error);
+    const message = error instanceof Error ? error.message : String(error || "Lỗi không xác định");
     if (brainStatus) brainStatus.textContent = "Có lỗi khi xây dựng yêu cầu AI";
-    if (resultContent) resultContent.textContent = "Không thể tạo yêu cầu AI. Kiểm tra lại cấu hình chuyên gia.";
+    if (resultContent) resultContent.textContent = "Không thể tạo yêu cầu AI.\n\nChi tiết: " + message;
     result?.classList.remove("hidden");
   }
 });
