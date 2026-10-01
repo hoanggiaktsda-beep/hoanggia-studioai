@@ -31,6 +31,14 @@ const intentStyle = document.getElementById("intentStyle");
 const intentLighting = document.getElementById("intentLighting");
 const intentView = document.getElementById("intentView");
 const intentCamera = document.getElementById("intentCamera");
+const spaceSyncPanel = document.getElementById("spaceSyncPanel");
+const syncReferenceInput = document.getElementById("syncReferenceInput");
+const syncReferencePreview = document.getElementById("syncReferencePreview");
+const syncReferencePlaceholder = document.getElementById("syncReferencePlaceholder");
+const syncTargetInput = document.getElementById("syncTargetInput");
+const syncTargetGallery = document.getElementById("syncTargetGallery");
+const syncTargetTrigger = document.getElementById("syncTargetTrigger");
+const syncTargetCount = document.getElementById("syncTargetCount");
 
 let currentMode = "Furniture";
 let selectedAITarget = "ChatGPT Images";
@@ -51,6 +59,9 @@ const aiTargetProfiles = {
 };
 let referenceFiles = [];
 let referenceMeta = [];
+let syncReferenceFile = null;
+let syncTargetFiles = [];
+let syncTargetNotes = [];
 
 const referenceOptions = {
   object: ["Sofa","Ghế đơn","Bàn trà","Bàn ăn","Ghế ăn","Giường","Tủ / kệ","Đèn","Khác"],
@@ -200,6 +211,51 @@ referenceInput?.addEventListener("change", () => {
   renderReferenceGallery();
 });
 
+function renderSpaceSyncTargets() {
+  if (syncTargetCount) syncTargetCount.textContent = syncTargetFiles.length + " ảnh";
+  if (!syncTargetGallery) return;
+  syncTargetGallery.innerHTML = syncTargetFiles.map((file, i) => {
+    const url = URL.createObjectURL(file);
+    const note = (syncTargetNotes[i] || "").replace(/"/g, "&quot;");
+    return '<div class="sync-target-item">' +
+      '<img src="' + url + '" alt="Ảnh cần đồng bộ ' + (i + 1) + '">' +
+      '<div class="sync-target-meta"><strong>Ảnh ' + String(i + 1).padStart(2, "0") + '</strong>' +
+      '<input type="text" data-sync-note="' + i + '" value="' + note + '" placeholder="Ghi chú riêng cho ảnh này (tuỳ chọn)"></div>' +
+      '<button type="button" class="sync-remove" data-sync-remove="' + i + '" aria-label="Xóa ảnh">×</button></div>';
+  }).join("");
+  syncTargetGallery.querySelectorAll("[data-sync-note]").forEach(input => {
+    input.addEventListener("input", () => { syncTargetNotes[Number(input.dataset.syncNote)] = input.value; });
+  });
+  syncTargetGallery.querySelectorAll("[data-sync-remove]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const i = Number(btn.dataset.syncRemove);
+      syncTargetFiles.splice(i, 1);
+      syncTargetNotes.splice(i, 1);
+      renderSpaceSyncTargets();
+    });
+  });
+}
+
+syncReferenceInput?.addEventListener("change", () => {
+  syncReferenceFile = syncReferenceInput.files?.[0] || null;
+  if (syncReferenceFile && syncReferencePreview) {
+    syncReferencePreview.src = URL.createObjectURL(syncReferenceFile);
+    syncReferencePreview.classList.add("visible");
+    syncReferencePlaceholder?.classList.add("hidden");
+  }
+  syncReferenceInput.value = "";
+});
+
+syncTargetTrigger?.addEventListener("click", () => syncTargetInput?.click());
+syncTargetInput?.addEventListener("change", () => {
+  Array.from(syncTargetInput.files || []).forEach(file => {
+    syncTargetFiles.push(file);
+    syncTargetNotes.push("");
+  });
+  syncTargetInput.value = "";
+  renderSpaceSyncTargets();
+});
+
 function selectedDecisions() {
   return Object.fromEntries([...decisionControls.querySelectorAll("[data-decision]")].map(el => [el.dataset.decision, el.value]));
 }
@@ -276,6 +332,7 @@ document.querySelectorAll(".ai-target-option").forEach(btn => {
 });
 
 function renderMode(mode) {
+  if (spaceSyncPanel) spaceSyncPanel.classList.toggle("hidden", mode !== "SpaceSync");
   currentMode = mode;
   document.querySelectorAll(".mode-card").forEach(card => card.classList.toggle("active", card.dataset.mode === mode));
   renderExpert(mode);
@@ -297,6 +354,12 @@ document.getElementById("newProject")?.addEventListener("click", () => {
   renderAITargets();
   referenceFiles = [];
   referenceMeta = [];
+  syncReferenceFile = null;
+  syncTargetFiles = [];
+  syncTargetNotes = [];
+  if (syncReferencePreview) { syncReferencePreview.src = ""; syncReferencePreview.classList.remove("visible"); }
+  syncReferencePlaceholder?.classList.remove("hidden");
+  renderSpaceSyncTargets();
   if (sceneInput) sceneInput.value = "";
   if (referenceInput) referenceInput.value = "";
   if (scenePreview) { scenePreview.src = ""; scenePreview.classList.remove("visible"); }
