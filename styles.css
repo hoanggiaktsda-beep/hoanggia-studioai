@@ -251,3 +251,36 @@ button,.nav-item,.mode-card,.ai-target-option,.copy-btn,.ghost-btn,.primary-btn,
 /* Avoid accidental horizontal overflow from long AI output / labels */
 .panel,.action-panel,.result-panel,.expert-system,.decision-bar,.intent-field,.decision-field{min-width:0}
 .result-panel pre,.hero-copy,.expert-scope,.expert-source,.protocol-step p{overflow-wrap:anywhere;word-break:break-word}
+
+
+/* Cân bằng tỷ lệ: Quyết định Expert ↔ Ý đồ thiết kế */
+.reference-controls > .editor-grid{
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  align-items:start;
+  gap:16px;
+}
+.reference-controls > .editor-grid > div{
+  min-width:0;
+}
+.reference-controls .decision-intro{
+  min-height:58px;
+  margin-bottom:12px;
+}
+.reference-controls .decision-controls{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.reference-controls .decision-field,
+.reference-controls .intent-field{
+  min-height:82px;
+}
+.reference-controls .intent-field{
+  padding:12px;
+}
+@media(max-width:900px){
+  .reference-controls > .editor-grid{grid-template-columns:1fr;}
+  .reference-controls .decision-controls{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:600px){
+  .reference-controls .decision-controls{grid-template-columns:1fr;}
+}
