@@ -9,12 +9,6 @@ import {expertDecision} from "./expert-decision-layer.js";
 
 function scopedEvidence(mode, brief, target, params = {}) {
   const text = (brief || "").trim();
-  const lines = [
-    `USER INTENT: ${text || "No additional direction."}`,
-    `TARGET: ${target || "Unspecified"}`,
-    `RELEVANT DESIGN INTENT: ${Object.entries(scopedParams).filter(([,v]) => v).map(([k,v]) => `${k}=${v}`).join(" | ") || "None"}`
-  ];
-
   const scopedParams = {
     Furniture: { style: params.style || "" },
     Material: { style: params.style || "" },
