@@ -273,7 +273,13 @@ export function buildDirection({
   aiTarget = "ChatGPT",
   aiProfile = ""
 }) {
-  const relevantParams = { Furniture: { style: params.style || "" }, Material: { style: params.style || "" }, Lighting: { lighting: params.lighting || "" }, Camera: { view: params.view || "", camera: params.camera || "" } }[mode] || {};
+  const intentMeaning = designIntentMeaning(params);
+  const relevantParams = {
+    Furniture: { style: params.style || "", styleMeaning: intentMeaning.style },
+    Material: { style: params.style || "", styleMeaning: intentMeaning.style },
+    Lighting: { lighting: params.lighting || "", lightingMeaning: intentMeaning.lighting },
+    Camera: { view: params.view || "", viewMeaning: intentMeaning.view, camera: params.camera || "", cameraMeaning: intentMeaning.camera }
+  }[mode] || {};
   const analysis = analyzeBrief(brief, mode, output, camera);
   const modeData = editModeDirection(mode, target, brief, params, decisions);
   const expert = expertDecision(mode, decisions);
@@ -365,7 +371,8 @@ export function buildDirection({
     "",
     "CONTEXT",
     "• User intent: " + ((brief || "").trim() || "No additional direction."),
-    "• Design intent: " + (Object.entries(relevantParams).filter(([,v]) => v).map(([k,v]) => k + "=" + v).join(" | ") || "None"),
+    "• Design intent selections: " + (Object.entries(relevantParams).filter(([k,v]) => v && !k.endsWith("Meaning")).map(([k,v]) => k + "=" + v).join(" | ") || "None"),
+    "• Design intent semantics: " + (Object.entries(relevantParams).filter(([k,v]) => v && k.endsWith("Meaning")).map(([k,v]) => k + "=" + v).join(" | ") || "None"),
     "",
     "PRESERVE",
     ...modeData.safeguards.map(x => "• " + x),
