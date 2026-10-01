@@ -243,10 +243,10 @@ function scopedEvidence(mode, brief, target, params = {}) {
   }[mode] || {};
 
   const lines = [
-    `USER INTENT: ${text || "No additional direction."}`,
-    `TARGET: ${target || "Unspecified"}`,
-    `RELEVANT DESIGN INTENT: ${Object.entries(scopedParams).filter(([,v]) => v).map(([k,v]) => `${k}=${v}`).join(" | ") || "None"}`,
-    `DESIGN INTENT MEANING: ${Object.entries(scopedMeaning).filter(([,v]) => v).map(([k,v]) => `${k}=${v}`).join(" | ") || "None"}`
+    `USER INTENT: ${text || "Không có yêu cầu bổ sung."}`,
+    `TARGET: ${target || "Chưa xác định"}`,
+    `RELEVANT DESIGN INTENT: ${Object.entries(scopedParams).filter(([,v]) => v).map(([k,v]) => `${k}=${v}`).join(" | ") || "Không có"}`,
+    `DESIGN INTENT MEANING: ${Object.entries(scopedMeaning).filter(([,v]) => v).map(([k,v]) => `${k}=${v}`).join(" | ") || "Không có"}`
   ];
 
   const scope = {
@@ -289,10 +289,10 @@ export function buildDirection({
     authority: mode === "Furniture"
       ? "Scene A = spatial authority · Reference B = furniture design authority"
       : "Scene A = spatial authority · Reference = authority only for the selected expert domain",
-    preserve: "Architecture, non-target objects and every domain outside the selected edit scope",
+    preserve: "Kiến trúc, các đối tượng không được chọn và mọi lĩnh vực ngoài phạm vi chỉnh sửa",
     expert: expert.name,
     expertRole: expert.role,
-    independence: `Only ${expert.name} decides within the ${mode} domain. Other domains are locked.`
+    independence: `Chỉ ${expert.name} quyết định trong phạm vi ${mode}. Các lĩnh vực khác được khóa.`
   };
 
   const decisionLines = Object.entries(decisions)
@@ -304,37 +304,37 @@ export function buildDirection({
   const adapter = AI_PROMPT_ADAPTERS[aiTarget] || AI_PROMPT_ADAPTERS["Khác"];
 
   body.push(
-    "EXPERT",
+    "CHUYÊN GIA",
     expert.name + " — " + expert.role,
-    "FOCUS",
+    "PHẠM VI CHUYÊN MÔN",
     expert.scope,
     "",
-    "TASK",
+    "NHIỆM VỤ",
     mode === "Furniture" ? "Replace only the selected furniture: " + target :
     mode === "Material" ? "Change only the selected material surface: " + target :
     mode === "Lighting" ? "Change only the selected lighting system: " + target :
     "Change only the camera view: " + target,
     "",
-    "DESIGN LOGIC",
+    "LOGIC THIẾT KẾ",
     expert.principles.map(x => "• " + x).join("\n"),
     "",
-    "PROCESS",
+    "QUY TRÌNH SUY LUẬN",
     expert.protocol.map((x,i) => (i + 1) + ". " + x).join("\n"),
     "",
-    "DECISIONS",
-    decisionLines || "• Apply expert principles to the user's intent."
+    "QUYẾT ĐỊNH",
+    decisionLines || "• Áp dụng nguyên tắc chuyên môn vào ý đồ của Ốc."
   );
 
   if (mode === "Furniture") {
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
     body.push(
       "",
-      "REFERENCE",
-      "• Use supplied model images only for the selected furniture.",
-      "• Reconcile multiple views into one coherent model.",
-      "• Preserve identity, silhouette and construction according to the selected decisions.",
+      "NGUỒN THAM CHIẾU",
+      "• Chỉ sử dụng ảnh mẫu được cung cấp cho đúng đồ nội thất được chọn.",
+      "• Tổng hợp nhiều góc nhìn thành một mẫu nội thất duy nhất, nhất quán.",
+      "• Bảo toàn nhận diện, silhouette và cấu tạo theo các quyết định đã chọn.",
       "",
-      "EXECUTION",
+      "THỰC THI CHỈNH SỬA",
       "• " + f.editRule,
       "• " + f.realism,
       "• " + f.referenceRule
@@ -344,7 +344,7 @@ export function buildDirection({
     const md = materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles});
     body.push(
       "",
-      "EXECUTION",
+      "THỰC THI CHỈNH SỬA",
       "• " + m.rule,
       "• " + m.realism.join("\n• "),
       ...md.checks.map(x => "• " + x)
@@ -353,41 +353,41 @@ export function buildDirection({
     const ld = lightingDecisionEngine({target, brief, decisions, analysis, referenceRoles});
     body.push(
       "",
-      "EXECUTION",
-      "• Design source, direction, intensity, temperature, falloff, contrast, shadow and bounce.",
+      "THỰC THI CHỈNH SỬA",
+      "• Xử lý nguồn sáng, hướng sáng, cường độ, nhiệt độ màu, độ suy giảm, tương phản, bóng đổ và ánh sáng phản xạ.",
       "• " + ld.checks.join("\n• ")
     );
   } else {
     const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
     body.push(
       "",
-      "EXECUTION",
-      "• Determine position, height, lens/FOV, perspective, framing, verticals and depth.",
+      "THỰC THI CHỈNH SỬA",
+      "• Xác định vị trí, độ cao, tiêu cự/FOV, phối cảnh, bố cục, đường đứng và chiều sâu.",
       "• " + cd.checks.join("\n• ")
     );
   }
 
   body.push(
     "",
-    "CONTEXT",
-    "• User intent: " + ((brief || "").trim() || "No additional direction."),
-    "• Design intent selections: " + (Object.entries(relevantParams).filter(([k,v]) => v && !k.endsWith("Meaning")).map(([k,v]) => k + "=" + v).join(" | ") || "None"),
-    "• Design intent semantics: " + (Object.entries(relevantParams).filter(([k,v]) => v && k.endsWith("Meaning")).map(([k,v]) => k + "=" + v).join(" | ") || "None"),
+    "BỐI CẢNH",
+    "• Ý đồ của Ốc: " + ((brief || "").trim() || "Không có yêu cầu bổ sung."),
+    "• Lựa chọn ý đồ thiết kế: " + (Object.entries(relevantParams).filter(([k,v]) => v && !k.endsWith("Meaning")).map(([k,v]) => k + "=" + v).join(" | ") || "Không có"),
+    "• Ý nghĩa chuyên môn của ý đồ thiết kế: " + (Object.entries(relevantParams).filter(([k,v]) => v && k.endsWith("Meaning")).map(([k,v]) => k + "=" + v).join(" | ") || "Không có"),
     "",
-    "PRESERVE",
+    "KHÓA BẢO TOÀN",
     ...modeData.safeguards.map(x => "• " + x),
     ...expert.qualityGates.map(x => "• " + x),
-    "• Keep all non-target domains unchanged.",
-    "• Do not solve problems by changing another expert's domain.",
+    "• Giữ nguyên toàn bộ các lĩnh vực không nằm trong phạm vi chỉnh sửa.",
+    "• Không giải quyết vấn đề bằng cách thay đổi phạm vi chuyên môn của chuyên gia khác.",
     "",
-    "AI FORMAT",
-    "• Target platform: " + aiTarget,
-    "• Format: " + adapter.format,
-    "• Structure: " + adapter.order.join(" → "),
-    "• Adapter: " + (aiProfile || "Use the selected platform structure."),
+    "ĐỊNH DẠNG THEO NỀN TẢNG AI",
+    "• Nền tảng AI: " + aiTarget,
+    "• Cách định dạng: " + adapter.format,
+    "• Cấu trúc: " + adapter.order.join(" → "),
+    "• Bộ định dạng: " + (aiProfile || "Sử dụng cấu trúc phù hợp với nền tảng AI đã chọn."),
     "",
-    "OUTPUT",
-    "Return one concise production-ready image-editing prompt only. Do not generate the image."
+    "ĐẦU RA",
+    "Chỉ trả về một yêu cầu chỉnh sửa ảnh hoàn chỉnh, rõ ràng và có thể sử dụng ngay. Không tạo ảnh."
   );
 
   return {analysis, reasoning, prompt: body.join("\n")};
