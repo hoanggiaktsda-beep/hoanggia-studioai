@@ -42,7 +42,9 @@ export function buildDirection({
   params = {},
   decisions = {},
   model = {},
-  referenceRoles = ""
+  referenceRoles = "",
+  aiTarget = "ChatGPT",
+  aiProfile = ""
 }) {
   const relevantParams = { Furniture: { style: params.style || "" }, Material: { style: params.style || "" }, Lighting: { lighting: params.lighting || "" }, Camera: { view: params.view || "", camera: params.camera || "" } }[mode] || {};
   const analysis = analyzeBrief(brief, mode, output, camera);
@@ -204,6 +206,10 @@ export function buildDirection({
     "• No warped geometry, impossible construction or invented unrelated details.",
     "• Preserve physically coherent scale, contact, occlusion and perspective.",
     "• Never solve a problem in a locked domain by changing that domain.",
+    "",
+    "AI OUTPUT TARGET",
+    "• Platform: " + aiTarget,
+    "• " + (aiProfile || "Use concise production-ready image-editing instructions."),
     "",
     "OUTPUT RULE",
     "Return a production-ready image-editing prompt only. Do not generate the image."
