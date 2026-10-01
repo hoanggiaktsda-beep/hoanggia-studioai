@@ -33,27 +33,25 @@ const modelSchema={
 
 const decisions={
  Furniture:[
-  ["direction","Hướng thay đổi",["Thay bằng model cung cấp","Thay bằng thiết kế mới","Tinh chỉnh model hiện tại"]],
-  ["fit","Mức độ can thiệp",["Giữ nguyên diện tích chiếm chỗ","Điều chỉnh vừa không gian","Ưu tiên đúng tỷ lệ model"]],
-  ["character","Ngôn ngữ thiết kế",["Giữ nguyên phong cách không gian","Hiện đại sang trọng","Tối giản sang trọng","Đương đại","Tân cổ điển đương đại"]]
+  ["identity","Mục tiêu thay đồ",["Thay đúng model cung cấp","Thay model tương đương","Tinh chỉnh model hiện tại"]],
+  ["fit","Tỷ lệ & công năng",["Giữ nguyên tỷ lệ model","Điều chỉnh vừa không gian","Ưu tiên công thái học"]],
+  ["placement","Vị trí & lưu thông",["Giữ footprint hiện tại","Tối ưu khoảng lưu thông","Khớp chính xác vị trí đồ cũ"]]
  ],
  Material:[
-  ["change","Mục tiêu vật liệu",["Thay hoàn toàn","Tinh chỉnh tông màu","Nâng cấp bề mặt","Đổi vật liệu nhưng giữ cấu tạo"]],
-  ["finish","Bề mặt",["Tự nhiên / mờ","Bán bóng","Bóng cao","Xước / có vân"]],
-  ["character","Cảm giác",["Ấm và tự nhiên","Tinh tế / tiết chế","Sang trọng","Tương phản mạnh"]]
+  ["boundary","Phạm vi vật liệu",["Chỉ thay bề mặt","Thay toàn bộ hệ vật liệu","Đổi vật liệu nhưng giữ cấu tạo"]],
+  ["finish","Bề mặt & phản xạ",["Tự nhiên / mờ","Bán bóng","Bóng cao"]],
+  ["junction","Liên kết vật liệu",["Giữ nguyên mối nối","Ưu tiên liên tục vân / mạch","Nhấn mạnh chi tiết cạnh / khe"]]
  ],
  Lighting:[
-  ["mood","Bầu không khí",["Sang trọng ấm áp","Ánh sáng ban ngày trung tính","Mềm như ảnh biên tập","Tương phản mạnh","Nhà ở thư thái"]],
-  ["source","Nguồn sáng",["Giữ nguồn sáng hiện tại","Ưu tiên ánh sáng tự nhiên","Ưu tiên ánh sáng nhân tạo","Chiếu sáng nhiều lớp"]],
-  ["contrast","Độ tương phản",["Mềm","Cân bằng","Mạnh"]]
+  ["mood","Không khí ánh sáng",["Sang trọng ấm áp","Tự nhiên trung tính","Mềm như ảnh biên tập","Tương phản mạnh"]],
+  ["source","Thứ bậc nguồn sáng",["Giữ nguồn sáng hiện tại","Tự nhiên chủ đạo","Nhân tạo chủ đạo","Chiếu sáng nhiều lớp"]],
+  ["contrast","Tương phản & bóng",["Mềm","Cân bằng","Mạnh"]]
  ],
  Camera:[
-  ["view","Ý đồ góc nhìn",["Giữ góc hiện tại","Rộng hơn để thấy không gian","Tập trung vật thể","Góc chụp biên tập","Góc chụp kiến trúc"]],
-  ["lens","Cảm giác tiêu cự",["Kiến trúc tự nhiên","Góc rộng 24–28mm","Cân bằng 35mm","Chi tiết 50mm"]],
-  ["height","Cao độ máy",["Ngang tầm mắt","Góc máy thấp","Góc máy cao","Cận chi tiết"]]
- ]
-};
-
+  ["view","Câu chuyện không gian",["Giữ góc hiện tại","Mở rộng để đọc không gian","Tập trung đối tượng","Góc chụp kiến trúc"]],
+  ["lens","Tiêu cự / FOV",["Kiến trúc tự nhiên","Góc rộng có kiểm soát","35mm cân bằng","50mm chi tiết"]],
+  ["height","Cao độ & khung hình",["Ngang tầm mắt","Thấp / gần trải nghiệm","Cao / đọc tổng thể","Cận chi tiết"]]
+ ];
 function setPreview(input,preview,placeholder,label){
  input.addEventListener("change",()=>{const f=input.files?.[0];if(!f)return;preview.src=URL.createObjectURL(f);preview.classList.add("visible");placeholder.classList.add("hidden");brainStatus.textContent=label+" đã tải";});
 }
@@ -123,7 +121,7 @@ function updateCount(){
 decisionControls.addEventListener("change",updateCount);
 
 const modeTemplates={
- Furniture:()=>`<div class="mode-control-grid furniture-advanced">
+ Furniture:()=>`<div class="expert-controls-head"><span>KIỂM SOÁT CHUYÊN MÔN</span><small>Chỉ dùng khi cần tinh chỉnh cách Expert triển khai quyết định.</small></div><div class="mode-control-grid furniture-advanced">
  <div class="field"><label>Cách thay đồ</label><select data-param="replacementMethod"><option>Thay đúng model cung cấp</option><option>Thay model tương đương theo ngôn ngữ thiết kế</option><option>Tinh chỉnh model hiện tại</option></select></div>
  <div class="field"><label>Khóa nhận diện model</label><select data-param="identityLock"><option>Khóa tuyệt đối silhouette + cấu tạo</option><option>Khóa silhouette + chi tiết đặc trưng</option><option>Khóa ngôn ngữ thiết kế</option></select></div>
  <div class="field"><label>Xử lý tỷ lệ</label><select data-param="scalePolicy"><option>Giữ nguyên tỷ lệ model</option><option>Điều chỉnh vừa không gian nhưng không đổi thiết kế</option><option>Ưu tiên tỷ lệ model so với đồ cũ</option></select></div>
@@ -131,11 +129,10 @@ const modeTemplates={
  <div class="field"><label>Kiểm tra cấu tạo</label><select data-param="construction"><option>Kiến trúc / có thể thi công</option><option>Giữ chi tiết liên kết nhìn thấy</option><option>Can thiệp cấu trúc tối thiểu</option></select></div>
  <div class="field"><label>Vật liệu model</label><select data-param="modelMaterial"><option>Giữ nguyên vật liệu model</option><option>Giữ cấu tạo, cho phép đổi bề mặt</option><option>Ưu tiên vật liệu theo ảnh tham chiếu</option></select></div>
  </div>`,
- Material:()=>`<div class="mode-control-grid"><div class="field"><label>Tỷ lệ vân / texture</label><select data-param="texture"><option>Tỷ lệ thực tế theo kiến trúc</option><option>Vân mịn</option><option>Vân / đường đá nổi bật</option></select></div><div class="field"><label>Ưu tiên vật liệu</label><select data-param="materialPriority"><option>Ưu tiên tính chân thực</option><option>Ưu tiên ảnh tham chiếu</option><option>Ưu tiên tính liên tục kiến trúc</option></select></div></div>`,
- Lighting:()=>`<div class="mode-control-grid"><div class="field"><label>Nhiệt độ màu</label><select data-param="temperature"><option>2700–3000K · ấm</option><option>3500–4000K · trung tính</option><option>5000–6500K · ánh sáng ban ngày</option></select></div><div class="field"><label>Thứ bậc ánh sáng</label><select data-param="hierarchy"><option>Nhiều lớp / kiến trúc</option><option>Ánh sáng tự nhiên chủ đạo</option><option>Ánh sáng nhân tạo chủ đạo</option></select></div></div>`,
- Camera:()=>`<div class="mode-control-grid camera-advanced"><div class="field"><label>Phối cảnh</label><select data-param="perspective"><option>Kiến trúc tự nhiên</option><option>Hiệu chỉnh đường đứng</option><option>Góc rộng có kiểm soát</option></select></div><div class="field"><label>Bố cục</label><select data-param="composition"><option>Giữ thứ bậc thiết kế</option><option>Ưu tiên đối tượng chính</option><option>Ưu tiên toàn cảnh không gian</option></select></div><div class="field"><label>Chiều sâu</label><select data-param="depth"><option>Tiền · trung · hậu cảnh rõ</option><option>Ưu tiên chiều sâu tự nhiên</option><option>Tập trung lớp chủ thể</option></select></div><div class="field"><label>Đường đứng</label><select data-param="verticalControl"><option>Giữ thẳng kiến trúc</option><option>Hiệu chỉnh phối cảnh</option><option>Tự nhiên theo góc máy</option></select></div></div>`
+ Material:()=>`<div class="expert-controls-head"><span>KIỂM SOÁT CHUYÊN MÔN</span><small>Chi tiết kỹ thuật của hệ vật liệu.</small></div><div class="mode-control-grid"><div class="field"><label>Tỷ lệ vân / texture</label><select data-param="texture"><option>Tỷ lệ thực tế theo kiến trúc</option><option>Vân mịn</option><option>Vân / đường đá nổi bật</option></select></div><div class="field"><label>Ưu tiên vật liệu</label><select data-param="materialPriority"><option>Ưu tiên tính chân thực</option><option>Ưu tiên ảnh tham chiếu</option><option>Ưu tiên tính liên tục kiến trúc</option></select></div></div>`,
+ Lighting:()=>`<div class="expert-controls-head"><span>KIỂM SOÁT CHUYÊN MÔN</span><small>Chi tiết kỹ thuật của hệ ánh sáng.</small></div><div class="mode-control-grid"><div class="field"><label>Nhiệt độ màu</label><select data-param="temperature"><option>2700–3000K · ấm</option><option>3500–4000K · trung tính</option><option>5000–6500K · ánh sáng ban ngày</option></select></div><div class="field"><label>Thứ bậc ánh sáng</label><select data-param="hierarchy"><option>Nhiều lớp / kiến trúc</option><option>Ánh sáng tự nhiên chủ đạo</option><option>Ánh sáng nhân tạo chủ đạo</option></select></div></div>`,
+ Camera:()=>`<div class="expert-controls-head"><span>KIỂM SOÁT CHUYÊN MÔN</span><small>Chi tiết kỹ thuật của camera và phối cảnh.</small></div><div class="mode-control-grid camera-advanced"><div class="field"><label>Phối cảnh</label><select data-param="perspective"><option>Kiến trúc tự nhiên</option><option>Hiệu chỉnh đường đứng</option><option>Góc rộng có kiểm soát</option></select></div><div class="field"><label>Bố cục</label><select data-param="composition"><option>Giữ thứ bậc thiết kế</option><option>Ưu tiên đối tượng chính</option><option>Ưu tiên toàn cảnh không gian</option></select></div><div class="field"><label>Chiều sâu</label><select data-param="depth"><option>Tiền · trung · hậu cảnh rõ</option><option>Ưu tiên chiều sâu tự nhiên</option><option>Tập trung lớp chủ thể</option></select></div><div class="field"><label>Đường đứng</label><select data-param="verticalControl"><option>Giữ thẳng kiến trúc</option><option>Hiệu chỉnh phối cảnh</option><option>Tự nhiên theo góc máy</option></select></div></div>`
 };
-
 function params(){return Object.fromEntries([...modeControls.querySelectorAll("[data-param]")].map(x=>[x.dataset.param,x.value]));}
 function renderExpert(mode){
  const e=expertFor(mode);
