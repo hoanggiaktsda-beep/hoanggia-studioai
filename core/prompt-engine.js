@@ -329,106 +329,68 @@ export function buildDirection({
   const body = [];
 
   const adapter = AI_PROMPT_ADAPTERS[aiTarget] || AI_PROMPT_ADAPTERS["Khác"];
+  const task = mode === "Furniture"
+    ? "Replace only the selected furniture: " + target
+    : mode === "Material"
+      ? "Change only the selected material surface: " + target
+      : mode === "Lighting"
+        ? "Change only the selected lighting system: " + target
+        : mode === "Camera"
+          ? "Change only the camera view: " + target
+          : "Synchronize the whole space using the combined principles of Citterio, Zumthor, Maurer and Baan: " + target;
 
   body.push(
-    "CHUYÊN GIA",
-    expert.name + " — " + expert.role,
-    "PHẠM VI CHUYÊN MÔN",
+    "Create and edit the image according to the following professional design direction.",
+    task + ".",
     expert.scope,
-    "",
-    "NHIỆM VỤ",
-    mode === "Furniture" ? "Replace only the selected furniture: " + target :
-    mode === "Material" ? "Change only the selected material surface: " + target :
-    mode === "Lighting" ? "Change only the selected lighting system: " + target :
-    mode === "Camera" ? "Change only the camera view: " + target :
-    "Synchronize the whole space using the combined principles of Citterio, Zumthor, Maurer and Baan: " + target,
-    "",
-    "LOGIC THIẾT KẾ",
-    expert.principles.map(x => "• " + x).join("\n"),
-    "",
-    "QUY TRÌNH SUY LUẬN",
-    expert.protocol.map((x,i) => (i + 1) + ". " + x).join("\n"),
-    "",
-    "QUYẾT ĐỊNH",
-    decisionLines || "• Áp dụng nguyên tắc chuyên môn vào ý đồ của Ốc."
+    expert.principles.join(" "),
+    expert.protocol.map((x,i) => (i + 1) + ") " + x).join(" "),
+    decisionLines ? "Apply these decisions exactly: " + decisionLines.replace(/• /g, "").replace(/\\n/g, "; ") + "." : "Apply the expert principles directly to the user's brief.",
   );
 
   if (mode === "Furniture") {
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
     body.push(
-      "",
-      "NGUỒN THAM CHIẾU",
-      "• Chỉ sử dụng ảnh mẫu được cung cấp cho đúng đồ nội thất được chọn.",
-      "• Tổng hợp nhiều góc nhìn thành một mẫu nội thất duy nhất, nhất quán.",
-      "• Bảo toàn nhận diện, silhouette và cấu tạo theo các quyết định đã chọn.",
-      "",
-      "THỰC THI CHỈNH SỬA",
-      "• " + f.editRule,
-      "• " + f.realism,
-      "• " + f.referenceRule
+      "Use only the supplied reference images for the selected furniture and reconcile all supplied views into one coherent model identity.",
+      f.editRule + " " + f.realism + " " + f.referenceRule
     );
   } else if (mode === "Material") {
     const m = materialDirection(analysis);
     const md = materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles});
     body.push(
-      "",
-      "THỰC THI CHỈNH SỬA",
-      "• " + m.rule,
-      "• " + m.realism.join("\n• "),
-      ...md.checks.map(x => "• " + x)
+      m.rule,
+      md.checks.join(" ")
     );
   } else if (mode === "Lighting") {
     const ld = lightingDecisionEngine({target, brief, decisions, analysis, referenceRoles});
     body.push(
-      "",
-      "THỰC THI CHỈNH SỬA",
-      "• Xử lý nguồn sáng, hướng sáng, cường độ, nhiệt độ màu, độ suy giảm, tương phản, bóng đổ và ánh sáng phản xạ.",
-      "• " + ld.checks.join("\n• ")
+      "Control source, direction, intensity, color temperature, falloff, contrast, shadows and reflected light.",
+      ld.checks.join(" ")
     );
   } else if (mode === "Camera") {
     const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
     body.push(
-      "",
-      "THỰC THI CHỈNH SỬA",
-      "• Xác định vị trí, độ cao, tiêu cự/FOV, phối cảnh, bố cục, đường đứng và chiều sâu.",
-      "• " + cd.checks.join("\n• ")
+      "Control camera position, height, focal length/FOV, perspective, framing, verticals and depth.",
+      cd.checks.join(" ")
     );
   } else {
     body.push(
-      "",
-      "THỰC THI ĐỒNG BỘ KHÔNG GIAN",
-      "• LỚP 01 — CITTERIO / NỘI THẤT: kiểm soát tỷ lệ, công năng, ergonomics, silhouette, cấu tạo và lưu thông.",
-      "• LỚP 02 — ZUMTHOR / VẬT LIỆU: kiểm soát texture, chiều sâu, mối nối, phản xạ và sự hiện diện của vật liệu.",
-      "• LỚP 03 — MAURER / ÁNH SÁNG: kiểm soát nguồn sáng, hướng sáng, tương phản, bóng đổ, phản xạ và atmosphere.",
-      "• LỚP 04 — BAAN / GÓC NHÌN: kiểm soát viewpoint, chiều cao, lens, perspective, framing và narrative.",
-      "• LỚP 05 — SYNCHRONIZE: đối chiếu 4 lớp trên và giải quyết xung đột bằng sự cân bằng của toàn bộ không gian.",
-      "• Không tối ưu riêng một lớp nếu kết quả làm phá vỡ tỷ lệ, vật liệu, ánh sáng, góc nhìn hoặc công năng của các lớp còn lại.",
-      "• Giữ nguyên identity của từng thành phần; chỉ điều chỉnh quan hệ giữa các thành phần khi cần để tạo một hệ không gian thống nhất."
+      "Synthesize the four independent expert layers: Citterio for furniture and spatial proportion; Zumthor for material presence and junctions; Maurer for light and atmosphere; Baan for viewpoint, perspective and architectural narrative.",
+      "Synchronize the four layers without allowing one layer to damage another, without inventing architecture, and while preserving the identity of each existing component."
     );
   }
 
   body.push(
-    "",
-    "BỐI CẢNH",
-    "• Ý đồ của Ốc: " + ((brief || "").trim() || "Không có yêu cầu bổ sung."),
-    "• Lựa chọn ý đồ thiết kế: " + (Object.entries(relevantParams).filter(([k,v]) => v && !k.endsWith("Meaning")).map(([k,v]) => k + "=" + v).join(" | ") || "Không có"),
-    "• Ý nghĩa chuyên môn của ý đồ thiết kế: " + (Object.entries(relevantParams).filter(([k,v]) => v && k.endsWith("Meaning")).map(([k,v]) => k + "=" + v).join(" | ") || "Không có"),
-    "",
-    "KHÓA BẢO TOÀN",
-    ...modeData.safeguards.map(x => "• " + x),
-    ...expert.qualityGates.map(x => "• " + x),
-    "• Giữ nguyên toàn bộ các lĩnh vực không nằm trong phạm vi chỉnh sửa.",
-    "• Không giải quyết vấn đề bằng cách thay đổi phạm vi chuyên môn của một Expert riêng lẻ; SpaceSync chỉ tổng hợp và cân bằng 4 lớp.",
-    "",
-    "ĐỊNH DẠNG THEO NỀN TẢNG AI",
-    "• Nền tảng AI: " + aiTarget,
-    "• Cách định dạng: " + adapter.format,
-    "• Cấu trúc: " + adapter.order.join(" → "),
-    "• Bộ định dạng: " + (aiProfile || "Sử dụng cấu trúc phù hợp với nền tảng AI đã chọn."),
-    "",
-    "ĐẦU RA",
-    "Chỉ trả về một yêu cầu chỉnh sửa ảnh hoàn chỉnh, rõ ràng và có thể sử dụng ngay. Không tạo ảnh."
+    "User brief: " + ((brief || "").trim() || "No additional request."),
+    "Design intent: " + (Object.entries(relevantParams).filter(([k,v]) => v && !k.endsWith("Meaning")).map(([k,v]) => k + "=" + v).join(" | ") || "Keep the existing design intent."),
+    "Professional interpretation: " + (Object.entries(relevantParams).filter(([k,v]) => v && k.endsWith("Meaning")).map(([k,v]) => v).join(" | ") || "Preserve the existing design language."),
+    modeData.safeguards.join(" "),
+    expert.qualityGates.join(" "),
+    "Preserve every area outside the requested intervention. Do not redesign unrelated furniture, architecture or other expert domains.",
+    "Target platform: " + aiTarget + ". Format the instruction for fast, advanced image editing with concise target/change/constraints, strong reference consistency and physical realism.",
+    "Generate the final edited image while preserving the supplied scene, references and selected constraints exactly."
   );
 
+  const prompt = body.join(" ").replace(/\\s+/g, " ").trim();
   return {analysis, reasoning, prompt: body.join("\n")};
 }
