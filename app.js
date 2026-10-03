@@ -70,6 +70,7 @@ const aiTargetProfiles = {
   "Khác": "Format as a concise production-ready image-editing prompt that clearly states the target, changes, preservation and realism."
 };
 let referenceFiles = [];
+let sceneFile = null;
 let referenceMeta = [];
 let syncReferenceFile = null;
 let syncTargetFiles = [];
@@ -118,6 +119,13 @@ const decisions = {
     ["composition","Bảo toàn composition","Ưu tiên thị giác cần giữ trong khung mới.",["Khóa composition gốc","Giữ chủ thể chính","Giữ architectural hierarchy","Cho phép cân lại nhẹ"]],
     ["grid","Grid / Balance","Hệ bố cục dùng để kiểm tra khung đầu ra.",["Theo composition hiện tại","Central balance","Rule of thirds","Architectural grid","Negative-space balance","Expert tự quyết định"]]
   ],
+  ReferenceReplica: [
+    ["fidelity","Reference Fidelity","Mức độ khóa ảnh tham chiếu làm nguồn sự thật.",["Maximum · khóa toàn bộ phần không được phép thay","High · ưu tiên khớp toàn cảnh","Controlled · cho phép thích nghi tối thiểu"]],
+    ["target","Sản phẩm cần thay","Xác định đúng sản phẩm trong reference được cấp quyền Product Override.",["Sofa","Armchair","Bàn trà","Bàn bên","Bàn ăn","Ghế ăn","Giường","Tủ / kệ","Đèn","Khác"]],
+    ["identity","Product Identity","Mức độ giữ đúng sản phẩm được cung cấp.",["Giữ 100% silhouette + cấu tạo + chi tiết","Giữ silhouette + chi tiết đặc trưng","Giữ ngôn ngữ thiết kế"]],
+    ["fit","Spatial Fit","Cách tích hợp sản phẩm mới vào scene reference.",["Giữ vị trí + footprint của sản phẩm gốc","Khớp tỷ lệ + floor contact + occlusion","Cho phép thích nghi kích thước tối thiểu"]],
+    ["photography","Photography Match","Mức khóa nhiếp ảnh của reference.",["Khóa camera + lens/FOV + perspective + framing","Khóa perspective + framing","Khóa composition tổng thể"]]
+  ],
   SpaceSync: [
     ["alignment","Trục & căn chỉnh","Đồng bộ các trục kiến trúc và đường chuẩn.",["Ưu tiên trục kiến trúc hiện hữu","Căn chỉnh đồ nội thất + kiến trúc","Cho phép tinh chỉnh nhẹ theo hệ trục"]],
     ["circulation","Lưu thông & khoảng thở","Bảo vệ đường đi và vùng sử dụng.",["Giữ nguyên lưu thông hiện tại","Tối ưu luồng di chuyển","Ưu tiên khoảng thở và chuyển tiếp"]],
@@ -161,6 +169,11 @@ const intentByMode = {
     placeholder: "Ví dụ: chuyển ảnh sang 16:9 bằng mở rộng canvas hai bên, giữ toàn bộ kiến trúc, nội thất, ánh sáng và perspective...",
     chips: ["giữ toàn bộ ảnh gốc","ưu tiên mở rộng canvas","không crop chủ thể","không thay camera / perspective"]
   },
+  ReferenceReplica: {
+    hint: "Reference là nguồn sự thật. Chỉ sản phẩm được cấp quyền mới được khác; Van Duysen khóa scene/design và Baan khóa camera/perspective.",
+    placeholder: "Ví dụ: sao chép reference với fidelity tối đa, chỉ thay sofa trong reference bằng đúng model sofa cung cấp; giữ nguyên mọi yếu tố còn lại...",
+    chips: ["reference = source of truth","chỉ thay sản phẩm được cấp quyền","khóa camera / perspective","không redesign / restyle"]
+  },
   SpaceSync: {
     hint: "Mô tả cách Ốc muốn toàn bộ không gian đồng bộ. Expert sẽ điều phối trục, tỷ lệ, lưu thông, tầm nhìn và hierarchy.",
     placeholder: "Ví dụ: đồng bộ sofa, bàn trà, đèn và vách theo trục kiến trúc, giữ lối đi và tạo hierarchy rõ...",
@@ -185,6 +198,7 @@ function setPreview(input, preview, placeholder, label) {
   });
 }
 setPreview(sceneInput, scenePreview, scenePlaceholder, "Ảnh không gian");
+sceneInput?.addEventListener("change", () => { sceneFile = sceneInput.files?.[0] || null; });
 
 function referenceMetaDefaults() {
   return {
@@ -431,6 +445,7 @@ document.getElementById("newProject")?.addEventListener("click", () => {
   renderAITargets();
   referenceFiles = [];
   referenceMeta = [];
+  sceneFile = null;
   syncReferenceFile = null;
   syncTargetFiles = [];
   syncTargetNotes = [];
@@ -458,7 +473,9 @@ document.getElementById("generate")?.addEventListener("click", () => {
   const firstModel = referenceMeta[0]?.model || "selected furniture";
   const target = currentMode === "Furniture"
     ? firstModel
-    : currentMode === "Material"
+    : currentMode === "ReferenceReplica"
+      ? (referenceMeta[0]?.model || decisionsNow.target || "authorized product")
+      : currentMode === "Material"
       ? "selected material surface"
       : currentMode === "Lighting"
         ? "selected lighting system"
@@ -471,11 +488,20 @@ document.getElementById("generate")?.addEventListener("click", () => {
               : "selected spatial system";
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
   const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}`).join(" | ");
+  const replicaReferenceRoles = currentMode === "ReferenceReplica"
+    ? "SCENE REFERENCE / SOURCE OF TRUTH: " + (sceneFile?.name || "missing") + " | AUTHORIZED REPLACEMENT PRODUCT REFERENCES: " + (referenceRoles || "missing")
+    : referenceRoles;
   const params = { ...designIntent() };
   const output = "production prompt";
   const camera = {};
   const replacement = brief?.value?.trim() || "";
   try {
+    if (currentMode === "ReferenceReplica" && !sceneFile) {
+      throw new Error("Reference Replica cần 1 ảnh tham chiếu scene làm Source of Truth.");
+    }
+    if (currentMode === "ReferenceReplica" && !referenceFiles.length) {
+      throw new Error("Reference Replica cần ít nhất 1 ảnh sản phẩm thay thế được cung cấp.");
+    }
     if (currentMode === "Removal" && decisionsNow.object === "Khác" && !decisionsNow.customObject) {
       throw new Error("Hãy mô tả vật thể Ốc muốn loại bỏ.");
     }
@@ -544,7 +570,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
       params,
       decisions: decisionsNow,
       model,
-      referenceRoles,
+      referenceRoles: replicaReferenceRoles,
       aiTarget: selectedAITarget,
       aiProfile: aiTargetProfiles[selectedAITarget] || aiTargetProfiles["Khác"]
     });

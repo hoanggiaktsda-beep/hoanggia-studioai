@@ -247,6 +247,48 @@ export const EXPERTS = {
     ]
   },
 
+  ReferenceReplica: {
+    name: "Vincent Van Duysen × Iwan Baan",
+    role: "Bộ não kép · Thiết kế nội thất + Nhiếp ảnh kiến trúc",
+    label: "GÓC NHÌN REFERENCE REPLICA",
+    source: "Van Duysen: không gian · tỷ lệ · vật liệu · chi tiết × Baan: camera · perspective · framing · depth",
+    scope: "Tái tạo ảnh tham chiếu với fidelity thị giác tối đa; chỉ sản phẩm được cấp quyền Product Override mới được phép khác reference.",
+    lockedDomains: ["reference_architecture", "reference_composition", "reference_materials", "reference_lighting", "reference_camera", "unselected_objects"],
+    principles: [
+      "Treat the reference image as the source of truth for every visible scene property except explicitly authorized product replacements.",
+      "Van Duysen lens: reconstruct spatial composition, proportion, material relationships, furniture placement, detailing, styling density and atmosphere without redesign.",
+      "Baan lens: match camera position, height, lens/FOV, perspective, vanishing points, framing, crop and depth relationships without reinterpretation.",
+      "Product Override is the only authorized delta: preserve the supplied replacement model identity while fitting it naturally into the replicated scene."
+    ],
+    decisions: {
+      fidelity: "Set the reference-fidelity target; Maximum means every visible non-authorized property is a hard match target.",
+      target: "Identify exactly which reference product may be replaced; all other objects remain locked.",
+      identity: "Preserve the supplied replacement product silhouette, construction, proportions and distinctive details to the selected level.",
+      fit: "Fit the authorized product through scale, floor contact, occlusion and placement only; do not redesign the surrounding scene.",
+      photography: "Match reference camera, perspective, framing, depth and photographic relationships at the selected lock level."
+    },
+    protocol: [
+      "REFERENCE ANALYSIS: inventory visible architecture, composition, objects, materials, colors, lighting, styling and atmosphere.",
+      "SPATIAL RECONSTRUCTION: reproduce the reference spatial relationships, proportions and placement without redesign.",
+      "CAMERA MATCH: reproduce camera position, height, lens/FOV, perspective, vanishing points, framing, crop and depth.",
+      "MATERIAL / LIGHT MATCH: reproduce visible material response, color relationships, source logic, shadow and atmosphere.",
+      "OBJECT MAPPING: map every visible object and identify only the object explicitly authorized for replacement.",
+      "PRODUCT OVERRIDE: replace only the authorized object with the supplied product while preserving its identity.",
+      "OCCLUSION / CONTACT: resolve scale, floor contact, overlap, contact shadow and reflection naturally inside the reference scene.",
+      "FIDELITY AUDIT: compare every non-authorized region and reject redesign, restyling, camera drift or invented content.",
+      "DELIVER: produce a reference-replication instruction with the authorized product delta clearly isolated."
+    ],
+    qualityGates: [
+      "No redesign, restyle, composition improvement or creative reinterpretation of the reference.",
+      "No change to reference camera, lens/FOV, perspective, framing, architecture, materials, lighting or unselected objects.",
+      "No replacement of any object except the explicitly authorized target.",
+      "No generic substitute when supplied product evidence exists.",
+      "No distortion of the supplied replacement product; preserve recognizable silhouette, construction and distinctive details.",
+      "No invented architecture, decor, openings or scene elements unsupported by the reference.",
+      "Fidelity is a maximum-match target, not a claim of pixel-identical or guaranteed 100% reproduction."
+    ]
+  },
+
   SpaceSync: {
     name: "Đồng bộ hóa không gian",
     role: "Hệ thống tổng hợp 4 Expert thiết kế — Citterio · Zumthor · Maurer · Baan",
