@@ -294,6 +294,7 @@ export function buildDirection({
     Furniture: { spaceType: params.spaceType || "", style: params.style || "", styleMeaning: intentMeaning.style },
     Material: { style: params.style || "", styleMeaning: intentMeaning.style },
     Lighting: { lighting: params.lighting || "", lightingMeaning: intentMeaning.lighting },
+    Removal: { spaceType: params.spaceType || "" },
     Camera: {
       view: params.view || "",
       viewMeaning: intentMeaning.view,
@@ -347,7 +348,9 @@ export function buildDirection({
         ? "Change only the selected lighting system: " + target
         : mode === "Camera"
           ? "Change only the camera view: " + target
-          : "Synchronize the whole space using Citterio, Zumthor, Maurer and Baan: " + target;
+          : mode === "Removal"
+            ? "Remove only the selected object(s): " + target
+            : "Synchronize the whole space using Citterio, Zumthor, Maurer and Baan: " + target;
 
   if (mode === "Furniture") {
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
@@ -359,6 +362,17 @@ export function buildDirection({
   } else if (mode === "Lighting") {
     const ld = lightingDecisionEngine({target, brief, decisions, analysis, referenceRoles});
     body.push(task + ".", "Control source, direction, intensity, color temperature, falloff, contrast and shadows.", ld.checks.join(" "));
+  } else if (mode === "Removal") {
+    body.push(
+      task + ".",
+      "Completely remove only the authorized object(s), including residual fragments.",
+      "Reconstruct only the surfaces that were physically occluded by those objects, using surrounding visual evidence.",
+      "Maintain floor/wall/baseboard/material pattern, joints, texture scale, perspective and lighting continuity.",
+      "Remove only contact shadows and reflections caused by the deleted objects.",
+      "Preserve architecture, room geometry, openings, materials, lighting, camera, perspective and every unselected object exactly as shown.",
+      "Do not replace removed objects, add furniture or decor, redesign the space, restyle the image or invent architectural details.",
+      "If hidden geometry is uncertain, use the simplest plausible continuation supported by nearby evidence."
+    );
   } else if (mode === "Camera") {
     const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
     const cc = relevantParams.cameraContext || {};
