@@ -336,7 +336,8 @@ function renderDecisions(mode) {
 
 function updateCount() {
   const total = (decisions[currentMode] || []).length;
-  const count = Object.values(selectedDecisions()).filter(Boolean).length;
+  const selected = selectedDecisions();
+  const count = (decisions[currentMode] || []).filter(([key]) => Boolean(selected[key])).length;
   if (decisionCount) decisionCount.textContent = count + " / " + total;
 }
 
@@ -478,8 +479,14 @@ document.getElementById("generate")?.addEventListener("click", () => {
     if (currentMode === "Removal" && decisionsNow.object === "Khác" && !decisionsNow.customObject) {
       throw new Error("Hãy mô tả vật thể Ốc muốn loại bỏ.");
     }
-    if (currentMode === "AspectRatio" && decisionsNow.ratio === "Khác" && !decisionsNow.customRatio) {
-      throw new Error("Hãy nhập tỷ lệ khung hình mong muốn theo dạng W:H.");
+    if (currentMode === "AspectRatio" && decisionsNow.ratio === "Khác") {
+      if (!decisionsNow.customRatio) {
+        throw new Error("Hãy nhập tỷ lệ khung hình mong muốn theo dạng W:H.");
+      }
+      const match = decisionsNow.customRatio.match(/^\s*(\d+(?:\.\d+)?)\s*[:x×]\s*(\d+(?:\.\d+)?)\s*$/i);
+      if (!match || Number(match[1]) <= 0 || Number(match[2]) <= 0) {
+        throw new Error("Tỷ lệ tùy chỉnh chưa hợp lệ. Hãy nhập dạng W:H, ví dụ 18:9 hoặc 3840:1600.");
+      }
     }
     if (currentMode === "SpaceSync" && syncTargetFiles.length) {
       if (!syncReferenceFile) {
