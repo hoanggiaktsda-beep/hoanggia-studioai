@@ -205,6 +205,48 @@ export const EXPERTS = {
     ]
   },
 
+  AspectRatio: {
+    name: "Josef Müller-Brockmann",
+    role: "Chuyên gia bố cục · Grid · Tỷ lệ khung hình · Canvas Expansion",
+    label: "GÓC NHÌN TỶ LỆ MÜLLER-BROCKMANN",
+    source: "Grid · tỷ lệ · hierarchy · balance · negative space · composition",
+    scope: "Chỉ quyết định hình dạng khung, tỷ lệ đầu ra, hướng mở rộng/crop và cân bằng bố cục trong canvas. Không thay camera, lens, perspective hay thiết kế của phần ảnh gốc.",
+    lockedDomains: ["camera_position", "lens_fov", "perspective", "architecture", "furniture", "material", "lighting"],
+    principles: [
+      "Treat the source image as protected content and the target aspect ratio as a new frame boundary, not permission to redesign the scene.",
+      "Use grid, hierarchy, balance and negative space to decide where canvas expansion or minimal cropping should occur.",
+      "Prefer outpainting over destructive cropping when important architecture, furniture or spatial hierarchy would be lost.",
+      "Never stretch, squash or rescale objects non-uniformly to fit a new ratio."
+    ],
+    decisions: {
+      ratio: "Use the selected target aspect ratio as the exact output frame; when Custom is selected, use the user's W:H value as authority.",
+      method: "Choose expansion, minimal crop or a controlled combination according to the selected preservation policy.",
+      direction: "Expand only in the selected direction, or choose the least destructive direction when Expert auto is selected.",
+      composition: "Protect the selected composition priority while changing only the frame boundary.",
+      grid: "Use the selected grid/balance logic to distribute original content and newly created negative space."
+    },
+    protocol: [
+      "SOURCE FRAME: read the original width/height relationship and identify protected visual content.",
+      "TARGET RATIO: establish the exact requested output aspect ratio.",
+      "GRID / HIERARCHY: identify subject position, architectural axes, visual weight and negative space.",
+      "EXPANSION PLAN: calculate which canvas boundaries need extension; avoid destructive crop when possible.",
+      "OUTPAINT / MINIMAL CROP: create only the missing frame area or remove only non-critical edge area.",
+      "CONTINUITY: continue existing architecture, floor, walls, ceiling, materials, lighting and perspective from visible evidence.",
+      "COMPOSITION CHECK: verify balance and hierarchy inside the new frame without moving or redesigning source objects.",
+      "PRESERVATION: confirm original camera position, lens/FOV, perspective, object proportions and design remain unchanged.",
+      "DELIVER: output a ratio-conversion instruction only."
+    ],
+    qualityGates: [
+      "No non-uniform stretching, squashing or warped geometry.",
+      "No camera move, lens/FOV change or perspective reinterpretation to manufacture the target ratio.",
+      "No redesigned architecture, furniture, materials or lighting.",
+      "No duplicated furniture, openings, decor or structural elements in outpainted regions.",
+      "No destructive crop of important subject matter when canvas expansion can preserve it.",
+      "Outpainted areas must continue visible geometry, materials, lighting and perspective seamlessly.",
+      "If visual evidence is insufficient, extend the simplest plausible background rather than inventing complex content."
+    ]
+  },
+
   SpaceSync: {
     name: "Đồng bộ hóa không gian",
     role: "Hệ thống tổng hợp 4 Expert thiết kế — Citterio · Zumthor · Maurer · Baan",
