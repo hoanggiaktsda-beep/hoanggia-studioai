@@ -295,6 +295,7 @@ export function buildDirection({
     Material: { style: params.style || "", styleMeaning: intentMeaning.style },
     Lighting: { lighting: params.lighting || "", lightingMeaning: intentMeaning.lighting },
     Removal: { spaceType: params.spaceType || "" },
+    AspectRatio: { spaceType: params.spaceType || "" },
     Camera: {
       view: params.view || "",
       viewMeaning: intentMeaning.view,
@@ -350,7 +351,9 @@ export function buildDirection({
           ? "Change only the camera view: " + target
           : mode === "Removal"
             ? "Remove only the selected object(s): " + target
-            : "Synchronize the whole space using Citterio, Zumthor, Maurer and Baan: " + target;
+            : mode === "AspectRatio"
+              ? "Convert the protected source image to aspect ratio: " + target
+              : "Synchronize the whole space using Citterio, Zumthor, Maurer and Baan: " + target;
 
   if (mode === "Furniture") {
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
@@ -372,6 +375,17 @@ export function buildDirection({
       "Preserve architecture, room geometry, openings, materials, lighting, camera, perspective and every unselected object exactly as shown.",
       "Do not replace removed objects, add furniture or decor, redesign the space, restyle the image or invent architectural details.",
       "If hidden geometry is uncertain, use the simplest plausible continuation supported by nearby evidence."
+    );
+  } else if (mode === "AspectRatio") {
+    body.push(
+      task + ".",
+      "Treat the complete source image as protected content and change only the canvas/frame boundary.",
+      "Prefer canvas expansion/outpainting over destructive cropping when important architecture, furniture or hierarchy would be lost.",
+      "Continue only the missing frame areas from visible evidence: walls, ceiling, floor, material patterns, lighting, shadows and spatial perspective.",
+      "Preserve original camera position, lens/FOV, perspective, architecture, furniture, materials, lighting, object scale and proportions exactly.",
+      "Never stretch, squash, warp, duplicate or relocate source objects to fit the new ratio.",
+      "Do not redesign or add new furniture, openings, decor or architectural elements.",
+      "If evidence is insufficient, extend the simplest plausible background consistent with the source image."
     );
   } else if (mode === "Camera") {
     const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
