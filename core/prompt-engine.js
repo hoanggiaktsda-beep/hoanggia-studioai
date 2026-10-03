@@ -296,6 +296,7 @@ export function buildDirection({
     Lighting: { lighting: params.lighting || "", lightingMeaning: intentMeaning.lighting },
     Removal: { spaceType: params.spaceType || "" },
     AspectRatio: { spaceType: params.spaceType || "" },
+    ReferenceReplica: { spaceType: params.spaceType || "" },
     Camera: {
       view: params.view || "",
       viewMeaning: intentMeaning.view,
@@ -353,7 +354,9 @@ export function buildDirection({
             ? "Remove only the selected object(s): " + target
             : mode === "AspectRatio"
               ? "Convert the protected source image to aspect ratio: " + target
-              : "Synchronize the whole space using Citterio, Zumthor, Maurer and Baan: " + target;
+              : mode === "ReferenceReplica"
+                ? "Replicate the supplied reference with maximum fidelity and replace only the authorized product: " + target
+                : "Synchronize the whole space using Citterio, Zumthor, Maurer and Baan: " + target;
 
   if (mode === "Furniture") {
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
@@ -386,6 +389,17 @@ export function buildDirection({
       "Never stretch, squash, warp, duplicate or relocate source objects to fit the new ratio.",
       "Do not redesign or add new furniture, openings, decor or architectural elements.",
       "If evidence is insufficient, extend the simplest plausible background consistent with the source image."
+    );
+  } else if (mode === "ReferenceReplica") {
+    body.push(
+      task + ".",
+      "REFERENCE IMAGE = SOURCE OF TRUTH for architecture, room geometry, spatial composition, proportions, furniture placement, materials, colors, styling, decor density, lighting, atmosphere, camera position, camera height, lens/FOV, perspective, vanishing points, framing, crop and depth relationships.",
+      "Reconstruct the reference scene with maximum visual fidelity. This is a fidelity target, not a claim of guaranteed pixel-identical reproduction.",
+      "AUTHORIZED DELTA: replace only the explicitly selected reference product with the supplied replacement product.",
+      "Preserve the supplied replacement product identity: silhouette, construction, proportions and distinctive details. Adapt only scale, floor contact, occlusion, contact shadow and reflection required for physically believable integration.",
+      "Every unselected object and every non-authorized scene property must remain matched to the reference.",
+      "Do not redesign, restyle, improve composition, change camera, relight, substitute materials, add or remove decor, invent architecture, or replace any other product.",
+      "If product-reference evidence is incomplete, preserve the clearest supported identity and do not invent distinctive structural details."
     );
   } else if (mode === "Camera") {
     const cd = cameraDecisionEngine({target, brief, decisions, params: relevantParams, analysis});
