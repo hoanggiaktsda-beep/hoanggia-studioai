@@ -316,6 +316,7 @@ function selectedDecisions() {
     values.replacementProducts = document.getElementById("replicaReplacementProducts")?.value?.trim() || "";
     values.availableBrand = document.getElementById("replicaAvailableBrand")?.value || "";
     values.availableProductNote = document.getElementById("replicaAvailableProductNote")?.value?.trim() || "";
+    values.productSourcePriority = referenceFiles.length ? "UPLOADED_PRODUCT_REFERENCE" : (values.replacementProducts ? "WRITTEN_REPLACEMENT_PRODUCTS" : (values.availableBrand ? "BRAND_LIBRARY" : "MISSING"));
   }
   if (currentMode === "AspectRatio" && values.ratio === "Khác") {
     values.customRatio = document.getElementById("customAspectRatio")?.value?.trim() || "";
@@ -502,7 +503,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
   const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}`).join(" | ");
   const replicaReferenceRoles = currentMode === "ReferenceReplica"
-    ? "SCENE REFERENCE / SOURCE OF TRUTH: " + (sceneFile?.name || "missing") + " | AUTHORIZED UPLOADED PRODUCT REFERENCES: " + (referenceRoles || "none") + " | AUTHORIZED WRITTEN REPLACEMENT PRODUCTS: " + (decisionsNow.replacementProducts || "none") + " | AUTHORIZED BRAND LIBRARY: " + (decisionsNow.availableBrand || "none") + " | BRAND PRODUCT NOTE: " + (decisionsNow.availableProductNote || "none")
+    ? "SCENE REFERENCE / SOURCE OF TRUTH: " + (sceneFile?.name || "missing") + " | AUTHORIZED UPLOADED PRODUCT REFERENCES: " + (referenceRoles || "none") + " | AUTHORIZED WRITTEN REPLACEMENT PRODUCTS: " + (decisionsNow.replacementProducts || "none") + " | AUTHORIZED BRAND LIBRARY: " + (decisionsNow.availableBrand || "none") + " | BRAND PRODUCT NOTE: " + (decisionsNow.availableProductNote || "none") + " | PRODUCT SOURCE PRIORITY: " + (decisionsNow.productSourcePriority || "MISSING")
     : referenceRoles;
   const params = { ...designIntent() };
   const output = "production prompt";
