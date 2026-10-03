@@ -502,9 +502,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
               : "selected spatial system";
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
   const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}`).join(" | ");
-  const replicaReferenceRoles = currentMode === "ReferenceReplica"
-    ? "SCENE REFERENCE / SOURCE OF TRUTH: " + (sceneFile?.name || "missing") + " | AUTHORIZED UPLOADED PRODUCT REFERENCES: " + (referenceRoles || "none") + " | AUTHORIZED WRITTEN REPLACEMENT PRODUCTS: " + (decisionsNow.replacementProducts || "none") + " | AUTHORIZED BRAND LIBRARY: " + (decisionsNow.availableBrand || "none") + " | BRAND PRODUCT NOTE: " + (decisionsNow.availableProductNote || "none") + " | PRODUCT SOURCE PRIORITY: " + (decisionsNow.productSourcePriority || "MISSING")
-    : referenceRoles;
+  const activeReplicaProductSource = decisionsNow.productSourcePriority === "UPLOADED_PRODUCT_REFERENCE"\n    ? "AUTHORIZED UPLOADED PRODUCT REFERENCES: " + (referenceRoles || "none")\n    : decisionsNow.productSourcePriority === "WRITTEN_REPLACEMENT_PRODUCTS"\n      ? "AUTHORIZED WRITTEN REPLACEMENT PRODUCTS: " + (decisionsNow.replacementProducts || "none")\n      : decisionsNow.productSourcePriority === "BRAND_LIBRARY"\n        ? "AUTHORIZED BRAND LIBRARY: " + (decisionsNow.availableBrand || "none") + " | BRAND PRODUCT NOTE: " + (decisionsNow.availableProductNote || "none")\n        : "AUTHORIZED PRODUCT SOURCE: missing";\n  const replicaReferenceRoles = currentMode === "ReferenceReplica"\n    ? "SCENE REFERENCE / SOURCE OF TRUTH: " + (sceneFile?.name || "missing") + " | ACTIVE PRODUCT OVERRIDE SOURCE: " + activeReplicaProductSource + " | PRODUCT SOURCE PRIORITY: " + (decisionsNow.productSourcePriority || "MISSING") + " | IGNORE LOWER-PRIORITY PRODUCT SOURCES WHEN A HIGHER-PRIORITY SOURCE EXISTS."\n    : referenceRoles;
   const params = { ...designIntent() };
   const output = "production prompt";
   const camera = {};
