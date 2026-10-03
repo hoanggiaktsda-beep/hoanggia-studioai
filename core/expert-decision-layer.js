@@ -1,7 +1,7 @@
 /*
- * HOANGGIA AI — 5 EXPERT DECISION SYSTEMS
+ * HOANGGIA AI — EXPERT DECISION SYSTEMS
  *
- * Four independent expert lenses. They never exchange decisions.
+ * Five independent expert lenses. They never exchange decisions.
  * Each expert reads only the user's intent + scene/reference evidence
  * relevant to its own domain, then returns a production constraint set.
  *
@@ -164,9 +164,50 @@ export const EXPERTS = {
     ]
   },
 
+  Removal: {
+    name: "John Knoll",
+    role: "Chuyên gia chỉnh sửa hình ảnh · Object Removal · Scene Reconstruction",
+    label: "GÓC NHÌN CHỈNH SỬA KNOLL",
+    source: "Object removal · compositing · reconstruction · cleanup",
+    scope: "Chỉ loại bỏ vật thể được chỉ định và phục hồi vùng nền bị che khuất. Không thay thế vật thể, không thiết kế lại không gian.",
+    lockedDomains: ["furniture_replacement", "material_design", "lighting_design", "camera", "architecture_geometry"],
+    principles: [
+      "Remove only explicitly selected objects and treat every unselected element as locked.",
+      "Reconstruct occluded background from surrounding visual evidence rather than inventing a new design.",
+      "Remove only shadows and reflections attributable to the removed object.",
+      "Maintain material continuity, joints, perspective, texture scale and lighting continuity across the reconstructed region."
+    ],
+    decisions: {
+      object: "Identify exactly the object or objects authorized for removal; when Khác is selected, use the user's custom description as the authority.",
+      scope: "Keep removal inside the selected object boundary and only include attached accessories when explicitly authorized.",
+      reconstruction: "Rebuild only the newly exposed region using nearby visual evidence and the simplest physically plausible continuation.",
+      cleanup: "Remove object-specific contact shadows and reflections only to the selected cleanup level.",
+      preservation: "Treat architecture, camera, lighting, materials and every unselected object as hard locks."
+    },
+    protocol: [
+      "OBJECT IDENTIFICATION: identify the exact selected object, location and distinguishing features.",
+      "BOUNDARY / MASK: isolate only the authorized object and directly attached pixels.",
+      "OCCLUSION: determine which floor, wall, baseboard or other existing surface was hidden by the object.",
+      "REMOVE: eliminate the selected object completely without inserting a replacement.",
+      "BACKGROUND RECONSTRUCTION: continue existing surfaces from surrounding evidence with correct perspective and material continuity.",
+      "SHADOW / REFLECTION CLEANUP: remove only effects caused by the deleted object.",
+      "EDGE CONTINUITY: verify seams, joints, grain, texture, lines and boundaries through the reconstructed area.",
+      "PRESERVATION: compare all unselected elements against the source and keep them unchanged.",
+      "DELIVER: produce a removal-only instruction with no redesign or unrelated cleanup."
+    ],
+    qualityGates: [
+      "No residual fragments, feet, edges, shadows or reflections from the selected object.",
+      "No replacement furniture, decor or invented object in the cleared area.",
+      "No invented architecture or complex detail when source evidence is insufficient.",
+      "No broken floor, wall, baseboard, joint, grain, texture or perspective continuity.",
+      "No changes to unselected objects, materials, lighting, camera or architecture.",
+      "When evidence is uncertain, use minimal plausible reconstruction continuous with surrounding surfaces."
+    ]
+  },
+
   SpaceSync: {
     name: "Đồng bộ hóa không gian",
-    role: "Hệ thống tổng hợp 4 Expert — Citterio · Zumthor · Maurer · Baan",
+    role: "Hệ thống tổng hợp 4 Expert thiết kế — Citterio · Zumthor · Maurer · Baan",
     label: "GÓC NHÌN ĐỒNG BỘ KHÔNG GIAN",
     source: "Tổng hợp: tỷ lệ & công năng · hiện diện vật liệu · ánh sáng · kiến trúc & nhiếp ảnh",
     scope: "Tổng hợp có chủ đích từ 4 Expert độc lập trước đó để đọc và đồng bộ toàn bộ không gian như một hệ thống. Không phải Expert thứ 5 độc lập về trường phái; đây là lớp tổng hợp các nguyên tắc Citterio, Zumthor, Maurer và Baan.",
