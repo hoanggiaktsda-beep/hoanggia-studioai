@@ -5,6 +5,7 @@ const MODES={
  Camera:{label:"Camera / View Change",instruction:"Change viewpoint only: position, height, lens feel, framing and perspective."},
  Removal:{label:"Object Removal / Scene Cleanup",instruction:"Remove only the selected objects and reconstruct only the newly exposed background from surrounding visual evidence."},
  AspectRatio:{label:"Aspect Ratio / Canvas Expansion",instruction:"Convert the source frame to the selected aspect ratio by controlled canvas expansion or minimal crop without changing the original camera or design."},
+ ReferenceReplica:{label:"Reference Replica / Product Override",instruction:"Replicate the supplied reference with maximum visual fidelity and allow only the explicitly authorized supplied product to differ."},
  SpaceSync:{label:"Spatial Synchronization",instruction:"Synchronize the whole space through alignment, circulation, proportion, sightlines, continuity and hierarchy without inventing architecture."}
 };
 export function editModeDirection(mode,target,brief,params={},decisions={}){
@@ -24,6 +25,7 @@ export function editModeDirection(mode,target,brief,params={},decisions={}){
  Camera:["Do not relocate or redesign objects merely to suit the new view.","Reason from camera height, lens/FOV, yaw, pitch, framing and vanishing points.","Keep architectural verticals and perspective believable.","Preserve material identity and design intent."],
  Removal:["Remove only explicitly selected objects.","Reconstruct only occluded background using surrounding visual evidence.","Remove only object-specific contact shadows and reflections.","Preserve architecture, geometry, materials, lighting, camera, perspective and every unselected object.","Never replace removed objects or redesign the cleared area."],
  AspectRatio:["Change only the frame boundary/aspect ratio.","Prefer canvas expansion when cropping would remove important content.","Never stretch or squash the source image.","Preserve camera position, lens/FOV, perspective, architecture, furniture, materials and lighting.","Outpaint only missing frame areas using surrounding visual evidence."],
+ ReferenceReplica:["Reference image is the source of truth for all visible scene properties.","Change only the explicitly authorized product target.","Match reference architecture, composition, materials, lighting, camera, perspective, framing and unselected objects.","Preserve supplied replacement product identity; adapt only scale, contact, occlusion and integration.","No redesign, restyle, improvement, invented content or unrelated change."],
   SpaceSync:["Read the entire scene as one spatial system before making any coordination decision.","Synchronize axes, scale, circulation, sightlines, hierarchy, rhythm and negative space.","Resolve conflicts through spatial coordination before changing individual design domains.","Preserve architecture, function and identity unless the brief explicitly authorizes a change."]
  }[mode];
  return {mode,label:config.label,instruction:config.instruction,target:target||"Unspecified",safeguards,params,decisions,detectedIntent:(brief||"").trim()||"No additional direction."};
