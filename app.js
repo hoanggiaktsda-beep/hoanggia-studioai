@@ -104,6 +104,13 @@ const decisions = {
     ["contrast","Tương phản","Giữ hierarchy giữa sáng và tối.",["Tương phản tự nhiên","Tăng chiều sâu vùng sáng / tối","Tương phản nghệ thuật có kiểm soát"]],
     ["shadow","Bóng & phản xạ","Bảo đảm bóng, contact shadow và bounce hợp lý.",["Bảo toàn bóng vật lý","Làm rõ contact shadow","Ưu tiên chiều sâu bằng bóng và bounce"]]
   ],
+  Removal: [
+    ["object","Đối tượng loại bỏ","Chọn vật thể cần xóa. Chọn Khác để tự mô tả chính xác vật muốn xóa.",["Sofa","Armchair","Bàn trà","Bàn bên","Ghế","Bàn ăn","Thảm","Đèn rời","Decor","Cây","Thiết bị","Toàn bộ nội thất rời","Khác"]],
+    ["scope","Phạm vi loại bỏ","Giới hạn chính xác những gì được phép biến mất.",["Chỉ vật thể được chọn","Vật thể + phụ kiện đi kèm","Toàn bộ nhóm liên quan"]],
+    ["reconstruction","Phục hồi vùng che khuất","Cách tái tạo phần sàn, tường hoặc bề mặt vừa lộ ra.",["Theo bằng chứng xung quanh","Ưu tiên continuity vật liệu","Reconstruction tối thiểu"]],
+    ["cleanup","Bóng & phản xạ","Xử lý dấu vết quang học trực tiếp của vật bị xóa.",["Xóa bóng của vật thể","Xóa bóng + reflection","Giữ ảnh hưởng không chắc chắn"]],
+    ["preservation","Mức bảo toàn","Mức khóa đối với phần còn lại của ảnh.",["Khóa tuyệt đối phần còn lại","Khóa kiến trúc + camera + vật liệu + ánh sáng","Cho phép cleanup tối thiểu quanh mask"]]
+  ],
   SpaceSync: [
     ["alignment","Trục & căn chỉnh","Đồng bộ các trục kiến trúc và đường chuẩn.",["Ưu tiên trục kiến trúc hiện hữu","Căn chỉnh đồ nội thất + kiến trúc","Cho phép tinh chỉnh nhẹ theo hệ trục"]],
     ["circulation","Lưu thông & khoảng thở","Bảo vệ đường đi và vùng sử dụng.",["Giữ nguyên lưu thông hiện tại","Tối ưu luồng di chuyển","Ưu tiên khoảng thở và chuyển tiếp"]],
@@ -136,6 +143,11 @@ const intentByMode = {
     hint: "Chỉ mô tả ánh sáng mong muốn. Maurer suy luận nguồn, hướng, falloff, tương phản và bóng.",
     placeholder: "Ví dụ: tạo ánh sáng chiều ấm, giữ nguyên toàn bộ đèn và đồ nội thất, tăng chiều sâu bóng...",
     chips: ["giữ nguồn sáng","ánh sáng ấm","tăng chiều sâu bóng","không đổi vật liệu / đồ nội thất"]
+  },
+  Removal: {
+    hint: "Chỉ xác định vật cần xóa. Knoll suy luận mask, occlusion, reconstruction, bóng/phản xạ và continuity; không thiết kế lại.",
+    placeholder: "Ví dụ: xóa sofa và hai armchair, phục hồi phần sàn bị che, giữ nguyên toàn bộ kiến trúc, vật liệu, ánh sáng và camera...",
+    chips: ["chỉ xóa vật thể được chọn","không thêm vật thay thế","phục hồi nền theo ảnh gốc","giữ nguyên phần còn lại"]
   },
   SpaceSync: {
     hint: "Mô tả cách Ốc muốn toàn bộ không gian đồng bộ. Expert sẽ điều phối trục, tỷ lệ, lưu thông, tầm nhìn và hierarchy.",
@@ -269,7 +281,11 @@ syncTargetInput?.addEventListener("change", () => {
 });
 
 function selectedDecisions() {
-  return Object.fromEntries([...decisionControls.querySelectorAll("[data-decision]")].map(el => [el.dataset.decision, el.value]));
+  const values = Object.fromEntries([...decisionControls.querySelectorAll("[data-decision]")].map(el => [el.dataset.decision, el.value]));
+  if (currentMode === "Removal" && values.object === "Khác") {
+    values.customObject = document.getElementById("removalCustomObject")?.value?.trim() || "";
+  }
+  return values;
 }
 
 function renderDecisions(mode) {
@@ -284,7 +300,15 @@ function renderDecisions(mode) {
       <select data-decision="${key}">
         ${opts.map((o, j) => `<option${j === 0 ? " selected" : ""}>${o}</option>`).join("")}
       </select>
+      ${mode === "Removal" && key === "object" ? '<input id="removalCustomObject" class="removal-custom-object hidden" type="text" placeholder="Mô tả vật muốn xóa: ví dụ ghế đôn màu nâu bên trái sofa..." aria-label="Mô tả vật thể muốn xóa">' : ""}
     </div>`).join("");
+  if (mode === "Removal") {
+    const objectSelect = decisionControls.querySelector('[data-decision="object"]');
+    const customInput = document.getElementById("removalCustomObject");
+    const syncCustom = () => customInput?.classList.toggle("hidden", objectSelect?.value !== "Khác");
+    objectSelect?.addEventListener("change", syncCustom);
+    syncCustom();
+  }
   updateCount();
 }
 
@@ -417,7 +441,9 @@ document.getElementById("generate")?.addEventListener("click", () => {
         ? "selected lighting system"
         : currentMode === "Camera"
           ? "selected camera view"
-          : "selected spatial system";
+          : currentMode === "Removal"
+            ? ((decisionsNow.object === "Khác" ? decisionsNow.customObject : decisionsNow.object) || "selected object")
+            : "selected spatial system";
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
   const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}`).join(" | ");
   const params = { ...designIntent() };
@@ -425,6 +451,9 @@ document.getElementById("generate")?.addEventListener("click", () => {
   const camera = {};
   const replacement = brief?.value?.trim() || "";
   try {
+    if (currentMode === "Removal" && decisionsNow.object === "Khác" && !decisionsNow.customObject) {
+      throw new Error("Hãy mô tả vật thể Ốc muốn loại bỏ.");
+    }
     if (currentMode === "SpaceSync" && syncTargetFiles.length) {
       if (!syncReferenceFile) {
         throw new Error("Đồng bộ hóa không gian cần 1 ảnh tham chiếu cố định.");
