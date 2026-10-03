@@ -422,3 +422,5 @@ footer{
 .context-full{margin-top:8px}
 .context-field small{display:block;margin-top:7px;color:#656a71;font-size:8px;line-height:1.45}
 @media(max-width:700px){.camera-context-grid{grid-template-columns:1fr}.camera-context-head{flex-direction:column}.camera-context-head>span{align-self:flex-start}}
+
+.replica-library{margin-top:10px;padding:12px;border:1px solid rgba(255,255,255,.09);border-radius:10px;display:grid;gap:8px}.replica-library label{display:grid;gap:4px}.replica-library label small{font-weight:400;opacity:.62;line-height:1.45}.replica-library select,.replica-library input,#replicaReplacementProducts{width:100%;box-sizing:border-box}\n
