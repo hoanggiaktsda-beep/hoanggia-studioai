@@ -70,6 +70,7 @@ const aiTargetProfiles = {
   "Khác": "Format as a concise production-ready image-editing prompt that clearly states the target, changes, preservation and realism."
 };
 let referenceFiles = [];
+let sceneFile = null;
 let referenceMeta = [];
 let syncReferenceFile = null;
 let syncTargetFiles = [];
@@ -197,6 +198,7 @@ function setPreview(input, preview, placeholder, label) {
   });
 }
 setPreview(sceneInput, scenePreview, scenePlaceholder, "Ảnh không gian");
+sceneInput?.addEventListener("change", () => { sceneFile = sceneInput.files?.[0] || null; });
 
 function referenceMetaDefaults() {
   return {
@@ -443,6 +445,7 @@ document.getElementById("newProject")?.addEventListener("click", () => {
   renderAITargets();
   referenceFiles = [];
   referenceMeta = [];
+  sceneFile = null;
   syncReferenceFile = null;
   syncTargetFiles = [];
   syncTargetNotes = [];
@@ -485,11 +488,20 @@ document.getElementById("generate")?.addEventListener("click", () => {
               : "selected spatial system";
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
   const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}`).join(" | ");
+  const replicaReferenceRoles = currentMode === "ReferenceReplica"
+    ? "SCENE REFERENCE / SOURCE OF TRUTH: " + (sceneFile?.name || "missing") + " | AUTHORIZED REPLACEMENT PRODUCT REFERENCES: " + (referenceRoles || "missing")
+    : referenceRoles;
   const params = { ...designIntent() };
   const output = "production prompt";
   const camera = {};
   const replacement = brief?.value?.trim() || "";
   try {
+    if (currentMode === "ReferenceReplica" && !sceneFile) {
+      throw new Error("Reference Replica cần 1 ảnh tham chiếu scene làm Source of Truth.");
+    }
+    if (currentMode === "ReferenceReplica" && !referenceFiles.length) {
+      throw new Error("Reference Replica cần ít nhất 1 ảnh sản phẩm thay thế được cung cấp.");
+    }
     if (currentMode === "Removal" && decisionsNow.object === "Khác" && !decisionsNow.customObject) {
       throw new Error("Hãy mô tả vật thể Ốc muốn loại bỏ.");
     }
@@ -558,7 +570,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
       params,
       decisions: decisionsNow,
       model,
-      referenceRoles,
+      referenceRoles: replicaReferenceRoles,
       aiTarget: selectedAITarget,
       aiProfile: aiTargetProfiles[selectedAITarget] || aiTargetProfiles["Khác"]
     });
