@@ -75,6 +75,7 @@ let referenceMeta = [];
 let syncReferenceFile = null;
 let syncTargetFiles = [];
 let syncTargetNotes = [];
+const furnitureBrands = ["Minotti","B&B Italia","Maxalto","Poliform","Molteni&C","Flexform","Cassina","Poltrona Frau","Giorgetti","Baxter","Living Divani","Edra","Porro","Rimadesio","Gallotti&Radice","Boffi|DePadova","Bonaldo","Cattelan Italia","Lema","Meridiani","Roche Bobois","Ligne Roset","Liaigre","Holly Hunt","Herman Miller","Knoll","Vitra","Fritz Hansen","Carl Hansen & Søn","HAY","Muuto","GUBI","&Tradition","Fredericia","Audo Copenhagen","Moooi","Tom Dixon","ClassiCon","Thonet","USM","Walter Knoll","Rolf Benz","De Sede","Wittmann","Kettal","Paola Lenti","Tribù","Dedon","Manutti","Gloster","Royal Botania","Gandia Blasco","Expormim","Roda","Fendi Casa","Bentley Home","Versace Home","Armani/Casa","Visionnaire","Turri","Longhi","Henge","Ceccotti Collezioni","Riva 1920","Tacchini","Zanotta","Moroso","Driade","Magis","Kristalia","Desalto","Alias","Pedrali","MDF Italia","Saba Italia","Ditre Italia","Hem","Normann Copenhagen","Ferm Living"];
 
 const referenceOptions = {
   object: ["Sofa","Ghế đơn","Bàn trà","Bàn ăn","Ghế ăn","Giường","Tủ / kệ","Đèn","Khác"],
@@ -121,7 +122,7 @@ const decisions = {
   ],
   ReferenceReplica: [
     ["fidelity","Reference Fidelity","Mức độ khóa ảnh tham chiếu làm nguồn sự thật.",["Maximum · khóa toàn bộ phần không được phép thay","High · ưu tiên khớp toàn cảnh","Controlled · cho phép thích nghi tối thiểu"]],
-    ["target","Sản phẩm cần thay","Xác định đúng sản phẩm trong reference được cấp quyền Product Override.",["Sofa","Armchair","Bàn trà","Bàn bên","Bàn ăn","Ghế ăn","Giường","Tủ / kệ","Đèn","Khác"]],
+    ["target","Sản phẩm cần thay","Xác định đúng sản phẩm trong reference được cấp quyền Product Override.",["Sofa","Armchair","Bàn trà","Bàn bên","Bàn ăn","Ghế ăn","Giường","Tủ / kệ","Đèn","Sản phẩm thay thế"]],
     ["identity","Product Identity","Mức độ giữ đúng sản phẩm được cung cấp.",["Giữ 100% silhouette + cấu tạo + chi tiết","Giữ silhouette + chi tiết đặc trưng","Giữ ngôn ngữ thiết kế"]],
     ["fit","Spatial Fit","Cách tích hợp sản phẩm mới vào scene reference.",["Giữ vị trí + footprint của sản phẩm gốc","Khớp tỷ lệ + floor contact + occlusion","Cho phép thích nghi kích thước tối thiểu"]],
     ["photography","Photography Match","Mức khóa nhiếp ảnh của reference.",["Khóa camera + lens/FOV + perspective + framing","Khóa perspective + framing","Khóa composition tổng thể"]]
@@ -311,6 +312,11 @@ function selectedDecisions() {
   if (currentMode === "Removal" && values.object === "Khác") {
     values.customObject = document.getElementById("removalCustomObject")?.value?.trim() || "";
   }
+  if (currentMode === "ReferenceReplica") {
+    values.replacementProducts = document.getElementById("replicaReplacementProducts")?.value?.trim() || "";
+    values.availableBrand = document.getElementById("replicaAvailableBrand")?.value || "";
+    values.availableProductNote = document.getElementById("replicaAvailableProductNote")?.value?.trim() || "";
+  }
   if (currentMode === "AspectRatio" && values.ratio === "Khác") {
     values.customRatio = document.getElementById("customAspectRatio")?.value?.trim() || "";
   }
@@ -329,7 +335,7 @@ function renderDecisions(mode) {
       <select data-decision="${key}">
         ${opts.map((o, j) => `<option${j === 0 ? " selected" : ""}>${o}</option>`).join("")}
       </select>
-      ${mode === "Removal" && key === "object" ? '<input id="removalCustomObject" class="removal-custom-object hidden" type="text" placeholder="Mô tả vật muốn xóa: ví dụ ghế đôn màu nâu bên trái sofa..." aria-label="Mô tả vật thể muốn xóa">' : ""}${mode === "AspectRatio" && key === "ratio" ? '<input id="customAspectRatio" class="removal-custom-object hidden" type="text" placeholder="Nhập W:H, ví dụ 18:9 hoặc 3840:1600" aria-label="Tỷ lệ khung hình tùy chỉnh">' : ""}
+      ${mode === "Removal" && key === "object" ? '<input id="removalCustomObject" class="removal-custom-object hidden" type="text" placeholder="Mô tả vật muốn xóa: ví dụ ghế đôn màu nâu bên trái sofa..." aria-label="Mô tả vật thể muốn xóa">' : ""}${mode === "AspectRatio" && key === "ratio" ? '<input id="customAspectRatio" class="removal-custom-object hidden" type="text" placeholder="Nhập W:H, ví dụ 18:9 hoặc 3840:1600" aria-label="Tỷ lệ khung hình tùy chỉnh">' : ""}${mode === "ReferenceReplica" && key === "target" ? '<textarea id="replicaReplacementProducts" class="removal-custom-object hidden" rows="3" placeholder="Ghi các sản phẩm thay thế + note riêng, mỗi sản phẩm một dòng."></textarea><div class="replica-library"><label>SẢN PHẨM CÓ SẴN<small>Chọn hãng khi không có model thay thế; chỉ áp dụng cho Product Override.</small></label><select id="replicaAvailableBrand"><option value="">Không dùng thư viện hãng</option>' + furnitureBrands.map(brand => `<option>${brand}</option>`).join("") + '</select><input id="replicaAvailableProductNote" class="removal-custom-object" type="text" placeholder="Tên/dòng sản phẩm hoặc note mong muốn (tùy chọn)"></div>' : ""}
     </div>`).join("");
   if (mode === "Removal") {
     const objectSelect = decisionControls.querySelector('[data-decision="object"]');
@@ -337,6 +343,13 @@ function renderDecisions(mode) {
     const syncCustom = () => customInput?.classList.toggle("hidden", objectSelect?.value !== "Khác");
     objectSelect?.addEventListener("change", syncCustom);
     syncCustom();
+  }
+  if (mode === "ReferenceReplica") {
+    const targetSelect = decisionControls.querySelector('[data-decision="target"]');
+    const products = document.getElementById("replicaReplacementProducts");
+    const syncProducts = () => products?.classList.toggle("hidden", targetSelect?.value !== "Sản phẩm thay thế");
+    targetSelect?.addEventListener("change", syncProducts);
+    syncProducts();
   }
   if (mode === "AspectRatio") {
     const ratioSelect = decisionControls.querySelector('[data-decision="ratio"]');
@@ -489,7 +502,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
   const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}`).join(" | ");
   const replicaReferenceRoles = currentMode === "ReferenceReplica"
-    ? "SCENE REFERENCE / SOURCE OF TRUTH: " + (sceneFile?.name || "missing") + " | AUTHORIZED REPLACEMENT PRODUCT REFERENCES: " + (referenceRoles || "missing")
+    ? "SCENE REFERENCE / SOURCE OF TRUTH: " + (sceneFile?.name || "missing") + " | AUTHORIZED UPLOADED PRODUCT REFERENCES: " + (referenceRoles || "none") + " | AUTHORIZED WRITTEN REPLACEMENT PRODUCTS: " + (decisionsNow.replacementProducts || "none") + " | AUTHORIZED BRAND LIBRARY: " + (decisionsNow.availableBrand || "none") + " | BRAND PRODUCT NOTE: " + (decisionsNow.availableProductNote || "none")
     : referenceRoles;
   const params = { ...designIntent() };
   const output = "production prompt";
@@ -499,8 +512,8 @@ document.getElementById("generate")?.addEventListener("click", () => {
     if (currentMode === "ReferenceReplica" && !sceneFile) {
       throw new Error("Reference Replica cần 1 ảnh tham chiếu scene làm Source of Truth.");
     }
-    if (currentMode === "ReferenceReplica" && !referenceFiles.length) {
-      throw new Error("Reference Replica cần ít nhất 1 ảnh sản phẩm thay thế được cung cấp.");
+    if (currentMode === "ReferenceReplica" && !referenceFiles.length && !decisionsNow.replacementProducts && !decisionsNow.availableBrand) {
+      throw new Error("Reference Replica cần một nguồn Product Override: ảnh sản phẩm, danh sách sản phẩm thay thế hoặc Sản phẩm có sẵn theo thương hiệu.");
     }
     if (currentMode === "Removal" && decisionsNow.object === "Khác" && !decisionsNow.customObject) {
       throw new Error("Hãy mô tả vật thể Ốc muốn loại bỏ.");
