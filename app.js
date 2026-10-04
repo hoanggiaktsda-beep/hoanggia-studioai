@@ -76,6 +76,8 @@ for (const kind of ["Face", "Body", "Outfit"]) {
     }
     if (characterReferenceUrls[kind]) URL.revokeObjectURL(characterReferenceUrls[kind]);
     characterReferenceFiles[kind] = file;
+    const characters = document.getElementById("cameraCharacters");
+    if (characters?.value === "Không có") characters.value = "1 người";
     characterReferenceUrls[kind] = URL.createObjectURL(file);
     if (preview) { preview.src = characterReferenceUrls[kind]; preview.classList.remove("hidden"); }
     remove?.classList.remove("hidden");
@@ -507,6 +509,8 @@ document.getElementById("newProject")?.addEventListener("click", () => {
   for (const kind of ["Face", "Body", "Outfit"]) document.getElementById("camera" + kind + "Remove")?.click();
   if (cameraCharacterDescription) cameraCharacterDescription.value = "";
   if (cameraSceneDescription) cameraSceneDescription.value = "";
+  if (syncReferenceInput) syncReferenceInput.value = "";
+  if (syncTargetInput) syncTargetInput.value = "";
   result?.classList.add("hidden");
   renderAITargets();
 renderMode("Furniture");
