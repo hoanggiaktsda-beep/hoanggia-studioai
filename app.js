@@ -52,6 +52,36 @@ const syncTargetGallery = document.getElementById("syncTargetGallery");
 const syncTargetTrigger = document.getElementById("syncTargetTrigger");
 const syncTargetCount = document.getElementById("syncTargetCount");
 
+const characterReferenceFiles = { Face: null, Body: null, Outfit: null };
+const characterReferenceUrls = { Face: null, Body: null, Outfit: null };
+for (const kind of ["Face", "Body", "Outfit"]) {
+  const input = document.getElementById("camera" + kind + "Input");
+  const preview = document.getElementById("camera" + kind + "Preview");
+  const remove = document.getElementById("camera" + kind + "Remove");
+  function clearReference() {
+    if (characterReferenceUrls[kind]) URL.revokeObjectURL(characterReferenceUrls[kind]);
+    characterReferenceUrls[kind] = null;
+    characterReferenceFiles[kind] = null;
+    if (input) input.value = "";
+    if (preview) { preview.removeAttribute("src"); preview.classList.add("hidden"); }
+    remove?.classList.add("hidden");
+  }
+  input?.addEventListener("change", () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      clearReference();
+      alert("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP.");
+      return;
+    }
+    if (characterReferenceUrls[kind]) URL.revokeObjectURL(characterReferenceUrls[kind]);
+    characterReferenceFiles[kind] = file;
+    characterReferenceUrls[kind] = URL.createObjectURL(file);
+    if (preview) { preview.src = characterReferenceUrls[kind]; preview.classList.remove("hidden"); }
+    remove?.classList.remove("hidden");
+  });
+  remove?.addEventListener("click", clearReference);
+}
 let currentMode = "Furniture";
 let selectedAITarget = "ChatGPT Images";
 
@@ -379,6 +409,7 @@ function cameraSceneContext() {
     lifeLevel: cameraLifeLevel?.value || "",
     exterior: cameraExterior?.value || "",
     story: cameraStory?.value || "",
+    characterReferences: Object.fromEntries(Object.entries(characterReferenceFiles).filter(([,file]) => file).map(([kind,file]) => [kind, file.name])),
     characterDescription: cameraCharacterDescription?.value?.trim() || "",
     sceneDescription: cameraSceneDescription?.value?.trim() || ""
   };
@@ -473,6 +504,7 @@ document.getElementById("newProject")?.addEventListener("click", () => {
   renderReferenceGallery();
   if (brief) brief.value = "";
   [cameraWeather,cameraTime,cameraCharacters,cameraActivity,cameraAtmosphere,cameraLifeLevel,cameraExterior,cameraStory].forEach(el => { if (el) el.selectedIndex = 0; });
+  for (const kind of ["Face", "Body", "Outfit"]) document.getElementById("camera" + kind + "Remove")?.click();
   if (cameraCharacterDescription) cameraCharacterDescription.value = "";
   if (cameraSceneDescription) cameraSceneDescription.value = "";
   result?.classList.add("hidden");
