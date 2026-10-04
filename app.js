@@ -53,6 +53,19 @@ const syncTargetTrigger = document.getElementById("syncTargetTrigger");
 const syncTargetCount = document.getElementById("syncTargetCount");
 
 const characterReferenceFiles = { Face: null, Body: null, Outfit: null };
+const BODY_TEXT_PRESETS = {
+  balanced: "Adult person with naturally balanced proportions, relaxed shoulders and realistic posture. Preserve a believable, non-exaggerated overall physique.",
+  slender: "Adult person with a naturally slender silhouette, balanced proportions and realistic posture, without exaggeration.",
+  athletic: "Adult person with a naturally active, healthy-looking physique, balanced proportions and realistic posture, without exaggerated definition.",
+  relaxed: "Adult person with natural body proportions, relaxed shoulders and an easy, everyday posture.",
+  formal: "Adult person with balanced proportions, upright but comfortable posture and natural shoulder alignment."
+};
+const bodyPreset = document.getElementById("cameraBodyPreset");
+const bodyText = document.getElementById("cameraBodyText");
+function suggestBodyText() {
+  if (bodyText) bodyText.value = BODY_TEXT_PRESETS[bodyPreset?.value] || BODY_TEXT_PRESETS.balanced;
+}
+bodyPreset?.addEventListener("change", suggestBodyText);
 const characterReferenceUrls = { Face: null, Body: null, Outfit: null };
 for (const kind of ["Face", "Body", "Outfit"]) {
   const input = document.getElementById("camera" + kind + "Input");
@@ -62,6 +75,7 @@ for (const kind of ["Face", "Body", "Outfit"]) {
     if (characterReferenceUrls[kind]) URL.revokeObjectURL(characterReferenceUrls[kind]);
     characterReferenceUrls[kind] = null;
     characterReferenceFiles[kind] = null;
+    if (kind === "Body" && bodyText) bodyText.value = "";
     if (input) input.value = "";
     if (preview) { preview.removeAttribute("src"); preview.classList.add("hidden"); }
     remove?.classList.add("hidden");
@@ -76,6 +90,7 @@ for (const kind of ["Face", "Body", "Outfit"]) {
     }
     if (characterReferenceUrls[kind]) URL.revokeObjectURL(characterReferenceUrls[kind]);
     characterReferenceFiles[kind] = file;
+    if (kind === "Body") suggestBodyText();
     const characters = document.getElementById("cameraCharacters");
     if (characters?.value === "Không có") characters.value = "1 người";
     characterReferenceUrls[kind] = URL.createObjectURL(file);
@@ -411,7 +426,8 @@ function cameraSceneContext() {
     lifeLevel: cameraLifeLevel?.value || "",
     exterior: cameraExterior?.value || "",
     story: cameraStory?.value || "",
-    characterReferences: Object.fromEntries(Object.entries(characterReferenceFiles).filter(([,file]) => file).map(([kind,file]) => [kind, file.name])),
+    characterReferences: Object.fromEntries(Object.entries(characterReferenceFiles).filter(([kind,file]) => kind !== "Body" && file).map(([kind,file]) => [kind, file.name])),
+    bodyDescription: bodyText?.value?.trim() || "",
     characterDescription: cameraCharacterDescription?.value?.trim() || "",
     sceneDescription: cameraSceneDescription?.value?.trim() || ""
   };
@@ -507,6 +523,8 @@ document.getElementById("newProject")?.addEventListener("click", () => {
   if (brief) brief.value = "";
   [cameraWeather,cameraTime,cameraCharacters,cameraActivity,cameraAtmosphere,cameraLifeLevel,cameraExterior,cameraStory].forEach(el => { if (el) el.selectedIndex = 0; });
   for (const kind of ["Face", "Body", "Outfit"]) document.getElementById("camera" + kind + "Remove")?.click();
+  if (bodyPreset) bodyPreset.value = "balanced";
+  if (bodyText) bodyText.value = "";
   if (cameraCharacterDescription) cameraCharacterDescription.value = "";
   if (cameraSceneDescription) cameraSceneDescription.value = "";
   if (syncReferenceInput) syncReferenceInput.value = "";
