@@ -105,7 +105,12 @@
     <small>Chọn ảnh có sẵn riêng cho Face, Body và Trang phục. Mỗi ảnh chỉ quyết định đúng phần tương ứng; không dùng để thay đổi kiến trúc hay góc máy ngoài yêu cầu.</small>
     <div class="character-reference-grid">
       <div class="character-reference-card"><strong>01 · FACE</strong><span>Gương mặt, tóc, đặc điểm nhận diện</span><label for="cameraFaceInput" class="character-reference-upload">＋ Chọn ảnh Face</label><input id="cameraFaceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><img id="cameraFacePreview" alt="Tham chiếu Face" class="hidden"><button type="button" id="cameraFaceRemove" class="character-reference-remove hidden">Xóa ảnh</button></div>
-      <div class="character-reference-card"><strong>02 · BODY</strong><span>Dáng người, tỷ lệ cơ thể, tư thế tham chiếu</span><label for="cameraBodyInput" class="character-reference-upload">＋ Chọn ảnh Body</label><input id="cameraBodyInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><img id="cameraBodyPreview" alt="Tham chiếu Body" class="hidden"><button type="button" id="cameraBodyRemove" class="character-reference-remove hidden">Xóa ảnh</button></div>
+      <div class="character-reference-card"><strong>02 · BODY → TEXT</strong><span>Ảnh chỉ dùng để đối chiếu tại đây. Prompt chỉ nhận mô tả trung tính đã duyệt, không chuyển ảnh Body.</span><label for="cameraBodyInput" class="character-reference-upload">＋ Chọn ảnh Body</label><input id="cameraBodyInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><img id="cameraBodyPreview" alt="Tham chiếu Body" class="hidden"><button type="button" id="cameraBodyRemove" class="character-reference-remove hidden">Xóa ảnh</button>
+        <label for="cameraBodyPreset">Gợi ý mô tả trung tính</label>
+        <select id="cameraBodyPreset"><option value="balanced">Tỷ lệ tự nhiên, cân đối</option><option value="slender">Dáng thanh thoát, tự nhiên</option><option value="athletic">Dáng khỏe khoắn, tự nhiên</option><option value="relaxed">Tư thế thư giãn, đời thường</option><option value="formal">Tư thế đứng chỉn chu</option></select>
+        <label for="cameraBodyText">BODY DESCRIPTION · CÓ THỂ CHỈNH SỬA</label>
+        <textarea id="cameraBodyText" rows="4" placeholder="Mô tả hình thể người trưởng thành bằng ngôn ngữ trung tính."></textarea>
+        <small>Gợi ý được tạo theo mẫu, chưa phải AI phân tích ảnh. Hãy đối chiếu ảnh và chỉnh text trước khi tạo prompt. Không đưa số đo nhạy cảm hoặc mô tả gợi dục.</small></div>
       <div class="character-reference-card"><strong>03 · TRANG PHỤC</strong><span>Kiểu dáng, chất liệu, màu sắc, phụ kiện</span><label for="cameraOutfitInput" class="character-reference-upload">＋ Chọn ảnh Trang phục</label><input id="cameraOutfitInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><img id="cameraOutfitPreview" alt="Tham chiếu Trang phục" class="hidden"><button type="button" id="cameraOutfitRemove" class="character-reference-remove hidden">Xóa ảnh</button></div>
     </div>
   </div>
@@ -160,4 +165,4 @@
   </div>
   <div class="creatorFooterBottom">HOANGGIA AI · ARCHITECT × AI · INTERIOR DESIGN WORKSTATION</div>
 </footer>
-</main></div><script type="module" src="./app.js"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=10").catch(()=>{}));}</script></body></html>
+</main></div><script type="module" src="./app.js"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=11").catch(()=>{}));}</script></body></html>
