@@ -414,6 +414,7 @@ export function buildDirection({
       ["exterior", cc.exterior],
       ["story", cc.story],
       ["characterReferences", Object.entries(cc.characterReferences || {}).map(([kind, filename]) => kind + " reference image: " + filename).join("; ")],
+      ["bodyDescription", cc.bodyDescription],
       ["characterDescription", cc.characterDescription],
       ["sceneDescription", cc.sceneDescription]
     ].filter(([,value]) => value && !/^Không xác định/.test(value));
@@ -421,9 +422,9 @@ export function buildDirection({
       ? "CAMERA SCENE CONTEXT: " + contextParts.map(([key,value]) => key + "=" + value).join(" | ") + ". Use this only to determine viewpoint, framing, spatial narrative, human scale, depth and photographic timing. Do not change furniture, materials or lighting decisions."
       : "CAMERA SCENE CONTEXT: No additional scene context specified. Infer only what is visibly supported by the image.";
     const characterReferenceRule = Object.keys(cc.characterReferences || {}).length
-      ? "CHARACTER REFERENCE INPUTS: The user must attach the corresponding uploaded images alongside this prompt. Face controls only facial identity, hair and facial features; Body controls only body shape, proportions and pose cues; Outfit controls only clothing, fabrics, colors and accessories. Never treat filenames as visual evidence. Do not invent missing reference details. Resolve conflicts within each role only, and preserve the original architecture, furniture and lighting."
+      ? "CHARACTER REFERENCE INPUTS: The user must attach the corresponding uploaded images alongside this prompt. Face controls only facial identity, hair and facial features; Outfit controls only clothing, fabrics, colors and accessories. Body reference images are intentionally excluded; use only the user-reviewed neutral bodyDescription text. Never treat filenames as visual evidence. Do not invent missing reference details. Resolve conflicts within each role only, and preserve the original architecture, furniture and lighting."
       : "";
-    body.push(task + ".", "Control position, height, focal length/FOV, perspective and framing.", contextLine, characterReferenceRule, cd.checks.join(" "));
+    body.push(task + ".", "Control position, height, focal length/FOV, perspective and framing.", contextLine, characterReferenceRule, cc.bodyDescription ? "BODY TEXT ONLY: Describe an adult person neutrally with realistic anatomy and natural proportions. Do not infer measurements, sexual attributes, nudity, or sensitive traits from a photo. Use only the reviewed text." : "", cd.checks.join(" "));
   } else {
     body.push(
       "EDIT TARGET IMAGE TO MATCH FIXED REFERENCE IMAGE.",
