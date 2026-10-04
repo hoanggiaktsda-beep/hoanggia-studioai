@@ -424,3 +424,13 @@ footer{
 @media(max-width:700px){.camera-context-grid{grid-template-columns:1fr}.camera-context-head{flex-direction:column}.camera-context-head>span{align-self:flex-start}}
 
 .replica-library{margin-top:10px;padding:12px;border:1px solid rgba(255,255,255,.09);border-radius:10px;display:grid;gap:8px}.replica-library label{display:grid;gap:4px}.replica-library label small{font-weight:400;opacity:.62;line-height:1.45}.replica-library select,.replica-library input,#replicaReplacementProducts{width:100%;box-sizing:border-box}\n
+/* Character references: Camera Expert */
+.character-reference-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+.character-reference-card{display:flex;flex-direction:column;gap:9px;min-width:0;padding:14px;border:1px solid rgba(160,170,185,.24);border-radius:12px;background:rgba(120,130,145,.06)}
+.character-reference-card strong{font-size:12px;letter-spacing:.06em}
+.character-reference-card span{font-size:12px;opacity:.75;line-height:1.5}
+.character-reference-upload{cursor:pointer;display:block;text-align:center;padding:12px;border:1px dashed rgba(160,170,185,.55);border-radius:9px;font-size:12px}
+.character-reference-card img{width:100%;height:140px;object-fit:contain;border-radius:8px;background:rgba(0,0,0,.12)}
+.character-reference-remove{align-self:flex-start;border:0;background:transparent;color:inherit;text-decoration:underline;cursor:pointer}
+.character-reference-card .hidden{display:none!important}
+@media(max-width:650px){.character-reference-grid{grid-template-columns:1fr}}
