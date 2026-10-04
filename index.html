@@ -100,6 +100,15 @@
     <div class="context-field"><label for="cameraExterior">BỐI CẢNH NGOÀI KHUNG</label><select id="cameraExterior"><option>Không xác định / tự nhận diện</option><option>Thành phố</option><option>Cây xanh / sân vườn</option><option>Đường phố</option><option>Thiên nhiên</option><option>Mặt nước</option><option>Núi / cảnh quan</option><option>Khu dân cư</option><option>Không gian đô thị cao cấp</option><option>Khác / tự nhập</option></select></div>
     <div class="context-field"><label for="cameraStory">CÂU CHUYỆN KHUNG HÌNH</label><select id="cameraStory"><option>Kiến trúc là chủ thể</option><option>Con người trong không gian</option><option>Khoảnh khắc đời sống</option><option>Kiến trúc + con người</option><option>Không gian + cảnh quan</option><option>Khoảnh khắc điện ảnh</option><option>Quan sát tự nhiên / documentary</option><option>Hero editorial</option><option>Khác / tự nhập</option></select></div>
   </div>
+  <div class="context-field context-full character-reference-section">
+    <label>ẢNH THAM CHIẾU NHÂN VẬT · TÙY CHỌN</label>
+    <small>Chọn ảnh có sẵn riêng cho Face, Body và Trang phục. Mỗi ảnh chỉ quyết định đúng phần tương ứng; không dùng để thay đổi kiến trúc hay góc máy ngoài yêu cầu.</small>
+    <div class="character-reference-grid">
+      <div class="character-reference-card"><strong>01 · FACE</strong><span>Gương mặt, tóc, đặc điểm nhận diện</span><label for="cameraFaceInput" class="character-reference-upload">＋ Chọn ảnh Face</label><input id="cameraFaceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><img id="cameraFacePreview" alt="Tham chiếu Face" class="hidden"><button type="button" id="cameraFaceRemove" class="character-reference-remove hidden">Xóa ảnh</button></div>
+      <div class="character-reference-card"><strong>02 · BODY</strong><span>Dáng người, tỷ lệ cơ thể, tư thế tham chiếu</span><label for="cameraBodyInput" class="character-reference-upload">＋ Chọn ảnh Body</label><input id="cameraBodyInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><img id="cameraBodyPreview" alt="Tham chiếu Body" class="hidden"><button type="button" id="cameraBodyRemove" class="character-reference-remove hidden">Xóa ảnh</button></div>
+      <div class="character-reference-card"><strong>03 · TRANG PHỤC</strong><span>Kiểu dáng, chất liệu, màu sắc, phụ kiện</span><label for="cameraOutfitInput" class="character-reference-upload">＋ Chọn ảnh Trang phục</label><input id="cameraOutfitInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><img id="cameraOutfitPreview" alt="Tham chiếu Trang phục" class="hidden"><button type="button" id="cameraOutfitRemove" class="character-reference-remove hidden">Xóa ảnh</button></div>
+    </div>
+  </div>
   <div class="context-field context-full"><label for="cameraCharacterDescription">MÔ TẢ NHÂN VẬT</label><textarea id="cameraCharacterDescription" rows="3" placeholder="Ví dụ: Một cặp vợ chồng khoảng 35 tuổi, trang phục tối giản, ngồi đối diện trên sofa và trò chuyện tự nhiên; tư thế thoải mái, không nhìn vào máy ảnh."></textarea><small>Mô tả ngoại hình, độ tuổi, trang phục, tư thế, vị trí, hướng nhìn và tương tác nếu cần. Chỉ được sử dụng bởi Góc máy.</small></div>
   <div class="context-field context-full"><label for="cameraSceneDescription">MÔ TẢ CẢNH / KHOẢNH KHẮC</label><textarea id="cameraSceneDescription" rows="3" placeholder="Ví dụ: Phòng khách lúc hoàng hôn, ánh sáng cuối ngày đi qua cửa kính, không gian yên tĩnh nhưng đang được sử dụng tự nhiên."></textarea><small>Mô tả khoảnh khắc, môi trường, hành vi hoặc chi tiết bối cảnh mà Ốc muốn Camera Expert kể lại bằng khung hình.</small></div>
 </div>
@@ -151,4 +160,4 @@
   </div>
   <div class="creatorFooterBottom">HOANGGIA AI · ARCHITECT × AI · INTERIOR DESIGN WORKSTATION</div>
 </footer>
-</main></div><script type="module" src="./app.js"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=9").catch(()=>{}));}</script></body></html>
+</main></div><script type="module" src="./app.js"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=10").catch(()=>{}));}</script></body></html>
