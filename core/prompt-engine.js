@@ -413,13 +413,17 @@ export function buildDirection({
       ["lifeLevel", cc.lifeLevel],
       ["exterior", cc.exterior],
       ["story", cc.story],
+      ["characterReferences", Object.entries(cc.characterReferences || {}).map(([kind, filename]) => kind + " reference image: " + filename).join("; ")],
       ["characterDescription", cc.characterDescription],
       ["sceneDescription", cc.sceneDescription]
     ].filter(([,value]) => value && !/^Không xác định/.test(value));
     const contextLine = contextParts.length
       ? "CAMERA SCENE CONTEXT: " + contextParts.map(([key,value]) => key + "=" + value).join(" | ") + ". Use this only to determine viewpoint, framing, spatial narrative, human scale, depth and photographic timing. Do not change furniture, materials or lighting decisions."
       : "CAMERA SCENE CONTEXT: No additional scene context specified. Infer only what is visibly supported by the image.";
-    body.push(task + ".", "Control position, height, focal length/FOV, perspective and framing.", contextLine, cd.checks.join(" "));
+    const characterReferenceRule = Object.keys(cc.characterReferences || {}).length
+      ? "CHARACTER REFERENCE INPUTS: The user must attach the corresponding uploaded images alongside this prompt. Face controls only facial identity, hair and facial features; Body controls only body shape, proportions and pose cues; Outfit controls only clothing, fabrics, colors and accessories. Never treat filenames as visual evidence. Do not invent missing reference details. Resolve conflicts within each role only, and preserve the original architecture, furniture and lighting."
+      : "";
+    body.push(task + ".", "Control position, height, focal length/FOV, perspective and framing.", contextLine, characterReferenceRule, cd.checks.join(" "));
   } else {
     body.push(
       "EDIT TARGET IMAGE TO MATCH FIXED REFERENCE IMAGE.",
