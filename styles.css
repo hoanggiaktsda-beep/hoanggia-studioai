@@ -434,3 +434,5 @@ footer{
 .character-reference-remove{align-self:flex-start;border:0;background:transparent;color:inherit;text-decoration:underline;cursor:pointer}
 .character-reference-card .hidden{display:none!important}
 @media(max-width:650px){.character-reference-grid{grid-template-columns:1fr}}
+
+.character-reference-card select,.character-reference-card textarea{width:100%;max-width:100%;box-sizing:border-box;border:1px solid rgba(160,170,185,.35);border-radius:8px;padding:10px;background:#20232a;color:#f3f3f3;font:inherit}.character-reference-card small{font-size:11px;line-height:1.5;opacity:.75}
