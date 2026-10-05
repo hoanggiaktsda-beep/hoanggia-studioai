@@ -9,6 +9,7 @@ const CORE = [
   "./expert09.js",
   "./core/multishot-engine.js",
   "./core/prompt-engine.js",
+  "./core/cognitive-core.js",
   "./core/prompt-copy-guard.js",
   "./core/visual-prompt-system.js",
   "./core/edit-engine.js",
