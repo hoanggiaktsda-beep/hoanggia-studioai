@@ -1,3 +1,4 @@
+import { compactVietnamesePrompt } from "./core/vietnamese-prompt-expert.js";
 import { installPromptCopyGuard } from "./core/prompt-copy-guard.js";
 import { buildDirection } from "./core/prompt-engine.js";
 import { editModeDirection } from "./core/edit-engine.js";
@@ -650,7 +651,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
       aiTarget: selectedAITarget,
       aiProfile: aiTargetProfiles[selectedAITarget] || aiTargetProfiles["Khác"]
     });
-    if (resultContent) resultContent.textContent = built.prompt;
+    if (resultContent) resultContent.textContent = compactVietnamesePrompt({brief:brief?.value,mode:currentMode,output,camera,target,replacement,params,decisions:decisionsNow,model,referenceRoles:replicaReferenceRoles,aiTarget:selectedAITarget});
     if (reasoningSummary) reasoningSummary.innerHTML = `
       <div><b>${built.reasoning.expert}</b><span>${built.reasoning.expertRole}</span></div>
       <div><b>${built.reasoning.independence}</b><span>Không suy luận chéo sang expert khác.</span></div>
