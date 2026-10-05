@@ -12,7 +12,7 @@ export function compileMultiShot(c){
  if(!spaces[c.space])throw Error("Chuyên ngành không hợp lệ");
  if(c.shots.length>total)throw Error("Số SHOT vượt quá số ô");
  const expert=c.space==="architecture"?"Tadao Ando — tư duy hình khối, tỷ lệ, kết cấu, ánh sáng và công trình trong bối cảnh; Iwan Baan — nhiếp ảnh kiến trúc và con người.":"Antonio Citterio — tỷ lệ, công năng, vật liệu và trật tự nội thất; François Halard — nhiếp ảnh nội thất, ánh sáng và chân dung.";
- const specified=c.shots.map((s,i)=>s.mode==="auto"?"SHOT "+String(i+1).padStart(2,"0")+" — AI TỰ ĐỀ XUẤT: Chọn góc đẹp, khác biệt, có bằng chứng từ MASTER; không trùng các SHOT khác.":"SHOT "+String(i+1).padStart(2,"0")+" — KIẾN TRÚC SƯ CHỈ ĐỊNH (HARD LOCK): Góc "+s.angle+"; khu vực: "+(s.subject||"AI chọn trong phạm vi ảnh")+"; nhân vật: "+(people[s.person]||people.auto)+"; hành động: "+(s.action||"tự nhiên, phù hợp cảnh")+"; ghi chú: "+(s.note||"không có")+".").join("\n");
+ const specified=c.shots.map((s,i)=>s.mode==="auto"?"SHOT "+String(i+1).padStart(2,"0")+" — AI TỰ ĐỀ XUẤT: Chọn góc đẹp, khác biệt, có bằng chứng từ MASTER; không trùng các SHOT khác.":"SHOT "+String(i+1).padStart(2,"0")+" — KIẾN TRÚC SƯ CHỈ ĐỊNH (HARD LOCK): Góc "+s.angle+"; khu vực ưu tiên: "+(EXPERT09_ZONES[c.space]?.[s.zone]||zoneText(c))+"; khu vực: "+(s.subject||"AI chọn trong phạm vi ảnh")+"; nhân vật: "+(people[s.person]||people.auto)+"; hành động: "+(s.action||"tự nhiên, phù hợp cảnh")+"; ghi chú: "+(s.note||"không có")+".").join("\n");
  const remaining=Array.from({length:total-c.shots.length},(_,i)=>"SHOT "+String(c.shots.length+i+1).padStart(2,"0")+" — AI TỰ ĐỀ XUẤT: Góc khác biệt, có giá trị hình ảnh, ưu tiên dữ liệu nhìn thấy; không trùng góc đã chọn.").join("\n");
  return [
  "HOANGGIA AI — EXPERT 09 · MULTI-SHOT STORYBOARD",
@@ -38,7 +38,7 @@ export function compileMultiShot(c){
 
 export function compileMultiView(c){
  const n=Number(c.viewCount);
- if(![4,6,9].includes(n))throw Error("Số góc chụp không hợp lệ");
+ if(!Number.isInteger(n)||n<1||n>12)throw Error("Số góc chụp không hợp lệ (1–12)");
  if(!c.master)throw Error("Thiếu MASTER IMAGE");
  if(!spaces[c.space])throw Error("Chuyên ngành không hợp lệ");
  if(c.shots.length>n)throw Error("Số SHOT vượt quá số góc");
@@ -82,10 +82,10 @@ export function compileMultiView(c){
  ["Góc tự do","Điểm nhấn có bằng chứng thị giác"]
  ];
  const prompts=Array.from({length:n},(_,i)=>{
- const s=c.shots[i];const manualAngles=new Set(c.shots.filter(x=>x.mode!=="auto").map(x=>x.angle));const candidates=defaults.filter(x=>!manualAngles.has(x[0]));const aiIndex=c.shots.slice(0,i).filter(x=>x.mode==="auto").length+Math.max(0,i-c.shots.length);const d=candidates[aiIndex%candidates.length]||defaults[i];
+ const s=c.shots[i];const manualAngles=new Set(c.shots.filter(x=>x.mode!=="auto").map(x=>x.angle));const candidates=defaults.filter(x=>!manualAngles.has(x[0]));const aiIndex=c.shots.slice(0,i).filter(x=>x.mode==="auto").length+Math.max(0,i-c.shots.length);const d=candidates[aiIndex%candidates.length]||defaults[i%defaults.length];
  const spec=s && s.mode!=="auto"
- ?"ARCHITECT LOCKED SHOT: "+(s.angle||"Góc tự do")+"; SUBJECT/ZONE: "+(s.subject||"within visible evidence")+"; PERSON: "+(people[s.person]||people.auto)+"; ACTION: "+(s.action||"natural")+"; NOTES: "+(s.note||"none")
- :"EXPERT-PROPOSED SHOT: "+d[0]+"; SUBJECT/ZONE: "+d[1]+"; adjust to MASTER evidence, prioritize a distinct and attractive composition; do not duplicate other shots.";
+ ?"ARCHITECT LOCKED SHOT: "+(s.angle||"Góc tự do")+"; PRIORITY ZONE: "+(EXPERT09_ZONES[c.space]?.[s.zone]||zoneText(c))+"; SUBJECT/ZONE: "+(s.subject||"within visible evidence")+"; PERSON: "+(people[s.person]||people.auto)+"; ACTION: "+(s.action||"natural")+"; NOTES: "+(s.note||"none")
+ :"EXPERT-PROPOSED SHOT: "+d[0]+"; PRIORITY ZONE: "+(s&&EXPERT09_ZONES[c.space]?.[s.zone]||zoneText(c))+"; SUBJECT/ZONE: "+d[1]+"; adjust to MASTER evidence, prioritize a distinct and attractive composition; do not duplicate other shots.";
  return "IMAGE "+String(i+1).padStart(2,"0")+" / "+n+" — STANDALONE PROMPT\n"+common+"\n"+spec+"\nOUTPUT THIS IMAGE ONLY. Photorealistic architectural editorial photograph, accurate verticals, plausible occlusion and perspective, natural material response, no changes to the original design.";
  });
  return prompts.join("\n\n"+("═".repeat(38))+"\n\n");
