@@ -2,8 +2,9 @@
 export const SHOT_ANGLES=["Góc chéo 2/3","Chính diện","Góc 45°","Góc 90°","Toàn cảnh","Góc thấp","Góc cao","Cận cảnh","Góc qua vai","Góc nhìn xuyên lớp","Góc tự do"];
 const counts={"2x2":4,"3x2":6,"3x3":9};
 const spaces={architecture:"KIẾN TRÚC",interior:"NỘI THẤT"};
-const people={auto:"AI đề xuất người trưởng thành hư cấu phù hợp nếu hữu ích",none:"Không có người",male:"Nam trưởng thành",female:"Nữ trưởng thành",both:"Nam và nữ trưởng thành"};
+const people={auto:"AI đề xuất người trưởng thành hư cấu phù hợp nếu hữu ích",none:"Không có người",male:"Nam trưởng thành",female:"Nữ trưởng thành",both:"Nam và nữ trưởng thành",pedestrians:"Người đi bộ và cư dân trong không gian công cộng, tỷ lệ thật",visitors:"Khách tham quan hoặc du khách, tương tác tự nhiên với kiến trúc",family:"Gia đình hoặc nhóm người sinh hoạt phù hợp không gian",cyclists:"Người đi xe đạp trên tuyến được nhìn thấy và phù hợp công năng",gardeners:"Nhân viên chăm sóc cây xanh, làm vườn hoặc bảo trì cảnh quan",community:"Nhóm người sinh hoạt cộng đồng phù hợp quảng trường, công viên",crowd:"Đám đông có mật độ hợp lý, không che khuất thiết kế",custom:"Nhân vật theo mô tả của kiến trúc sư"};
 const zones={auto:"AI chọn khu vực có bằng chứng thị giác mạnh nhất",living:"Sofa / khu tiếp khách",dining:"Bàn ăn",kitchen:"Bếp",facade:"Mặt đứng / hình khối",landscape:"Cảnh quan",detail:"Chi tiết vật liệu",custom:"Khu vực do kiến trúc sư mô tả"};
+const architectureCasts=new Set(["pedestrians","visitors","family","cyclists","gardeners","community","crowd","custom"]);function castPolicy(c){const type=c.space==="architecture"?c.cast:(architectureCasts.has(c.cast)?"auto":c.cast);return (people[type]||people.auto)+(type==="custom"&&c.castNote?"; yêu cầu: "+c.castNote:"")+"; keep people contextually plausible and subordinate to architectural and landscape design, never invent paths or features.";}
 export function compileMultiShot(c){
  const total=counts[c.layout];if(!total)throw Error("Bố cục không hợp lệ");
  if(!c.master)throw Error("Thiếu MASTER IMAGE");
@@ -21,7 +22,7 @@ export function compileMultiShot(c){
  "BRAIN 03 — PHOTOGRAPHY: Use expert architectural/interior photography reasoning; natural perspective, controlled lens, coherent light, human scale, no fisheye or distorted verticals.",
  "BRAIN 04 — ART DIRECTION & MODELING: Visual direction inspired by Peter Lindbergh's natural storytelling; model posing informed by David Gandy and Liu Wen's professional editorial practices. These are professional principles, NOT requests to reproduce these individuals' likenesses.",
  "PRIORITY AREA: "+(zones[c.zone]||zones.auto)+(c.zoneNote?"; architect note: "+c.zoneNote:"")+".",
- "CHARACTER POLICY: "+(people[c.cast]||people.auto)+". If FACE ID and BODY TEXT are missing, suggest fictional adults with natural appearance, consistent across all panels; never copy an actual model's face.",
+ "CHARACTER POLICY: "+castPolicy(c)+". If FACE ID and BODY TEXT are missing, suggest fictional adults with natural appearance, consistent across all panels; never copy an actual model's face.",
  c.face?"FACE ID (attach separately): "+c.face+". This controls only facial identity; keep consistent in all relevant shots.":"FACE ID: not supplied; use a fictional adult identity.",
  c.bodyText?"BODY TEXT ONLY (reviewed by user): "+c.bodyText+". Maintain realistic anatomy; no exaggerated or sexualized measurements.":"BODY: natural adult proportions, believable posture and scale. No body reference image is sent to the image generator.",
  c.outfit?"OUTFIT REFERENCE (attach separately): "+c.outfit+". Use only garment silhouette, fabric, palette and accessories; never derive face/body from outfit photo.":"OUTFIT: appropriate understated editorial clothing, consistent across shots.",
