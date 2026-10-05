@@ -1,0 +1,11 @@
+import {reason,compilePrompt} from "../core/cognitive-core.js";
+const assert=(ok,msg)=>{if(!ok)throw Error(msg)};
+const r=reason({task:"Thay sofa",mode:"edit",evidence:[{role:"target"}],changes:["sofa"]});
+assert(r.ready,"valid edit should be ready");
+assert(r.locks.includes("camera"),"camera lock");
+const c=reason({task:"Change camera",mode:"edit",evidence:[{role:"target"}],changes:["camera"]});
+assert(!c.ready&&c.conflicts.length===1,"detect lock conflict");
+assert(!reason({task:"Edit",mode:"edit"}).ready,"missing target");
+const p=compilePrompt({task:"Thay sofa",evidence:[{role:"target"}],changes:["sofa"]},"gemini");
+assert(p.platform==="Gemini"&&p.prompt.includes("PRESERVE:"),"platform compilation");
+console.log("HG Cognitive Core: 4 tests passed");
