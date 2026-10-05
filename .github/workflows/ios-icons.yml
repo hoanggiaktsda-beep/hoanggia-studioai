@@ -8,6 +8,7 @@ on:
       - '.github/workflows/ios-icons.yml'
 permissions:
   contents: write
+  actions: write
 jobs:
   icons:
     runs-on: ubuntu-latest
