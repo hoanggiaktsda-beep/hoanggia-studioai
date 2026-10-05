@@ -34,6 +34,42 @@ jobs:
           console.log('Static integration and offline navigation checks passed');
           NODE
 
+      - name: Verify production dependency graph and mobile icons
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {readFileSync,existsSync} from 'node:fs';
+          import {resolve,dirname} from 'node:path';
+          const sw=readFileSync('sw.js','utf8');
+          const manifest=JSON.parse(readFileSync('manifest.webmanifest','utf8'));
+          const cachePaths=[...sw.matchAll(/^\s*"((?:\.\/)[^"]+)"/gm)].map(m=>m[1].slice(2));
+          for(const file of cachePaths)assert.ok(existsSync(file),'Offline asset missing: '+file);
+          function checkImports(file,seen=new Set()){
+            if(seen.has(file))return;seen.add(file);
+            const src=readFileSync(file,'utf8');
+            for(const m of src.matchAll(/(?:import|export)\s+(?:[^'"]*?\s+from\s+)?["'](\.[^"']+)["']/g)){
+              const next=resolve(dirname(file),m[1]);
+              assert.ok(existsSync(next),'Missing module: '+next);
+              assert.ok(cachePaths.some(x=>resolve(x)===next),'Offline module not precached: '+next);
+              checkImports(next,seen);
+            }
+          }
+          for(const page of ['index.html','expert09.html']){
+            const html=readFileSync(page,'utf8');
+            assert.match(html,/apple-touch-icon\.png\?v=13/);
+            assert.match(html,/sw\.js\?v=14/);
+            for(const m of html.matchAll(/<script\s+type="module"\s+src="\.\/([^"]+)"/g))checkImports(m[1]);
+          }
+          for(const icon of manifest.icons){
+            const path=icon.src.replace(/^\.\//,'');
+            assert.ok(existsSync(path),'Missing manifest icon: '+path);
+            assert.equal(icon.type,'image/png');
+            assert.equal(readFileSync(path).subarray(0,8).toString('hex'),'89504e470d0a1a0a','Invalid PNG: '+path);
+          }
+          assert.ok(existsSync('assets/apple-touch-icon.png'));
+          console.log('Dependency, offline and iOS PNG integrity checks passed');
+          NODE
+
       - name: Expert 09 regression
         run: |
           node --input-type=module <<'NODE'
