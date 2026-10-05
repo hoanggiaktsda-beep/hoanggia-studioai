@@ -4,6 +4,9 @@
 export function installPromptCopyGuard({ output, copyButton, status }) {
   if (!output) return;
   output.classList.add("prompt-copy-guard");
+  output.style.userSelect = "none";
+  output.style.webkitUserSelect = "none";
+  output.style.caretColor = "transparent";
   output.setAttribute("aria-label", "Kết quả prompt (chế độ hạn chế sao chép)");
   if (copyButton) {
     copyButton.hidden = true;
@@ -12,6 +15,7 @@ export function installPromptCopyGuard({ output, copyButton, status }) {
   }
   const notice = document.createElement("p");
   notice.className = "prompt-protection-notice";
+  notice.style.cssText = "font-size:12px;line-height:1.5;color:#bfa77b;margin:10px 0;";
   notice.textContent = "🔒 Chế độ bảo vệ: hạn chế chọn, sao chép và tải prompt. Đây không phải mã hóa bảo mật; nội dung hiển thị vẫn có thể được ghi lại.";
   output.parentNode.insertBefore(notice, output);
   const isInside = target => target === output || output.contains(target);
