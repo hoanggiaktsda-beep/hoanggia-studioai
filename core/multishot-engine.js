@@ -33,3 +33,58 @@ export function compileMultiShot(c){
  c.brief?"ADDITIONAL DESIGN INTENT: "+c.brief:""
  ].filter(Boolean).join("\n\n");
 }
+
+export function compileMultiView(c){
+ const n=Number(c.viewCount);
+ if(![4,6,9].includes(n))throw Error("Số góc chụp không hợp lệ");
+ if(!c.master)throw Error("Thiếu MASTER IMAGE");
+ if(!spaces[c.space])throw Error("Chuyên ngành không hợp lệ");
+ if(c.shots.length>n)throw Error("Số SHOT vượt quá số góc");
+ const master="MASTER IMAGE: "+c.master+" (attach image separately). Master is the sole spatial source of truth; do not infer hidden geometry from a filename.";
+ const brains=c.space==="interior"
+ ?"ARCHITECTURE BRAIN: preserve floor plan, walls, ceiling, openings and spatial axes. INTERIOR DESIGN BRAIN: preserve furniture identities, placement, proportions, palette, materials and lighting. PHOTOGRAPHY BRAIN: François Halard-inspired interior photography, human scale, controlled verticals, realistic lens and light."
+ :"ARCHITECTURE BRAIN: Tadao Ando-inspired reading of massing, openings, context and structural logic. INTERIOR DESIGN BRAIN: preserve visible fit-out, furniture, materials and continuity. PHOTOGRAPHY BRAIN: Iwan Baan-inspired architectural photography, human context, perspective and natural light.";
+ const common=[
+ "HOANGGIA AI EXPERT 09 — MULTI-VIEW CREATIVE — CONSISTENCY MASTER",
+ master,"DOMAIN: "+spaces[c.space],brains,
+ "ART DIRECTION BRAIN: direct male/female adult models' placement, posture, scale, gaze, interactions and blocking without obscuring design; use professional editorial practices, not real celebrity likenesses.",
+ "PRIORITY ZONE: "+(zones[c.zone]||zones.auto)+(c.zoneNote?"; "+c.zoneNote:""),
+ "CAST: "+(people[c.cast]||people.auto),
+ c.face?"FACE ID FILE: "+c.face+"; use attached portrait only for face identity, not architecture.":"FACE ID: fictional consistent adult face if a character is used.",
+ c.bodyText?"BODY TEXT (user-reviewed): "+c.bodyText:"BODY: natural adult proportions, realistic posture and scale; no BODY image inferred or transmitted.",
+ c.outfit?"OUTFIT FILE: "+c.outfit+"; clothing only, no face/body derivation.":"OUTFIT: consistent understated editorial clothing.",
+ "GLOBAL SPATIAL LOCK: all images depict the SAME exact project, objects, finishes, furniture positions, lighting setup, time of day, and character identity/wardrobe. Only viewpoint, focal length, framing and naturally compatible action may vary.",
+ "EVIDENCE SAFETY: a single master image cannot verify reverse angles or hidden surfaces. Avoid inventing unseen rooms, doors, windows, rear walls or furniture. If a requested angle is not visually supported, use a conservative view within observed spatial evidence; do not claim geometric certainty.",
+ "OUTPUT: exactly "+n+" SEPARATE photographic images, ONE image per numbered shot, NOT a collage, grid or contact sheet. Each prompt below is standalone and inherits this same consistency master.",
+ c.brief?"ADDITIONAL INTENT: "+c.brief:""
+ ].filter(Boolean).join("\n");
+ const defaults=c.space==="interior"?[
+ ["Toàn cảnh","Phòng khách và mối liên hệ với khu ăn"],
+ ["Góc chéo 2/3","Sofa, bàn trà và hệ vách"],
+ ["Góc nhìn xuyên lớp","Từ phòng khách hướng về khu ăn"],
+ ["Cận cảnh","Khu bàn ăn, đèn trang trí và chi tiết vật liệu"],
+ ["Góc 45°","Tương quan cửa kính, sofa và bàn"],
+ ["Góc thấp","Chiều sâu đồ nội thất"],
+ ["Chính diện","Trục không gian chính"],
+ ["Góc cao","Bố cục tổng thể"],
+ ["Góc tự do","Chi tiết có giá trị thị giác"]
+ ]:[
+ ["Toàn cảnh","Công trình trong bối cảnh"],
+ ["Góc chéo 2/3","Hình khối và mặt đứng"],
+ ["Góc nhìn xuyên lớp","Các lớp không gian và lối tiếp cận"],
+ ["Cận cảnh","Vật liệu và chi tiết kiến trúc"],
+ ["Góc thấp","Nhịp kết cấu và tỷ lệ người"],
+ ["Góc 45°","Giao điểm khối tích"],
+ ["Chính diện","Mặt đứng chính"],
+ ["Góc cao","Tổ chức khối"],
+ ["Góc tự do","Điểm nhấn có bằng chứng thị giác"]
+ ];
+ const prompts=Array.from({length:n},(_,i)=>{
+ const s=c.shots[i],d=defaults[i];
+ const spec=s
+ ?"ARCHITECT LOCKED SHOT: "+(s.angle||"Góc tự do")+"; SUBJECT/ZONE: "+(s.subject||"within visible evidence")+"; PERSON: "+(people[s.person]||people.auto)+"; ACTION: "+(s.action||"natural")+"; NOTES: "+(s.note||"none")
+ :"EXPERT-PROPOSED SHOT: "+d[0]+"; SUBJECT/ZONE: "+d[1]+"; adjust to MASTER evidence, prioritize a distinct and attractive composition; do not duplicate other shots.";
+ return "IMAGE "+String(i+1).padStart(2,"0")+" / "+n+" — STANDALONE PROMPT\n"+common+"\n"+spec+"\nOUTPUT THIS IMAGE ONLY. Photorealistic architectural editorial photograph, accurate verticals, plausible occlusion and perspective, natural material response, no changes to the original design.";
+ });
+ return prompts.join("\n\n"+("═".repeat(38))+"\n\n");
+}
