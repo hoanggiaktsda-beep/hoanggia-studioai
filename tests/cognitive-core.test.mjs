@@ -15,4 +15,15 @@ assert(independent.domains.includes("furniture")&&!independent.domains.includes(
 assert(!reason({task:" ",mode:"create"}).ready,"missing task");
 assert(reason({task:"Thiết kế mới",mode:"create"}).ready,"create without target");
 assert(compilePrompt({task:"Thay sofa",mode:"edit",evidence:[{role:"target"}],changes:["sofa"]},"grok").platform==="Grok","grok");
-console.log("HG Cognitive Core: 10 assertions passed");
+for (const [name,changes,locks,expected] of [
+  ["camera change blocked",["đổi góc máy"],["camera"],false],
+  ["camera expert permitted",["camera"],["architecture","geometry"],true],
+  ["furniture only",["sofa"],["camera","architecture"],true],
+  ["material only",["vật liệu"],["camera","architecture"],true],
+  ["lighting only",["ánh sáng"],["camera","architecture"],true],
+  ["aspect ratio only",["frame"],["camera","architecture"],true]
+]) {
+  const result=reason({task:name,mode:"edit",evidence:[{role:"target"}],changes,locks});
+  assert(result.ready===expected,name);
+}
+console.log("HG Cognitive Core: regression assertions passed");
