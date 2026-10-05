@@ -57,5 +57,9 @@ jobs:
           assert.throws(()=>compileMultiView({...b,viewCount:4,shots:Array(5).fill({})}),/vượt/);
           assert.throws(()=>compileMultiShot({...b,space:'invalid'}),/không hợp lệ/);
           assert.throws(()=>compileMultiView({...b,space:'invalid',viewCount:4}),/không hợp lệ/);
+          const noDup=compileMultiView({...b,viewCount:4,shots:[{mode:'manual',angle:'Toàn cảnh',subject:'facade',person:'none',action:''},{mode:'auto'}]});
+          assert.match(noDup,/ARCHITECT LOCKED SHOT: Toàn cảnh/);
+          assert.match(noDup,/EXPERT-PROPOSED SHOT: Góc chéo 2\/3/);
+          assert.doesNotMatch(noDup,/EXPERT-PROPOSED SHOT: Toàn cảnh/);
           console.log('Expert 09 regression passed');
           NODE
