@@ -61,5 +61,13 @@ jobs:
           assert.match(noDup,/ARCHITECT LOCKED SHOT: Toàn cảnh/);
           assert.match(noDup,/EXPERT-PROPOSED SHOT: Góc chéo 2\/3/);
           assert.doesNotMatch(noDup,/EXPERT-PROPOSED SHOT: Toàn cảnh/);
+          for(const cast of ['pedestrians','visitors','family','cyclists','gardeners','community','crowd','custom']){
+            const cfg={...b,space:'architecture',cast,castNote:'lối đi bộ'};
+            assert.match(compileMultiShot(cfg),/CHARACTER POLICY/);
+            assert.match(compileMultiView({...cfg,viewCount:4}),/CAST:/);
+          }
+          assert.match(compileMultiShot({...b,space:'architecture',cast:'cyclists'}),/xe đạp/);
+          assert.match(compileMultiView({...b,space:'architecture',viewCount:4,cast:'custom',castNote:'cư dân đi dạo'}),/cư dân đi dạo/);
+          assert.doesNotMatch(compileMultiShot({...b,cast:'cyclists'}),/xe đạp/);
           console.log('Expert 09 regression passed');
           NODE
