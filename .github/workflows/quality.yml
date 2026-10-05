@@ -30,8 +30,8 @@ jobs:
           assert.throws(()=>compileMultiShot({...b,master:''}),/MASTER/);
           assert.throws(()=>compileMultiShot({...b,layout:'2x2',shots:Array(5).fill({})}),/vượt/);
           assert.match(compileMultiView({...b,viewCount:4}),/IMAGE 04 \/ 4/);
-          assert.match(compileMultiView({...b,viewCount:4}),/SEPARATE photographic images/);
-          assert.throws(()=>compileMultiView({...b,viewCount:3}),/không hợp lệ/);
+          assert.match(compileMultiView({...b,viewCount:4}),/independent numbered shot prompts/);
+          assert.match(compileMultiView({...b,viewCount:3}),/IMAGE 03 \\/ 3/);
           const mixed={...b,viewCount:4,shots:[{mode:'manual',angle:'Góc chéo 2/3',subject:'sofa',person:'female',action:'uống trà'},{mode:'auto'}]};
           assert.match(compileMultiView(mixed),/ARCHITECT LOCKED SHOT/);
           assert.match(compileMultiView(mixed),/EXPERT-PROPOSED SHOT/);
