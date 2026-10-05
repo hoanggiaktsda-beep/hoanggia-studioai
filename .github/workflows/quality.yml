@@ -12,7 +12,54 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           set -e
-          for file in app.js core/*.js; do
+          for file in app.js expert09.js core/*.js; do
             echo "Checking $file"
             node --check "$file"
           done
+
+      - name: Expert 09 regression
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {compileMultiShot,compileMultiView} from './core/multishot-engine.js';
+          const b={master:'master.jpg',space:'interior',layout:'3x2',zone:'auto',cast:'auto',shots:[]};
+          assert.match(compileMultiShot(b),/with 6 distinct photographic panels/);
+          assert.match(compileMultiShot({...b,shots:[{angle:'Góc chéo 2\/3',subject:'sofa',person:'female',action:'ngồi uống trà'}]}),/ngồi uống trà/);
+          assert.match(compileMultiShot({...b,layout:'2x2'}),/with 4 distinct/);
+          assert.match(compileMultiShot({...b,layout:'3x3'}),/with 9 distinct/);
+          assert.throws(()=>compileMultiShot({...b,master:''}),/MASTER/);
+          assert.throws(()=>compileMultiShot({...b,layout:'2x2',shots:Array(5).fill({})}),/vượt/);
+          assert.match(compileMultiView({...b,viewCount:4}),/IMAGE 04 \/ 4/);
+          assert.match(compileMultiView({...b,viewCount:4}),/SEPARATE photographic images/);
+          assert.throws(()=>compileMultiView({...b,viewCount:3}),/không hợp lệ/);
+          const mixed={...b,viewCount:4,shots:[{mode:'manual',angle:'Góc chéo 2/3',subject:'sofa',person:'female',action:'uống trà'},{mode:'auto'}]};
+          assert.match(compileMultiView(mixed),/ARCHITECT LOCKED SHOT/);
+          assert.match(compileMultiView(mixed),/EXPERT-PROPOSED SHOT/);
+          assert.match(compileMultiShot(mixed),/AI TỰ ĐỀ XUẤT/);
+          // Cross-mode, optional reference, and guardrail coverage
+          for(const space of ['interior','architecture']){
+            for(const layout of ['2x2','3x2','3x3']){
+              const p=compileMultiShot({...b,space,layout});
+              assert.match(p,/CONTINUITY LOCK/);
+              assert.match(p,/EVIDENCE LIMIT/);
+            }
+            for(const viewCount of [4,6,9]){
+              const p=compileMultiView({...b,space,viewCount});
+              assert.match(p,/GLOBAL SPATIAL LOCK/);
+              assert.match(p,/EVIDENCE SAFETY/);
+              assert.match(p,new RegExp('IMAGE '+String(viewCount).padStart(2,'0')+' \\/ '+viewCount));
+            }
+          }
+          const refs={...b,viewCount:4,face:'face.jpg',bodyText:'Adult, balanced proportions',outfit:'jacket.jpg'};
+          assert.match(compileMultiView(refs),/FACE ID FILE/);
+          assert.match(compileMultiView(refs),/BODY TEXT/);
+          assert.match(compileMultiView(refs),/OUTFIT FILE/);
+          assert.throws(()=>compileMultiView({...b,viewCount:4,shots:Array(5).fill({})}),/vượt/);
+          assert.throws(()=>compileMultiShot({...b,space:'invalid'}),/không hợp lệ/);
+          assert.throws(()=>compileMultiView({...b,space:'invalid',viewCount:4}),/không hợp lệ/);
+          const noDup=compileMultiView({...b,viewCount:4,shots:[{mode:'manual',angle:'Toàn cảnh',subject:'facade',person:'none',action:''},{mode:'auto'}]});
+          assert.match(noDup,/ARCHITECT LOCKED SHOT: Toàn cảnh/);
+          assert.match(noDup,/EXPERT-PROPOSED SHOT: Góc chéo 2\/3/);
+          assert.doesNotMatch(noDup,/EXPERT-PROPOSED SHOT: Toàn cảnh/);
+          console.log('Expert 09 regression passed');
+          NODE
