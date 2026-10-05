@@ -3,7 +3,8 @@ export const SHOT_ANGLES=["Góc chéo 2/3","Chính diện","Góc 45°","Góc 90�
 const counts={"2x2":4,"3x2":6,"3x3":9};
 const spaces={architecture:"KIẾN TRÚC",interior:"NỘI THẤT"};
 const people={auto:"AI đề xuất người trưởng thành hư cấu phù hợp nếu hữu ích",none:"Không có người",male:"Nam trưởng thành",female:"Nữ trưởng thành",both:"Nam và nữ trưởng thành",pedestrians:"Người đi bộ và cư dân trong không gian công cộng, tỷ lệ thật",visitors:"Khách tham quan hoặc du khách, tương tác tự nhiên với kiến trúc",family:"Gia đình hoặc nhóm người sinh hoạt phù hợp không gian",cyclists:"Người đi xe đạp trên tuyến được nhìn thấy và phù hợp công năng",gardeners:"Nhân viên chăm sóc cây xanh, làm vườn hoặc bảo trì cảnh quan",community:"Nhóm người sinh hoạt cộng đồng phù hợp quảng trường, công viên",crowd:"Đám đông có mật độ hợp lý, không che khuất thiết kế",custom:"Nhân vật theo mô tả của kiến trúc sư"};
-const zones={auto:"AI chọn khu vực có bằng chứng thị giác mạnh nhất",living:"Sofa / khu tiếp khách",dining:"Bàn ăn",kitchen:"Bếp",facade:"Mặt đứng / hình khối",landscape:"Cảnh quan",detail:"Chi tiết vật liệu",custom:"Khu vực do kiến trúc sư mô tả"};
+export const EXPERT09_ZONES={"interior":{"auto":"AI tự chọn khu vực trong MASTER","living":"Phòng khách / sofa","dining":"Phòng ăn","kitchen":"Bếp / đảo bếp","bedroom":"Phòng ngủ","master":"Phòng ngủ master","bathroom":"Phòng tắm / WC","wardrobe":"Phòng thay đồ","foyer":"Sảnh đón / tiền phòng","hallway":"Hành lang / lưu thông","stairs":"Cầu thang / thông tầng","lounge":"Lounge / giải trí","bar":"Minibar / quầy bar","office":"Phòng làm việc","showroom":"Showroom / trưng bày","retail":"Cửa hàng / thương mại","hospitality":"Sảnh khách sạn / nhà hàng","ceiling":"Trần / hệ đèn","wall":"Vách / hệ tủ","floor":"Sàn / vật liệu","detail":"Chi tiết nội thất","custom":"Khác — mô tả riêng"},"architecture":{"auto":"AI tự chọn khu vực trong MASTER","facade":"Mặt đứng / hình khối","entrance":"Lối vào / tiền sảnh","massing":"Tổng thể khối công trình","roof":"Mái / sân mái","courtyard":"Sân trong","terrace":"Ban công / sân hiên","landscape":"Cảnh quan tổng thể","garden":"Sân vườn / cây xanh","park":"Công viên","plaza":"Quảng trường / không gian công cộng","walkway":"Lối đi bộ / đường dạo","water":"Hồ nước / đài phun / mặt nước","pool":"Hồ bơi / khu nghỉ","playground":"Sân chơi / khu hoạt động","parking":"Lối xe / bãi đỗ","street":"Đường phố / cảnh quan đô thị","boundary":"Cổng / hàng rào / ranh giới","lighting":"Chiếu sáng ngoại thất","detail":"Chi tiết kiến trúc / vật liệu","custom":"Khác — mô tả riêng"}};
+const zoneText=c=>EXPERT09_ZONES[c.space]?.[c.zone]||EXPERT09_ZONES[c.space]?.auto;
 const architectureCasts=new Set(["pedestrians","visitors","family","cyclists","gardeners","community","crowd","custom"]);function castPolicy(c){const type=c.space==="architecture"?c.cast:(architectureCasts.has(c.cast)?"auto":c.cast);return (people[type]||people.auto)+(type==="custom"&&c.castNote?"; yêu cầu: "+c.castNote:"")+"; keep people contextually plausible and subordinate to architectural and landscape design, never invent paths or features.";}
 export function compileMultiShot(c){
  const total=counts[c.layout];if(!total)throw Error("Bố cục không hợp lệ");
@@ -21,7 +22,7 @@ export function compileMultiShot(c){
  "BRAIN 01/02 — SPATIAL DESIGN: "+expert,
  "BRAIN 03 — PHOTOGRAPHY: Use expert architectural/interior photography reasoning; natural perspective, controlled lens, coherent light, human scale, no fisheye or distorted verticals.",
  "BRAIN 04 — ART DIRECTION & MODELING: Visual direction inspired by Peter Lindbergh's natural storytelling; model posing informed by David Gandy and Liu Wen's professional editorial practices. These are professional principles, NOT requests to reproduce these individuals' likenesses.",
- "PRIORITY AREA: "+(zones[c.zone]||zones.auto)+(c.zoneNote?"; architect note: "+c.zoneNote:"")+".",
+ "PRIORITY AREA: "+zoneText(c)+(c.zoneNote?"; architect note: "+c.zoneNote:"")+".",
  "CHARACTER POLICY: "+castPolicy(c)+". If FACE ID and BODY TEXT are missing, suggest fictional adults with natural appearance, consistent across all panels; never copy an actual model's face.",
  c.face?"FACE ID (attach separately): "+c.face+". This controls only facial identity; keep consistent in all relevant shots.":"FACE ID: not supplied; use a fictional adult identity.",
  c.bodyText?"BODY TEXT ONLY (reviewed by user): "+c.bodyText+". Maintain realistic anatomy; no exaggerated or sexualized measurements.":"BODY: natural adult proportions, believable posture and scale. No body reference image is sent to the image generator.",
@@ -49,7 +50,7 @@ export function compileMultiView(c){
  "HOANGGIA AI EXPERT 09 — MULTI-VIEW CREATIVE — CONSISTENCY MASTER",
  master,"DOMAIN: "+spaces[c.space],brains,
  "ART DIRECTION BRAIN: direct male/female adult models' placement, posture, scale, gaze, interactions and blocking without obscuring design; use professional editorial practices, not real celebrity likenesses.",
- "PRIORITY ZONE: "+(zones[c.zone]||zones.auto)+(c.zoneNote?"; "+c.zoneNote:""),
+ "PRIORITY ZONE: "+zoneText(c)+(c.zoneNote?"; "+c.zoneNote:""),
  "CAST: "+(people[c.cast]||people.auto),
  c.face?"FACE ID FILE: "+c.face+"; use attached portrait only for face identity, not architecture.":"FACE ID: fictional consistent adult face if a character is used.",
  c.bodyText?"BODY TEXT (user-reviewed): "+c.bodyText:"BODY: natural adult proportions, realistic posture and scale; no BODY image inferred or transmitted.",
