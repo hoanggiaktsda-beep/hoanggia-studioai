@@ -51,13 +51,13 @@ export function compileMultiView(c){
  master,"DOMAIN: "+spaces[c.space],brains,
  "ART DIRECTION BRAIN: direct male/female adult models' placement, posture, scale, gaze, interactions and blocking without obscuring design; use professional editorial practices, not real celebrity likenesses.",
  "PRIORITY ZONE: "+zoneText(c)+(c.zoneNote?"; "+c.zoneNote:""),
- "CAST: "+(people[c.cast]||people.auto),
+ "CAST: "+castPolicy(c),
  c.face?"FACE ID FILE: "+c.face+"; use attached portrait only for face identity, not architecture.":"FACE ID: fictional consistent adult face if a character is used.",
  c.bodyText?"BODY TEXT (user-reviewed): "+c.bodyText:"BODY: natural adult proportions, realistic posture and scale; no BODY image inferred or transmitted.",
  c.outfit?"OUTFIT FILE: "+c.outfit+"; clothing only, no face/body derivation.":"OUTFIT: consistent understated editorial clothing.",
  "GLOBAL SPATIAL LOCK: all images depict the SAME exact project, objects, finishes, furniture positions, lighting setup, time of day, and character identity/wardrobe. Only viewpoint, focal length, framing and naturally compatible action may vary.",
  "EVIDENCE SAFETY: a single master image cannot verify reverse angles or hidden surfaces. Avoid inventing unseen rooms, doors, windows, rear walls or furniture. If a requested angle is not visually supported, use a conservative view within observed spatial evidence; do not claim geometric certainty.",
- "OUTPUT: exactly "+n+" SEPARATE photographic images, ONE image per numbered shot, NOT a collage, grid or contact sheet. Each prompt below is standalone and inherits this same consistency master.",
+ "SERIES PLAN: "+n+" independent numbered shot prompts follow. Each prompt generates EXACTLY ONE image, NOT a collage, grid or contact sheet.",
  c.brief?"ADDITIONAL INTENT: "+c.brief:""
  ].filter(Boolean).join("\n");
  const defaults=c.space==="interior"?[
