@@ -15,4 +15,4 @@ assert(independent.domains.includes("furniture")&&!independent.domains.includes(
 assert(!reason({task:" ",mode:"create"}).ready,"missing task");
 assert(reason({task:"Thiết kế mới",mode:"create"}).ready,"create without target");
 assert(compilePrompt({task:"Thay sofa",mode:"edit",evidence:[{role:"target"}],changes:["sofa"]},"grok").platform==="Grok","grok");
-console.log("HG Cognitive Core: 9 tests passed");
+console.log("HG Cognitive Core: 10 assertions passed");
