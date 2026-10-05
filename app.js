@@ -1,3 +1,4 @@
+import { reason as cognitiveReason } from "./core/cognitive-core.js";
 import { installPromptCopyGuard } from "./core/prompt-copy-guard.js";
 import { buildDirection } from "./core/prompt-engine.js";
 import { editModeDirection } from "./core/edit-engine.js";
@@ -650,6 +651,15 @@ document.getElementById("generate")?.addEventListener("click", () => {
       aiTarget: selectedAITarget,
       aiProfile: aiTargetProfiles[selectedAITarget] || aiTargetProfiles["Khác"]
     });
+    // Advisory-only gate: never blend independent Expert 01–09 decisions.
+    // The established expert engine remains the sole prompt authority.
+    const cognitive = cognitiveReason({
+      task: brief?.value || currentMode,
+      mode: "create",
+      changes: [currentMode],
+      evidence: sceneInput?.files?.length ? [{role:"target",observed:false}] : []
+    });
+    if (!cognitive.ready) throw new Error("Thiếu yêu cầu hợp lệ để biên dịch.");
     if (resultContent) resultContent.textContent = built.prompt;
     if (reasoningSummary) reasoningSummary.innerHTML = `
       <div><b>${built.reasoning.expert}</b><span>${built.reasoning.expertRole}</span></div>
