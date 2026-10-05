@@ -78,5 +78,13 @@ jobs:
           assert.match(compileMultiView({...b,space:'interior',viewCount:4,zone:'ceiling'}),/Trần/);
           assert.doesNotMatch(compileMultiShot({...b,space:'interior',zone:'park'}),/Công viên/);
           assert.doesNotMatch(compileMultiShot({...b,space:'architecture',zone:'wardrobe'}),/Phòng thay đồ/);
+          for(const n of [1,2,3,5,7,8,10,12]){
+            const result=compileMultiView({...b,viewCount:n,shots:[]});
+            assert.match(result,new RegExp('IMAGE '+String(n).padStart(2,'0')+' \\/ '+n));
+          }
+          assert.throws(()=>compileMultiView({...b,viewCount:0}),/không hợp lệ/);
+          assert.throws(()=>compileMultiView({...b,viewCount:13}),/không hợp lệ/);
+          assert.match(compileMultiView({...b,viewCount:2,shots:[{mode:'manual',zone:'kitchen',angle:'Góc cao',person:'none',subject:'island'}]}),/Bếp \/ đảo bếp/);
+          assert.match(compileMultiShot({...b,shots:[{mode:'manual',zone:'dining',angle:'Toàn cảnh',person:'none'}]}),/Phòng ăn/);
           console.log('Expert 09 regression passed');
           NODE
