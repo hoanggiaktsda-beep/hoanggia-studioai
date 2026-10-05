@@ -21,7 +21,7 @@ jobs:
         run: |
           node --input-type=module <<'NODE'
           import assert from 'node:assert/strict';
-          import {compileMultiShot} from './core/multishot-engine.js';
+          import {compileMultiShot,compileMultiView} from './core/multishot-engine.js';
           const b={master:'master.jpg',space:'interior',layout:'3x2',zone:'auto',cast:'auto',shots:[]};
           assert.match(compileMultiShot(b),/with 6 distinct photographic panels/);
           assert.match(compileMultiShot({...b,shots:[{angle:'Góc chéo 2\/3',subject:'sofa',person:'female',action:'ngồi uống trà'}]}),/ngồi uống trà/);
@@ -29,5 +29,5 @@ jobs:
           assert.match(compileMultiShot({...b,layout:'3x3'}),/with 9 distinct/);
           assert.throws(()=>compileMultiShot({...b,master:''}),/MASTER/);
           assert.throws(()=>compileMultiShot({...b,layout:'2x2',shots:Array(5).fill({})}),/vượt/);
-          console.log('Expert 09 regression passed');
+          assert.match(compileMultiView({...b,viewCount:4}),/IMAGE 04 \/ 4/);\n          assert.match(compileMultiView({...b,viewCount:4}),/SEPARATE photographic images/);\n          assert.throws(()=>compileMultiView({...b,viewCount:3}),/không hợp lệ/);\n          console.log('Expert 09 regression passed');
           NODE
