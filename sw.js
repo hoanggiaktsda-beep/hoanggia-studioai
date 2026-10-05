@@ -1,4 +1,4 @@
-const CACHE = "hoanggia-ai-v13";
+const CACHE = "hoanggia-ai-v14";
 const CORE = [
   "./",
   "./index.html",
@@ -9,6 +9,8 @@ const CORE = [
   "./expert09.js",
   "./core/multishot-engine.js",
   "./core/prompt-engine.js",
+  "./core/prompt-copy-guard.js",
+  "./core/visual-prompt-system.js",
   "./core/edit-engine.js",
   "./core/expert-decision-layer.js",
   "./core/architectural-brain.js",
