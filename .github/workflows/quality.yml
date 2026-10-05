@@ -12,7 +12,22 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           set -e
-          for file in app.js core/*.js; do
+          for file in app.js expert09.js core/*.js; do
             echo "Checking $file"
             node --check "$file"
           done
+
+      - name: Expert 09 regression
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {compileMultiShot} from './core/multishot-engine.js';
+          const b={master:'master.jpg',space:'interior',layout:'3x2',zone:'auto',cast:'auto',shots:[]};
+          assert.match(compileMultiShot(b),/with 6 distinct photographic panels/);
+          assert.match(compileMultiShot({...b,shots:[{angle:'Góc chéo 2\/3',subject:'sofa',person:'female',action:'ngồi uống trà'}]}),/ngồi uống trà/);
+          assert.match(compileMultiShot({...b,layout:'2x2'}),/with 4 distinct/);
+          assert.match(compileMultiShot({...b,layout:'3x3'}),/with 9 distinct/);
+          assert.throws(()=>compileMultiShot({...b,master:''}),/MASTER/);
+          assert.throws(()=>compileMultiShot({...b,layout:'2x2',shots:Array(5).fill({})}),/vượt/);
+          console.log('Expert 09 regression passed');
+          NODE
