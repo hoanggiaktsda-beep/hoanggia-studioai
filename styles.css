@@ -436,3 +436,35 @@ footer{
 @media(max-width:650px){.character-reference-grid{grid-template-columns:1fr}}
 
 .character-reference-card select,.character-reference-card textarea{width:100%;max-width:100%;box-sizing:border-box;border:1px solid rgba(160,170,185,.35);border-radius:8px;padding:10px;background:#20232a;color:#f3f3f3;font:inherit}.character-reference-card small{font-size:11px;line-height:1.5;opacity:.75}
+
+
+/* Mobile usability parity — presentation only; no expert logic changes. */
+@media(max-width:899px){
+  .sidebar{display:none!important}
+  .main{margin-left:0!important;width:100%!important;max-width:100%!important;box-sizing:border-box}
+  .app-shell{display:block;min-width:0}
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(7,8,7,.96);backdrop-filter:blur(14px);box-sizing:border-box}
+  .mode-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .mode-card{min-width:0;min-height:94px;text-align:left}
+  .mode-card small{font-size:11px!important;line-height:1.45}
+  .mode-card span{font-size:13px!important}
+  .panel-note,.expert-source,.expert-scope,.decision-intro small,.decision-field label small,.sync-help{font-size:12px!important;line-height:1.5}
+  .intent-field label,.decision-field label,.context-field label{font-size:12px!important;line-height:1.45}
+  .reference-controls>.editor-grid,.space-sync-grid{grid-template-columns:minmax(0,1fr)!important}
+  .reference-controls .decision-controls,.design-intent-grid{grid-template-columns:minmax(0,1fr)!important}
+  .evidence-row select,.evidence-row input,.intent-field select,.decision-field select,.context-field select,.context-field textarea,
+  .sync-target-meta input,.replica-library select,.replica-library input,
+  .reference-controls input,.reference-controls textarea{font-size:16px!important;min-height:44px;max-width:100%;box-sizing:border-box}
+  .upload-trigger,.ghost-btn,.copy-btn,.ai-target-option,.chips button{font-size:13px!important;min-height:44px}
+  .reference-remove,.sync-remove{min-width:44px;min-height:44px}
+  .result-panel pre{font-size:12px!important;white-space:pre-wrap;overflow-wrap:anywhere}
+  .hero-badge{display:none}
+  .editor-grid>*,.reference-controls>*,.action-panel>*,.panel-head>*{min-width:0}
+}
+@media(max-width:380px){
+  .main{padding-left:10px!important;padding-right:10px!important}
+  .panel{padding:12px!important}
+  .mode-grid{gap:7px}
+  .mode-card{padding:9px}
+  .topbar .crumb{max-width:48vw}
+}
