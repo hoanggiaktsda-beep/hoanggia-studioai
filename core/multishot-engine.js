@@ -80,7 +80,7 @@ export function compileMultiView(c){
  ["Góc tự do","Điểm nhấn có bằng chứng thị giác"]
  ];
  const prompts=Array.from({length:n},(_,i)=>{
- const s=c.shots[i],d=defaults[i];
+ const s=c.shots[i];const manualAngles=new Set(c.shots.filter(x=>x.mode!=="auto").map(x=>x.angle));const candidates=defaults.filter(x=>!manualAngles.has(x[0]));const aiIndex=c.shots.slice(0,i).filter(x=>x.mode==="auto").length+Math.max(0,i-c.shots.length);const d=candidates[aiIndex%candidates.length]||defaults[i];
  const spec=s && s.mode!=="auto"
  ?"ARCHITECT LOCKED SHOT: "+(s.angle||"Góc tự do")+"; SUBJECT/ZONE: "+(s.subject||"within visible evidence")+"; PERSON: "+(people[s.person]||people.auto)+"; ACTION: "+(s.action||"natural")+"; NOTES: "+(s.note||"none")
  :"EXPERT-PROPOSED SHOT: "+d[0]+"; SUBJECT/ZONE: "+d[1]+"; adjust to MASTER evidence, prioritize a distinct and attractive composition; do not duplicate other shots.";
