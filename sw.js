@@ -1,4 +1,4 @@
-const CACHE = "hoanggia-ai-v12";
+const CACHE = "hoanggia-ai-v13";
 const CORE = [
   "./",
   "./index.html",
@@ -18,9 +18,10 @@ const CORE = [
   "./core/furniture-engine.js",
   "./core/lighting-engine.js",
   "./assets/brand-mark.svg",
+  "./assets/apple-touch-icon.png",
   "./assets/brand.svg",
-  "./assets/icon-192.svg",
-  "./assets/icon-512.svg",
+  "./assets/icon-192.png",
+  "./assets/icon-512.png",
   "./manifest.webmanifest"
 ];
 
