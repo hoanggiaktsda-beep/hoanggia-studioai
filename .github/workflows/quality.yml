@@ -69,5 +69,14 @@ jobs:
           assert.match(compileMultiShot({...b,space:'architecture',cast:'cyclists'}),/xe đạp/);
           assert.match(compileMultiView({...b,space:'architecture',viewCount:4,cast:'custom',castNote:'cư dân đi dạo'}),/cư dân đi dạo/);
           assert.doesNotMatch(compileMultiShot({...b,cast:'cyclists'}),/xe đạp/);
+          const {EXPERT09_ZONES}=await import('./core/multishot-engine.js');
+          assert.ok(Object.keys(EXPERT09_ZONES.architecture).length>=15);
+          assert.ok(Object.keys(EXPERT09_ZONES.interior).length>=15);
+          assert.match(compileMultiShot({...b,space:'architecture',zone:'park'}),/Công viên/);
+          assert.match(compileMultiView({...b,space:'architecture',viewCount:4,zone:'walkway'}),/Lối đi bộ/);
+          assert.match(compileMultiShot({...b,space:'interior',zone:'wardrobe'}),/Phòng thay đồ/);
+          assert.match(compileMultiView({...b,space:'interior',viewCount:4,zone:'ceiling'}),/Trần/);
+          assert.doesNotMatch(compileMultiShot({...b,space:'interior',zone:'park'}),/Công viên/);
+          assert.doesNotMatch(compileMultiShot({...b,space:'architecture',zone:'wardrobe'}),/Phòng thay đồ/);
           console.log('Expert 09 regression passed');
           NODE
