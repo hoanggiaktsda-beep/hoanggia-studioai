@@ -11,11 +11,11 @@ jobs:
       - name: Validate JavaScript
         run: |
           set -e
-          for file in app.js core/*.js; do node --check "$file"; done
+          for file in app.js expert09.js core/*.js; do node --check "$file"; done
       - name: Build static preview package
         run: |
           mkdir -p preview
-          cp index.html styles.css app.js manifest.webmanifest sw.js preview/
+          cp index.html styles.css app.js expert09.html expert09.css expert09.js manifest.webmanifest sw.js preview/
           cp -R core assets preview/
           printf "HOANGGIA AI PR Preview\nCommit: %s\n" "$GITHUB_SHA" > preview/PREVIEW.txt
       - name: Upload preview
