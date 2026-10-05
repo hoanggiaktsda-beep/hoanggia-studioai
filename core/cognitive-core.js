@@ -1,6 +1,6 @@
 // HOANGGIA AI — Cognitive Core v1.0. Pure, deterministic, offline prompt reasoning.
 // No remote calls, secrets, or claims of automatic image understanding.
-export const CORE_VERSION = "1.0.0";
+export const CORE_VERSION = "1.0.1";
 const clean = x => typeof x === "string" ? x.trim().replace(/\s+/g," ") : "";
 const uniq = a => [...new Set(a.filter(Boolean))];
 const DOMAINS = {
@@ -18,6 +18,19 @@ const TARGETS = {
   gemini:{name:"Gemini",hint:"Respect image roles and preserve explicitly locked attributes."},
   grok:{name:"Grok",hint:"Treat each reference according to its assigned role and avoid unrelated changes."}
 };
+// Only the selected expert's explicit decisions enter the core. No cross-expert inference.
+const ALIASES = {
+  camera:["camera","góc máy","đổi góc máy","thay góc máy","camera angle","viewpoint"],
+  perspective:["perspective","phối cảnh","đổi phối cảnh"],
+  geometry:["geometry","hình học","kích thước không gian","thay hình khối"],
+  architecture:["architecture","kiến trúc","thay tường","thay trần","thay cửa"],
+  composition:["composition","bố cục","đổi bố cục"],
+  "non-target objects":["non-target objects","đồ vật khác","vật thể ngoài phạm vi"]
+};
+const canonical = x => {
+  const s=clean(x).toLowerCase();
+  return Object.entries(ALIASES).find(([,terms])=>terms.some(t=>s===t||s.startsWith(t+" ")||s.endsWith(" "+t)))?.[0]||s;
+};
 const RESTRICTIONS = ["architecture","geometry","camera","perspective","composition","non-target objects"];
 export function reason(input={}){
   const task=clean(input.task), brief=clean(input.brief), text=(task+" "+brief).toLowerCase();
@@ -29,14 +42,14 @@ export function reason(input={}){
   const mode=clean(input.mode)||"edit";
   const locks=uniq((Array.isArray(input.locks)?input.locks:mode==="edit"?RESTRICTIONS:[]).map(clean));
   const changes=uniq((Array.isArray(input.changes)?input.changes:[]).map(clean));
-  const conflicts=changes.filter(c=>locks.some(l=>c.toLowerCase()===l.toLowerCase())).map(c=>"Change conflicts with preservation lock: "+c);
+  const conflicts=changes.filter(c=>locks.some(l=>canonical(c)===canonical(l))).map(c=>"Change conflicts with preservation lock: "+c);
   const warnings=[];
   if(!task&&!brief)warnings.push("Missing task and design brief");
   if(mode==="edit"&&!evidence.some(e=>e.role==="target"))warnings.push("Target image not declared");
   if(evidence.some(e=>!e.observed&&e.description))warnings.push("Some descriptions are user-provided or inferred, not verified visual observations");
   if(mode==="edit"&&changes.length===0)warnings.push("No explicit allowed changes specified");
   if(conflicts.length)warnings.push("Resolve preservation conflicts before exporting");
-  const ready=warnings.filter(w=>/Missing task|conflicts|Target image/.test(w)).length===0;
+  const ready=Boolean(task||brief) && (mode!=="edit"||evidence.some(e=>e.role==="target")) && conflicts.length===0;
   return {version:CORE_VERSION,mode,task,brief,domains:uniq(domains),evidence,locks,changes,conflicts,warnings,ready};
 }
 export function compilePrompt(input={},platform="chatgpt"){
