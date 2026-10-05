@@ -1,6 +1,6 @@
 // HOANGGIA AI — Cognitive Core v1.0. Pure, deterministic, offline prompt reasoning.
 // No remote calls, secrets, or claims of automatic image understanding.
-export const CORE_VERSION = "1.0.1";
+export const CORE_VERSION = "1.0.2";
 const clean = x => typeof x === "string" ? x.trim().replace(/\s+/g," ") : "";
 const uniq = a => [...new Set(a.filter(Boolean))];
 const DOMAINS = {
