@@ -1,9 +1,13 @@
-const CACHE = "hoanggia-ai-v11";
+const CACHE = "hoanggia-ai-v12";
 const CORE = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
+  "./expert09.html",
+  "./expert09.css",
+  "./expert09.js",
+  "./core/multishot-engine.js",
   "./core/prompt-engine.js",
   "./core/edit-engine.js",
   "./core/expert-decision-layer.js",
@@ -49,11 +53,11 @@ self.addEventListener("fetch", event => {
         .then(response => {
           if (response && response.ok) {
             const copy = response.clone();
-            caches.open(CACHE).then(cache => cache.put("./index.html", copy));
+            caches.open(CACHE).then(cache => cache.put(request, copy));
           }
           return response;
         })
-        .catch(() => caches.match("./index.html"))
+        .catch(async () => (await caches.match(request)) || (await caches.match("./index.html")))
     );
     return;
   }
