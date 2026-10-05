@@ -17,6 +17,23 @@ jobs:
             node --check "$file"
           done
 
+      - name: Static integration and offline navigation checks
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {readFileSync,existsSync} from 'node:fs';
+          const index=readFileSync('index.html','utf8'), expert=readFileSync('expert09.html','utf8'), sw=readFileSync('sw.js','utf8'), js=readFileSync('expert09.js','utf8');
+          for(const path of ['index.html','styles.css','app.js','expert09.html','expert09.css','expert09.js','core/multishot-engine.js','assets/brand-mark.svg'])assert.ok(existsSync(path),path);
+          assert.match(index,/href="\.\/expert09\.html"/);
+          assert.match(expert,/href="\.\/index\.html"/);
+          assert.match(sw,/cache\.put\(request, copy\)/);
+          assert.doesNotMatch(sw,/cache\.put\("\.\/index\.html", copy\)/);
+          for(const path of ['expert09.html','expert09.css','expert09.js','core/multishot-engine.js'])assert.ok(sw.includes('"./'+path+'"'),path);
+          for(const id of ['space','outputMode','viewCount','layout','shots','addShot','zone','master','generate','output','status','shotHelp'])assert.ok(expert.includes('id="'+id+'"'),id);
+          assert.match(js,/while\(document\.querySelectorAll\("\.shot"\)\.length<count\(\)\)addShot\(\)/);
+          console.log('Static integration and offline navigation checks passed');
+          NODE
+
       - name: Expert 09 regression
         run: |
           node --input-type=module <<'NODE'
