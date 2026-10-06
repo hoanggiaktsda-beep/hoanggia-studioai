@@ -677,21 +677,37 @@ document.getElementById("generate")?.addEventListener("click", () => {
   }
 });
 
-document.getElementById("copy")?.addEventListener("click", async () => {
-  const enteredPassword = window.prompt("Nhập mật khẩu để sao chép prompt:");
-  if (enteredPassword === null) return;
-  if (enteredPassword !== "181092") {
-    if (brainStatus) brainStatus.textContent = "Mật khẩu sao chép không đúng";
-    window.alert("Mật khẩu không đúng. Không thể sao chép prompt.");
-    return;
+let copyUnlocked = false;
+const copyButton = document.getElementById("copy");
+const copyPassword = document.getElementById("copyPassword");
+const copyLockStatus = document.getElementById("copyLockStatus");
+document.getElementById("unlockCopy")?.addEventListener("click", () => {
+  if (copyPassword?.value === "181092") {
+    copyUnlocked = true;
+    copyButton.disabled = false;
+    copyButton.style.opacity = "1";
+    copyPassword.value = "";
+    if (copyLockStatus) copyLockStatus.textContent = "🔓 Đã mở khóa";
+  } else {
+    copyUnlocked = false;
+    copyButton.disabled = true;
+    copyButton.style.opacity = ".45";
+    if (copyLockStatus) copyLockStatus.textContent = "Mật khẩu không đúng";
   }
+});
+copyPassword?.addEventListener("input", () => {
+  if (!copyUnlocked) return;
+  copyUnlocked = false;
+  copyButton.disabled = true;
+  copyButton.style.opacity = ".45";
+  if (copyLockStatus) copyLockStatus.textContent = "🔒 Chưa mở khóa";
+});
+copyButton?.addEventListener("click", async () => {
+  if (!copyUnlocked) return;
   try {
     await navigator.clipboard.writeText(resultContent?.textContent || "");
-    const copyButton = document.getElementById("copy");
-    if (copyButton) {
-      copyButton.textContent = "✓ Đã sao chép";
-      setTimeout(() => { copyButton.textContent = "Sao chép yêu cầu AI"; }, 1600);
-    }
+    copyButton.textContent = "✓ Đã sao chép";
+    setTimeout(() => { copyButton.textContent = "Sao chép yêu cầu AI"; }, 1600);
     if (brainStatus) brainStatus.textContent = "Đã sao chép yêu cầu AI";
   } catch {
     if (brainStatus) brainStatus.textContent = "Không thể sao chép tự động";
