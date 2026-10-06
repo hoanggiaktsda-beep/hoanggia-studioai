@@ -1,5 +1,4 @@
 import { reason as cognitiveReason } from "./core/cognitive-core.js";
-import { installPromptCopyGuard } from "./core/prompt-copy-guard.js";
 import { buildDirection } from "./core/prompt-engine.js";
 import { editModeDirection } from "./core/edit-engine.js";
 import { expertFor } from "./core/expert-decision-layer.js";
@@ -694,4 +693,4 @@ document.getElementById("copy")?.addEventListener("click", async () => {
 
 renderMode("Furniture");
 
-installPromptCopyGuard({output:resultContent,copyButton:document.getElementById("copy"),status:brainStatus});
+
