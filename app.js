@@ -678,6 +678,13 @@ document.getElementById("generate")?.addEventListener("click", () => {
 });
 
 document.getElementById("copy")?.addEventListener("click", async () => {
+  const enteredPassword = window.prompt("Nhập mật khẩu để sao chép prompt:");
+  if (enteredPassword === null) return;
+  if (enteredPassword !== "181092") {
+    if (brainStatus) brainStatus.textContent = "Mật khẩu sao chép không đúng";
+    window.alert("Mật khẩu không đúng. Không thể sao chép prompt.");
+    return;
+  }
   try {
     await navigator.clipboard.writeText(resultContent?.textContent || "");
     const copyButton = document.getElementById("copy");
