@@ -1,5 +1,5 @@
 const MODES={
- Furniture:{label:"Furniture Replacement",instruction:"Replace only the selected furniture while preserving the surrounding interior."},
+ Furniture:{label:"Thay thế sản phẩm nội thất",instruction:"Chỉ thay đúng sản phẩm được chọn và bảo toàn không gian xung quanh. Ảnh model chỉ là bằng chứng nhận diện, không quyết định hướng đặt trong ảnh đích."},
  Material:{label:"Material Change",instruction:"Change only the specified material system while preserving geometry, proportion and spatial composition."},
  Lighting:{label:"Lighting Change",instruction:"Recompose light only: source, direction, temperature, intensity, contrast and bounce."},
  Camera:{label:"Camera / View Change",instruction:"Change viewpoint only: position, height, lens feel, framing and perspective."},
@@ -12,9 +12,14 @@ export function editModeDirection(mode,target,brief,params={},decisions={}){
  const config=MODES[mode]||MODES.Furniture;
  const safeguards={
  Furniture:[
-  "Replace only the target furniture; treat the supplied model images as one coherent model identity.",
-  "Preserve all non-target objects, architecture, built-ins and original camera.",
-  "Match model scale, floor contact, perspective, occlusion, lighting and contact shadows to the existing scene.",
+  "Chỉ thay sản phẩm mục tiêu; coi toàn bộ ảnh model cung cấp là các góc nhìn của cùng một sản phẩm.",
+  "REFERENCE VIEW ≠ PLACEMENT ORIENTATION: không sao chép hướng chụp/camera của ảnh model sang ảnh đích.",
+  "Phân tích từng ảnh model để xác định diện FRONT / REAR / LEFT / RIGHT / LONG SIDE / SHORT SIDE / 3-4 / TOP / BOTTOM / UNKNOWN; nếu KTS khai báo diện thủ công thì ưu tiên tuyệt đối dữ liệu KTS.",
+  "Xác định hệ trục LENGTH–WIDTH–HEIGHT của model, sau đó map vào trục, footprint và hướng của đồ cũ trong ảnh không gian.",
+  "Giữ camera/perspective của ảnh gốc; xoay vật thể theo không gian đích, không xoay không gian để khớp ảnh model.",
+  "ORIENTATION QUALITY GATE: nếu trục dài/rộng của model mâu thuẫn với đồ cũ hoặc perspective mục tiêu, phải sửa trước khi xuất.",
+  "Bảo toàn toàn bộ vật thể không thuộc mục tiêu, kiến trúc, built-in và camera gốc.",
+  "Khớp tỷ lệ model, tiếp xúc sàn, perspective, occlusion, ánh sáng và contact shadow với không gian hiện hữu.",
   "Resolve geometry consistently across all supplied reference views; never mix unrelated models or invent missing structural parts.",
   "Preserve the selected model's silhouette, construction logic and distinctive details unless the user explicitly requests a change.",
   "If scale must adapt to the room, adjust placement and fit only within the user's selected intervention level; do not redesign the model.",
