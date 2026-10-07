@@ -73,6 +73,12 @@
     <div class="upload-box" id="lightingTargetUploadBox"><div id="lightingTargetGallery" class="reference-gallery"></div><div id="lightingTargetPlaceholder"><button type="button" class="upload-trigger" id="lightingTargetTrigger">＋ Thêm hình ảnh nhận tham chiếu</button><span>Cho phép nhiều ảnh · mỗi ảnh tạo một Prompt riêng</span></div></div>
     <input id="lightingTargetInput" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden>
     <span class="panel-note" id="lightingTargetCount">0 ảnh</span>
+    <div class="sync-rule"><strong>PHÂN TÍCH ẢNH NHẬN</strong><span>EXPERT 03 đọc từng ảnh nhận để xác định phần phải GIỮ NGUYÊN và phần ánh sáng ĐƯỢC PHÉP THAY ĐỔI. Không dùng phân tích này để thiết kế lại không gian.</span></div>
+    <div class="intent-grid">
+      <div class="intent-field"><label for="lightingPreserve">GIỮ LẠI / KHÓA BẢO TOÀN</label><textarea id="lightingPreserve" rows="6" placeholder="Mặc định: kiến trúc, hình học, nội thất, sản phẩm, vật liệu, màu vật liệu, camera, góc nhìn, phối cảnh, bố cục, tỷ lệ, vị trí vật thể. Có thể bổ sung vùng hoặc chi tiết cần khóa."></textarea></div>
+      <div class="intent-field"><label for="lightingChange">THAY ĐỔI / CHỈ ÁNH SÁNG</label><textarea id="lightingChange" rows="6" placeholder="Mặc định: hướng sáng, nguồn sáng, độ mềm/cứng, cường độ, nhiệt độ màu, tương phản, vùng sáng–tối, bóng đổ, phản xạ, ánh sáng dội và độ phơi sáng. Có thể ghi rõ vùng ánh sáng cần thay."></textarea></div>
+    </div>
+    <div class="intent-field"><label for="lightingTargetAnalysis">GHI CHÚ PHÂN TÍCH RIÊNG CHO ẢNH NHẬN</label><textarea id="lightingTargetAnalysis" rows="4" placeholder="Ví dụ: giữ nguyên toàn bộ hệ tủ và đá; chỉ thay ánh sáng trần và ánh sáng tự nhiên từ cửa sổ. Không thay màu vật liệu gốc."></textarea></div>
   </div>
 </div>
 <div class="sync-rule"><strong>LIGHTING EXPERT 03</strong><span>Chỉ chuyển hướng sáng, nguồn sáng, độ mềm/cứng, cường độ, nhiệt độ màu, tương phản, phân bố sáng–tối và bầu không khí. Khóa kiến trúc, nội thất, vật liệu, camera, bố cục và tỷ lệ của ảnh nhận.</span></div>
@@ -229,4 +235,4 @@
   </div>
   <div class="creatorFooterBottom">HOANGGIA AI · ARCHITECT × AI · INTERIOR DESIGN WORKSTATION</div>
 </footer>
-</main></div><script type="module" src="./app.js?v=30"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
+</main></div><script type="module" src="./app.js?v=31"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
