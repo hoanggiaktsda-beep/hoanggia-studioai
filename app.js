@@ -740,7 +740,11 @@ document.getElementById("generate")?.addEventListener("click", () => {
               ? ((decisionsNow.ratio === "Khác" ? decisionsNow.customRatio : decisionsNow.ratio) || "target aspect ratio")
               : "selected spatial system";
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
-  const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}; additional_views=${(m.extraReferences || []).map(f => f.name).join(", ") || "none"}; multi_view_rule=${(m.extraReferences || []).length ? "Treat all additional images as different views/details of the SAME product identity, not separate products." : "none"}`).join(" | ");
+  const productReferenceRoles = referenceFiles.length ? referenceMeta.map((m, i) => `Ảnh model ${i + 1}: ${m.model}; mã=${m.modelCode || "chưa có"}; kích thước=${m.dimensions || "chưa có"}; góc KTS=${m.viewRole || "KTS chưa xác định"}; ưu tiên=${m.priority}; bảo toàn=${m.preservation}; ghi chú=${m.note || "không"}; ảnh bổ sung=${(m.extraReferences || []).map(f => f.name).join(", ") || "không"}`).join(" | ") : "";
+  const modeSpecificReference = modeReferenceFile && modeReferenceConfig[currentMode]
+    ? `${modeReferenceConfig[currentMode].title}: ${modeReferenceFile.name}`
+    : "";
+  const referenceRoles = [productReferenceRoles, modeSpecificReference].filter(Boolean).join(" | ");
   const activeReplicaProductSource = decisionsNow.productSourcePriority === "UPLOADED_PRODUCT_REFERENCE"
     ? "AUTHORIZED UPLOADED PRODUCT REFERENCES: " + (referenceRoles || "none")
     : decisionsNow.productSourcePriority === "WRITTEN_REPLACEMENT_PRODUCTS"
