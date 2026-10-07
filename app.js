@@ -91,63 +91,36 @@ const modeReferenceNote = document.getElementById("modeReferenceNote");
 const modeReferenceAction = document.getElementById("modeReferenceAction");
 const modeReferenceHelp = document.getElementById("modeReferenceHelp");
 const modeReferenceConfig = {
-  Lighting: {title:"Ảnh ánh sáng tham chiếu", note:"Bộ não riêng 03 · Ingo Maurer", action:"＋ Thêm ảnh ánh sáng tham chiếu", help:"JPG / PNG / WebP · Có thể chọn nhiều ảnh ánh sáng tham chiếu"}
+  Lighting: {title:"Ảnh ánh sáng tham chiếu", note:"Tùy chọn · dùng để tham chiếu không khí, hướng sáng và tương phản", action:"＋ Thêm ảnh ánh sáng tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu ánh sáng"},
+  Camera: {title:"Ảnh góc máy tham chiếu", note:"Tùy chọn · dùng để tham chiếu vị trí máy, bố cục và phối cảnh", action:"＋ Thêm ảnh góc máy tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu góc máy"},
+  ReferenceReplica: {title:"Ảnh không gian tham chiếu", note:"Tùy chọn · nguồn hình ảnh để sao chép khi KTS cung cấp", action:"＋ Thêm ảnh không gian tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không được giả định có ảnh tham chiếu"}
 };
-let modeReferenceFiles=[], modeReferenceUrls=[];
-const modeReferenceGallery=document.getElementById("modeReferenceGallery");
-const modeReferenceTrigger=document.getElementById("modeReferenceTrigger");
+let modeReferenceFile=null, modeReferenceUrl=null;
 function renderModeReference(){
   const cfg=modeReferenceConfig[currentMode];
   modeReferencePanel?.classList.toggle("hidden",!cfg);
   if(!cfg) return;
   if(modeReferenceTitle) modeReferenceTitle.textContent=cfg.title;
   if(modeReferenceNote) modeReferenceNote.textContent=cfg.note;
+  if(modeReferenceAction) modeReferenceAction.textContent=cfg.action;
   if(modeReferenceHelp) modeReferenceHelp.textContent=cfg.help;
 }
-function renderLightingReferences(){
-  if(!modeReferenceGallery) return;
-  modeReferenceGallery.innerHTML="";
-  modeReferenceUrls.forEach(url=>URL.revokeObjectURL(url)); modeReferenceUrls=[];
-  modeReferenceFiles.forEach((file,i)=>{
-    const url=URL.createObjectURL(file); modeReferenceUrls.push(url);
-    const card=document.createElement("div"); card.className="reference-thumb";
-    card.innerHTML='<img src="'+url+'" alt="Ảnh ánh sáng tham chiếu '+(i+1)+'"><span>ÁNH SÁNG '+String(i+1).padStart(2,"0")+'</span><button type="button" class="reference-remove" aria-label="Xóa ảnh">×</button>';
-    card.querySelector("button")?.addEventListener("click",()=>{modeReferenceFiles.splice(i,1);renderLightingReferences();});
-    modeReferenceGallery.appendChild(card);
-  });
-  modeReferencePlaceholder?.classList.toggle("hidden",modeReferenceFiles.length>0);
+function clearModeReference(){
+  if(modeReferenceUrl) URL.revokeObjectURL(modeReferenceUrl);
+  modeReferenceUrl=null; modeReferenceFile=null;
+  if(modeReferenceInput) modeReferenceInput.value="";
+  if(modeReferencePreview){modeReferencePreview.src="";modeReferencePreview.classList.remove("visible");}
+  modeReferencePlaceholder?.classList.remove("hidden"); modeReferenceRemove?.classList.add("hidden");
 }
-modeReferenceTrigger?.addEventListener("click",()=>modeReferenceInput?.click());
 modeReferenceInput?.addEventListener("change",()=>{
-  if(currentMode!=="Lighting") return;
-  const files=Array.from(modeReferenceInput.files||[]).filter(f=>["image/jpeg","image/png","image/webp"].includes(f.type));
-  modeReferenceFiles.push(...files); modeReferenceInput.value=""; renderLightingReferences();
+  const file=modeReferenceInput.files?.[0]; if(!file) return;
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){alert("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP.");clearModeReference();return;}
+  if(modeReferenceUrl) URL.revokeObjectURL(modeReferenceUrl);
+  modeReferenceFile=file; modeReferenceUrl=URL.createObjectURL(file);
+  if(modeReferencePreview){modeReferencePreview.src=modeReferenceUrl;modeReferencePreview.classList.add("visible");}
+  modeReferencePlaceholder?.classList.add("hidden"); modeReferenceRemove?.classList.remove("hidden");
 });
-const lightingTargetInput=document.getElementById("lightingTargetInput");
-const lightingTargetGallery=document.getElementById("lightingTargetGallery");
-const lightingTargetTrigger=document.getElementById("lightingTargetTrigger");
-const lightingTargetPlaceholder=document.getElementById("lightingTargetPlaceholder");
-const lightingTargetCount=document.getElementById("lightingTargetCount");
-let lightingTargetFiles=[], lightingTargetUrls=[];
-function renderLightingTargets(){
-  if(!lightingTargetGallery) return;
-  lightingTargetGallery.innerHTML="";
-  lightingTargetUrls.forEach(url=>URL.revokeObjectURL(url)); lightingTargetUrls=[];
-  lightingTargetFiles.forEach((file,i)=>{
-    const url=URL.createObjectURL(file); lightingTargetUrls.push(url);
-    const card=document.createElement("div"); card.className="reference-thumb";
-    card.innerHTML='<img src="'+url+'" alt="Hình ảnh nhận tham chiếu '+(i+1)+'"><span>ẢNH NHẬN '+String(i+1).padStart(2,"0")+'</span><button type="button" class="reference-remove" aria-label="Xóa ảnh">×</button>';
-    card.querySelector("button")?.addEventListener("click",()=>{lightingTargetFiles.splice(i,1);renderLightingTargets();});
-    lightingTargetGallery.appendChild(card);
-  });
-  lightingTargetPlaceholder?.classList.toggle("hidden",lightingTargetFiles.length>0);
-  if(lightingTargetCount) lightingTargetCount.textContent=lightingTargetFiles.length+" ảnh · mỗi ảnh tạo một Prompt riêng";
-}
-lightingTargetTrigger?.addEventListener("click",()=>lightingTargetInput?.click());
-lightingTargetInput?.addEventListener("change",()=>{
-  const files=Array.from(lightingTargetInput.files||[]).filter(f=>["image/jpeg","image/png","image/webp"].includes(f.type));
-  lightingTargetFiles.push(...files); lightingTargetInput.value=""; renderLightingTargets();
-});
+modeReferenceRemove?.addEventListener("click",clearModeReference);
 const spaceSyncPanel = document.getElementById("spaceSyncPanel");
 const syncReferenceInput = document.getElementById("syncReferenceInput");
 const syncReferencePreview = document.getElementById("syncReferencePreview");
@@ -779,25 +752,6 @@ renderMode("Furniture");
 document.getElementById("generate")?.addEventListener("click", () => {
   const expert = expertFor(currentMode);
   const decisionsNow = selectedDecisions();
-  if(currentMode==="Lighting" && lightingTargetFiles.length){
-    if(!modeReferenceFiles.length){alert("Hãy thêm HÌNH ẢNH THAM CHIẾU ánh sáng trước.");return;}
-    const refNames=modeReferenceFiles.map((f,i)=>"Tham chiếu ánh sáng "+(i+1)+": "+f.name).join(" | ");
-    const prompts=lightingTargetFiles.map((file,index)=>{
-      const lightingBrief=[
-        "HÌNH ẢNH NHẬN THAM CHIẾU "+(index+1)+"/"+lightingTargetFiles.length+": "+file.name,
-        "NGUỒN THAM CHIẾU ÁNH SÁNG: "+refNames,
-        "Chỉ chuyển đặc tính ánh sáng: hướng sáng, độ mềm/cứng, nhiệt độ màu, tương phản, cường độ và bầu không khí.",
-        "Giữ nguyên kiến trúc, nội thất, vật liệu, bố cục, camera và tỷ lệ của hình ảnh nhận tham chiếu.",
-        "Không sao chép nhân vật, đồ vật, vật liệu hoặc kiến trúc từ hình ảnh tham chiếu.",
-        brief?.value?.trim() ? "YÊU CẦU KTS: "+brief.value.trim() : ""
-      ].filter(Boolean).join("\n");
-      return buildDirection({brief:lightingBrief,mode:"Lighting",output:document.getElementById("output")?.value||"",camera:document.getElementById("camera")?.value||"",target:"Hình ảnh nhận tham chiếu "+(index+1),replacement:lightingBrief,params:{},decisions:decisionsNow,model:{},referenceRoles:refNames+" | Ảnh nhận: "+file.name,aiTarget:selectedAITarget,aiProfile:aiTargetProfiles[selectedAITarget]||aiTargetProfiles["Khác"]}).prompt;
-    });
-    if(resultContent) resultContent.textContent=prompts.map((p,i)=>"════════════════════════════════════════\nPROMPT "+String(i+1).padStart(2,"0")+" — ẢNH NHẬN: "+lightingTargetFiles[i].name+"\n════════════════════════════════════════\n"+p).join("\n\n");
-    result?.classList.remove("hidden"); result?.scrollIntoView({behavior:"smooth",block:"start"});
-    if(brainStatus) brainStatus.textContent="Đã tạo "+prompts.length+" Prompt ánh sáng từ cùng bộ tham chiếu.";
-    return;
-  }
   const firstModel = referenceMeta[0]?.model || "selected furniture";
   const target = currentMode === "Furniture"
     ? firstModel
