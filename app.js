@@ -732,17 +732,26 @@ let copyUnlocked = false;
 const copyButton = document.getElementById("copy");
 const copyPassword = document.getElementById("copyPassword");
 const copyLockStatus = document.getElementById("copyLockStatus");
+function syncPromptProtection() {
+  if (!resultContent) return;
+  resultContent.classList.toggle("prompt-protected", !copyUnlocked);
+  resultContent.setAttribute("aria-hidden", copyUnlocked ? "false" : "true");
+  resultContent.setAttribute("tabindex", copyUnlocked ? "0" : "-1");
+}
+syncPromptProtection();
 document.getElementById("unlockCopy")?.addEventListener("click", () => {
   if (copyPassword?.value === "181092") {
     copyUnlocked = true;
     copyButton.disabled = false;
     copyButton.style.opacity = "1";
+    syncPromptProtection();
     copyPassword.value = "";
     if (copyLockStatus) copyLockStatus.textContent = "🔓 Đã mở khóa";
   } else {
     copyUnlocked = false;
     copyButton.disabled = true;
     copyButton.style.opacity = ".45";
+    syncPromptProtection();
     if (copyLockStatus) copyLockStatus.textContent = "Mật khẩu không đúng";
   }
 });
@@ -751,6 +760,7 @@ copyPassword?.addEventListener("input", () => {
   copyUnlocked = false;
   copyButton.disabled = true;
   copyButton.style.opacity = ".45";
+  syncPromptProtection();
   if (copyLockStatus) copyLockStatus.textContent = "🔒 Chưa mở khóa";
 });
 copyButton?.addEventListener("click", async () => {
