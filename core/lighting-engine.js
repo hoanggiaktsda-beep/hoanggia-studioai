@@ -146,3 +146,51 @@ export function lightingDecisionEngine({
     }
   };
 }
+
+
+export function buildIndependentLightingPrompt({
+  referenceName = "",
+  targetName = "",
+  brief = "",
+  decisions = {},
+  aiTarget = "ChatGPT Images"
+} = {}) {
+  if (!referenceName) throw new Error("EXPERT 03 cần HÌNH ẢNH THAM CHIẾU ánh sáng.");
+  if (!targetName) throw new Error("EXPERT 03 cần HÌNH ẢNH NHẬN THAM CHIẾU.");
+
+  const d = lightingDecisionEngine({
+    target: decisions.target || "Toàn cảnh",
+    brief,
+    decisions,
+    referenceRoles: "Chỉ dùng ảnh " + referenceName + " làm bằng chứng ánh sáng."
+  });
+
+  return [
+    "HOANGGIA EDIT AI — EXPERT 03 / ÁNH SÁNG",
+    "CHUYÊN GIA: Ingo Maurer · Lighting Intelligence",
+    "TRẠNG THÁI: ĐỘC LẬP HOÀN TOÀN. Không nhận quyết định, ảnh tham chiếu hoặc dữ liệu chuyên môn từ Expert 01/02/04/05/06/07/08.",
+    "",
+    "ẢNH THAM CHIẾU ÁNH SÁNG: " + referenceName,
+    "ẢNH NHẬN THAM CHIẾU: " + targetName,
+    "",
+    "NHIỆM VỤ:",
+    "Phân tích hệ ánh sáng của ảnh tham chiếu và chuyển DUY NHẤT đặc tính ánh sáng sang ảnh nhận.",
+    "Đọc: hướng sáng, nguồn sáng, độ mềm/cứng, cường độ, nhiệt độ màu, tương phản, phân bố sáng–tối, bóng đổ, phản xạ và bầu không khí.",
+    "",
+    "KHÓA BẢO TOÀN ẢNH NHẬN:",
+    "- Giữ nguyên kiến trúc, hình học, nội thất, sản phẩm, vật liệu, tỷ lệ và kích thước.",
+    "- Giữ nguyên camera, góc nhìn, phối cảnh, bố cục và vị trí vật thể.",
+    "- Không sao chép nhân vật, đồ vật, vật liệu, kiến trúc hoặc bố cục từ ảnh tham chiếu ánh sáng.",
+    "- Chỉ cập nhật phản ứng quang học cần thiết: vùng sáng/tối, bóng đổ, phản xạ, bounce light và exposure.",
+    "",
+    "QUY TRÌNH EXPERT 03:",
+    ...d.decisionSequence,
+    "",
+    "KIỂM ĐỊNH:",
+    ...d.qualityGates.map(x => "- " + x),
+    brief.trim() ? "" : null,
+    brief.trim() ? "YÊU CẦU BỔ SUNG CỦA KTS: " + brief.trim() : null,
+    "",
+    "ĐẦU RA DÀNH CHO: " + aiTarget
+  ].filter(Boolean).join("\n");
+}
