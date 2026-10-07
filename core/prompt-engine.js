@@ -338,6 +338,8 @@ export function buildDirection({
     .join("\n");
 
   const body = [];
+  // Chỉ coi là có tham chiếu khi giao diện thực sự truyền dữ liệu ảnh đã tải lên.
+  const hasReference = Boolean(String(referenceRoles || "").trim());
   if (params.spaceType) body.push("SPACE TYPE: " + params.spaceType + ". Use this as scene-context evidence for spatial recognition, furniture logic, material use, lighting behavior and camera interpretation; do not invent missing architecture.");
   const visualSystem = visualPromptSystem({mode, target, replacement, brief, decisions, params, referenceRoles, aiTarget});
 
