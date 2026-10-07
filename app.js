@@ -286,6 +286,7 @@ materialRemove?.addEventListener("click",()=>{
 renderMaterialTargets();
 let referenceFiles = [];
 let sceneFile = null;
+let sceneFiles = [];
 let referenceMeta = [];
 let syncReferenceFile = null;
 let syncTargetFiles = [];
@@ -415,7 +416,11 @@ function setPreview(input, preview, placeholder, label) {
   });
 }
 setPreview(sceneInput, scenePreview, scenePlaceholder, "Ảnh không gian");
-sceneInput?.addEventListener("change", () => { sceneFile = sceneInput.files?.[0] || null; });
+sceneInput?.addEventListener("change", () => {
+  sceneFiles = Array.from(sceneInput.files || []);
+  sceneFile = sceneFiles[0] || null;
+  if (brainStatus && sceneFiles.length > 1) brainStatus.textContent = sceneFiles.length + " ảnh đích đã tải";
+});
 
 function referenceMetaDefaults() {
   return {
@@ -920,6 +925,37 @@ document.getElementById("generate")?.addEventListener("click", () => {
       result?.classList.remove("hidden");
       result?.scrollIntoView({ behavior: "smooth", block: "start" });
       if (brainStatus) brainStatus.textContent = "Đã tạo " + prompts.length + " prompt đồng bộ riêng";
+      return;
+    }
+    if (["Lighting","Camera","ReferenceReplica"].includes(currentMode) && sceneFiles.length > 1) {
+      const refFile = modeReferenceFiles[currentMode];
+      if (!refFile) throw new Error("Hãy thêm ảnh tham chiếu cho mục " + currentMode + ".");
+      const detailState = modeReferenceDetailState[currentMode] || {};
+      const detailText = Object.entries(detailState).filter(([k,v]) => k !== "note" && v).map(([k,v]) => k + "=" + v).join("; ");
+      const prompts = sceneFiles.map((file,index) => {
+        const batchBrief = [
+          "ẢNH ĐÍCH " + (index+1) + "/" + sceneFiles.length + ": " + file.name,
+          "ẢNH THAM CHIẾU CỐ ĐỊNH: " + refFile.name,
+          "Mỗi ảnh đích là một nhiệm vụ độc lập.",
+          "Thiết lập tham chiếu: " + detailText,
+          detailState.note ? "Ghi chú KTS: " + detailState.note : "",
+          replacement ? "Yêu cầu chung: " + replacement : ""
+        ].filter(Boolean).join("\n");
+        return buildDirection({
+          brief: batchBrief, mode: currentMode, output, camera,
+          target: target + " — ảnh đích " + (index+1),
+          replacement: batchBrief, params, decisions: decisionsNow, model,
+          referenceRoles: modeReferenceConfig[currentMode].title + ": " + refFile.name + " | Ảnh đích: " + file.name,
+          aiTarget: selectedAITarget,
+          aiProfile: aiTargetProfiles[selectedAITarget] || aiTargetProfiles["Khác"]
+        }).prompt;
+      });
+      if(resultContent) resultContent.textContent=prompts.map((prompt,i)=>
+        "════════════════════════════════════════\nPROMPT "+String(i+1).padStart(2,"0")+" — ẢNH ĐÍCH: "+sceneFiles[i].name+"\n════════════════════════════════════════\n"+prompt
+      ).join("\n\n");
+      result?.classList.remove("hidden");
+      result?.scrollIntoView({behavior:"smooth",block:"start"});
+      if(brainStatus) brainStatus.textContent="Đã tạo "+prompts.length+" prompt riêng từ 1 ảnh tham chiếu.";
       return;
     }
     if (currentMode === "SpaceSync" && !syncTargetFiles.length) {
