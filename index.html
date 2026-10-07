@@ -23,8 +23,8 @@
 <section class="hero" id="workspace"><div><p class="eyebrow">HỆ THỐNG QUYẾT ĐỊNH KIẾN TRÚC</p><h1>Thay đổi không gian.<br><em>Giữ nguyên thiết kế.</em></h1><p class="hero-copy">HOANGGIA AI không chỉ chuyển yêu cầu thành prompt. Chín chuyên gia xử lý nội thất, vật liệu, ánh sáng, góc máy, loại bỏ vật thể, tỷ lệ khung hình và sao chép tham chiếu trước khi xây dựng yêu cầu AI chuyên nghiệp.</p></div><div class="hero-badge"><img src="./assets/brand-mark.svg" alt="HOANGGIA AI"><small>TRÍ TUỆ<br>KIẾN TRÚC</small></div></section>
 <section class="editor-grid">
 <div class="panel upload-panel">
-<div class="panel-head"><div><span class="kicker">01</span><h2>Ảnh không gian / tham chiếu</h2></div><span class="panel-note">Ảnh gốc · Expert 07 dùng làm Source of Truth</span></div>
-<label class="upload-box" for="sceneInput"><img id="scenePreview" alt="Ảnh không gian"><div id="scenePlaceholder"><strong>＋ Tải ảnh không gian</strong><span>JPG / PNG / WebP · Ảnh render hoặc ảnh chụp</span></div></label><input id="sceneInput" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden>
+<div class="panel-head"><div><span class="kicker">01</span><h2>Ảnh đích cần chỉnh sửa</h2></div><span class="panel-note">Có thể tải nhiều ảnh · mỗi ảnh tạo một Prompt riêng</span></div>
+<div class="upload-box scene-target-box" id="sceneTargetBox"><div id="sceneGallery" class="reference-gallery scene-gallery"></div><div id="scenePlaceholder"><button type="button" class="upload-trigger" id="sceneTrigger">＋ Thêm ảnh đích</button><span>JPG / PNG / WebP · Chọn một hoặc nhiều ảnh cần nhận thay đổi từ ảnh tham chiếu</span></div></div><input id="sceneInput" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden>
 </div>
 <div class="panel upload-panel">
 <div class="panel-head"><div><span class="kicker">02</span><h2>Mẫu / sản phẩm cung cấp</h2></div><span class="panel-note">Có thể thêm nhiều ảnh · Expert 07 dùng làm Product Override</span></div>
@@ -218,4 +218,4 @@
   </div>
   <div class="creatorFooterBottom">HOANGGIA AI · ARCHITECT × AI · INTERIOR DESIGN WORKSTATION</div>
 </footer>
-</main></div><script type="module" src="./app.js?v=19"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
+</main></div><script type="module" src="./app.js?v=20"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
