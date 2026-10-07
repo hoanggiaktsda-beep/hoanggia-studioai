@@ -30,6 +30,17 @@
 <div class="panel-head"><div><span class="kicker">02</span><h2>Mẫu / sản phẩm cung cấp</h2></div><span class="panel-note">Có thể thêm nhiều ảnh · Expert 07 dùng làm Product Override</span></div>
 <div class="upload-box" id="referenceUploadBox"><div id="referenceGallery" class="reference-gallery"></div><div id="referencePlaceholder"><button type="button" class="upload-trigger" id="referenceTrigger">＋ Thêm ảnh mẫu nội thất</button><span>JPG / PNG · Có thể chọn nhiều ảnh, nhiều góc nhìn của cùng một mẫu</span></div></div>
 <input id="referenceInput" type="file" accept="image/png,image/jpeg" multiple hidden>
+<div class="model-library-bar">
+<button type="button" class="ghost-btn" id="openModelLibrary">▦ Thư viện model</button>
+<button type="button" class="ghost-btn" id="saveModelLibrary">＋ Lưu model hiện tại</button>
+<span id="modelLibraryStatus">Chưa có model đã lưu</span>
+</div>
+<div id="modelLibraryPanel" class="model-library-panel hidden">
+<div class="model-library-head"><strong>THƯ VIỆN MODEL</strong><button type="button" class="reference-remove" id="closeModelLibrary">×</button></div>
+<div class="model-library-tools"><input id="modelLibrarySearch" type="search" placeholder="Tìm theo tên, mã model, loại sản phẩm..."></div>
+<div id="modelLibraryGrid" class="model-library-grid"></div>
+<small>Thư viện trên thiết bị này lưu hồ sơ model, kích thước và góc nhìn KTS. Ảnh gốc có thể cần chọn lại nếu trình duyệt không còn quyền truy cập.</small>
+</div>
 </div>
 </section>
 <section class="panel material-reference-panel hidden" id="materialReferencePanel">
