@@ -74,14 +74,14 @@
     <div class="panel-head"><div><span class="kicker">02</span><h2>Ảnh nhận tham chiếu</h2></div><span class="panel-note" id="lightingTargetCount">0 ảnh · 0 Prompt riêng</span></div>
     <div class="upload-box lighting-main-upload" id="lightingTargetUploadBox"><div id="lightingTargetGallery" class="reference-gallery"></div><div id="lightingTargetPlaceholder"><button type="button" class="upload-trigger" id="lightingTargetTrigger">＋ Đưa ảnh nhận vào</button><span>JPG / PNG / WebP · Có thể chọn nhiều ảnh</span></div></div>
     <input id="lightingTargetInput" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden>
+    <div class="lighting-target-settings">
+      <label>GIỮ NGUYÊN<input id="lightingPreserve" value="Thiết kế · vật liệu · camera · bố cục · tỷ lệ"></label>
+      <label>THAY ĐỔI<input id="lightingChange" value="Chỉ ánh sáng theo ảnh tham chiếu"></label>
+      <label>GHI CHÚ<input id="lightingTargetAnalysis" placeholder="Tùy chọn"></label>
+    </div>
+    <div class="sync-rule lighting-target-rule"><strong>QUY TẮC 03</strong><span>Ảnh nhận giữ nguyên thiết kế · chỉ chuyển ánh sáng từ ảnh tham chiếu.</span></div>
   </div>
 </div>
-<div class="lighting-compact-controls">
-  <label>GIỮ NGUYÊN<input id="lightingPreserve" value="Thiết kế · vật liệu · camera · bố cục · tỷ lệ"></label>
-  <label>THAY ĐỔI<input id="lightingChange" value="Chỉ ánh sáng theo ảnh tham chiếu"></label>
-  <label>GHI CHÚ<input id="lightingTargetAnalysis" placeholder="Tùy chọn"></label>
-</div>
-<div class="sync-rule"><strong>QUY TẮC 03</strong><span>Ảnh nhận giữ nguyên thiết kế · chỉ chuyển ánh sáng từ ảnh tham chiếu.</span></div>
 </section>
 <section class="panel mode-reference-panel hidden" id="modeReferencePanel">
 <div class="panel-head"><div><span class="kicker" id="modeReferenceKicker">03R</span><h2 id="modeReferenceTitle">Ảnh tham chiếu</h2></div><span class="panel-note" id="modeReferenceNote">Tùy chọn · chỉ dùng khi KTS tải ảnh</span></div>
@@ -235,4 +235,4 @@
   </div>
   <div class="creatorFooterBottom">HOANGGIA AI · ARCHITECT × AI · INTERIOR DESIGN WORKSTATION</div>
 </footer>
-</main></div><script type="module" src="./app.js?v=35"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
+</main></div><script type="module" src="./app.js?v=36"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
