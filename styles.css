@@ -564,3 +564,9 @@ footer{
 .extra-reference-item span{position:absolute;left:4px;bottom:4px;padding:2px 4px;border-radius:4px;background:rgba(0,0,0,.68);color:#ddd;font-size:8px}
 .evidence-extra-reference small{display:block;margin-top:6px;color:#656a71;font-size:8px;line-height:1.45}
 @media(max-width:899px){.extra-reference-trigger{font-size:13px!important;min-height:44px}.evidence-extra-reference small{font-size:11px}}
+
+/* Thu vien model — Edit AI */
+.model-library-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.model-library-bar span{font-size:12px;opacity:.7}
+.model-library-panel{margin-top:14px;padding:16px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(10,12,12,.72)}
+.model-library-head{display:flex;justify-content:space-between;align-items:center}.model-library-tools{margin:12px 0}.model-library-tools input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:inherit}
+.model-library-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.model-library-card{padding:12px;border:1px solid rgba(255,255,255,.1);border-radius:12px;display:flex;flex-direction:column;gap:6px}.model-library-card span,.model-library-card small{opacity:.72}.model-library-card div{display:flex;gap:8px;margin-top:5px}.model-library-card button{padding:7px 9px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:transparent;color:inherit;cursor:pointer}
