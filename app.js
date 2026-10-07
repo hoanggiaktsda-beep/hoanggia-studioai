@@ -127,6 +127,7 @@ const lightingReferencePreview = document.getElementById("lightingReferencePrevi
 const lightingReferencePlaceholder = document.getElementById("lightingReferencePlaceholder");
 const lightingReferenceRemove = document.getElementById("lightingReferenceRemove");
 const lightingTargetInput = document.getElementById("lightingTargetInput");
+const lightingTargetUploadBox = document.getElementById("lightingTargetUploadBox");
 const lightingTargetGallery = document.getElementById("lightingTargetGallery");
 const lightingTargetTrigger = document.getElementById("lightingTargetTrigger");
 const lightingTargetPlaceholder = document.getElementById("lightingTargetPlaceholder");
@@ -165,7 +166,8 @@ lightingReferenceRemove?.addEventListener("click", () => {
   if (lightingReferencePreview) { lightingReferencePreview.src=""; lightingReferencePreview.classList.remove("visible"); }
   lightingReferencePlaceholder?.classList.remove("hidden"); lightingReferenceRemove?.classList.add("hidden");
 });
-lightingTargetTrigger?.addEventListener("click", () => lightingTargetInput?.click());
+lightingTargetUploadBox?.addEventListener("click", (event) => { if (event.target.closest(".character-reference-remove")) return; lightingTargetInput?.click(); });
+lightingTargetTrigger?.addEventListener("click", (event) => { event.stopPropagation(); lightingTargetInput?.click(); });
 lightingTargetInput?.addEventListener("change", () => {
   Array.from(lightingTargetInput.files || []).filter(file => ["image/jpeg","image/png","image/webp"].includes(file.type)).forEach(file => { lightingTargetFiles.push(file); lightingTargetUrls.push(URL.createObjectURL(file)); });
   lightingTargetInput.value=""; renderLightingTargets();
