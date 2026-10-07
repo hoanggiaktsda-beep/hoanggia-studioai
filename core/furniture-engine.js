@@ -77,13 +77,23 @@ const PROFILES = {
 };
 
 const DEFAULT_RULES = {
-  replacement: "Replace only the selected furniture object.",
-  identity: "When model references are supplied, reconstruct one coherent model identity from all views.",
-  proportion: "Preserve the selected model's proportion unless the user's chosen intervention explicitly allows fit adjustment.",
-  placement: "Use the existing object's footprint as the spatial anchor unless the user explicitly requests a new position.",
-  construction: "Keep structure, joints, support and contact physically believable.",
-  preservation: "Preserve all non-target objects and the surrounding architecture."
+  replacement: "Chỉ thay thế đúng sản phẩm nội thất đã chọn.",
+  identity: "Khi có nhiều ảnh model, hợp nhất chúng thành một nhận diện sản phẩm nhất quán.",
+  proportion: "Giữ tỷ lệ nguyên bản của model trừ khi KTS chủ động cho phép điều chỉnh.",
+  placement: "Dùng footprint và vị trí của đồ cũ làm neo không gian, trừ khi KTS yêu cầu vị trí mới.",
+  construction: "Giữ cấu tạo, mối nối, hệ đỡ và tiếp xúc vật lý hợp lý.",
+  preservation: "Bảo toàn toàn bộ vật thể không thuộc mục tiêu và kiến trúc xung quanh."
 };
+
+const SPATIAL_ORIENTATION_RULES = [
+  "Ảnh model là Reference View để nhận dạng hình học, cấu tạo, vật liệu và tỷ lệ; KHÔNG phải hướng đặt trong ảnh đích.",
+  "Tự phân tích diện ảnh: FRONT / REAR / LEFT / RIGHT / LONG SIDE / SHORT SIDE / 3-4 / TOP / BOTTOM / UNKNOWN.",
+  "Nếu KTS xác nhận diện ảnh thủ công, dữ liệu KTS có ưu tiên tuyệt đối.",
+  "Xác lập hệ trục LENGTH–WIDTH–HEIGHT từ toàn bộ ảnh tham chiếu và kích thước được cung cấp.",
+  "Đọc trục, footprint, hướng và perspective của đồ cũ trong ảnh không gian.",
+  "Map trục model vào trục đồ cũ rồi chiếu theo camera/perspective của ảnh gốc; Reference camera is NOT target camera.",
+  "Nếu trục dài/rộng mâu thuẫn với đồ cũ, đánh dấu ORIENTATION CONFLICT và sửa trước khi xuất."
+];
 
 function normalize(text = "") {
   return String(text).trim().toLowerCase();
@@ -165,7 +175,9 @@ export function furnitureDirection(target, replacement = "", brief = "", params 
 
   return {
     target,
-    scope: "Furniture only",
+    scope: "Chỉ nội thất / Furniture only",
+    promptLanguage: "Vietnamese-first; giữ thuật ngữ kỹ thuật tiếng Anh khi cần.",
+    spatialOrientation: SPATIAL_ORIENTATION_RULES,
     anatomy: profile.anatomy,
     ergonomics: profile.ergonomics,
     circulation: profile.circulation,
@@ -178,7 +190,7 @@ export function furnitureDirection(target, replacement = "", brief = "", params 
       ? "Treat all supplied model images as multiple views of one primary furniture model. Preserve silhouette, construction language and distinctive details at the user's selected lock level."
       : "Follow the user's furniture description while preserving the selected object's footprint and functional logic.",
     editRule: DEFAULT_RULES.replacement + " " + DEFAULT_RULES.preservation,
-    realism: "Match scale, perspective, contact points, occlusion, seams, joints and shadows to the original scene.",
+    realism: "Khớp tỷ lệ, perspective, điểm tiếp xúc, occlusion, seams, joints và bóng đổ với ảnh không gian gốc.",
     expertQuestions: [
       "What is the exact functional typology of the target object?",
       "Which silhouette and construction features identify the supplied model?",
@@ -205,7 +217,9 @@ export function furnitureDirection(target, replacement = "", brief = "", params 
       "Never solve a furniture problem by changing material, lighting or camera.",
       "Never let a model-reference preference silently override the five explicit Furniture decisions.",
       "Never create impossible human-scale dimensions, unsupported structure or blocked circulation.",
-      "Never add decorative details that are not justified by the supplied model or user brief."
+      "Never add decorative details that are not justified by the supplied model or user brief.",
+      "ORIENTATION GATE — Reference camera ≠ Target camera. Không lấy hướng chụp ảnh model làm hướng đặt sản phẩm.",
+      "AXIS GATE — LENGTH / WIDTH / HEIGHT phải map đúng với trục đồ cũ; nếu mâu thuẫn phải sửa trước khi xuất."
     ]
   };
 }
