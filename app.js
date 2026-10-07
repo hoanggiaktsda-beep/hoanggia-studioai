@@ -92,7 +92,6 @@ const modeReferenceNote = document.getElementById("modeReferenceNote");
 const modeReferenceAction = document.getElementById("modeReferenceAction");
 const modeReferenceHelp = document.getElementById("modeReferenceHelp");
 const modeReferenceConfig = {
-  Lighting: {title:"Ảnh ánh sáng tham chiếu", note:"Tùy chọn · dùng để tham chiếu không khí, hướng sáng và tương phản", action:"＋ Thêm ảnh ánh sáng tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu ánh sáng"},
   Camera: {title:"Ảnh góc máy tham chiếu", note:"Tùy chọn · dùng để tham chiếu vị trí máy, bố cục và phối cảnh", action:"＋ Thêm ảnh góc máy tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu góc máy"},
   ReferenceReplica: {title:"Ảnh không gian tham chiếu", note:"Tùy chọn · nguồn hình ảnh để sao chép khi KTS cung cấp", action:"＋ Thêm ảnh không gian tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không được giả định có ảnh tham chiếu"}
 };
