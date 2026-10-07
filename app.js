@@ -362,6 +362,53 @@ function renderReferenceGallery() {
   if (brainStatus) brainStatus.textContent = referenceFiles.length ? `Đã chuẩn bị ${referenceFiles.length} thẻ bằng chứng mẫu` : "Hệ thống sẵn sàng";
 }
 
+const modelLibraryPanel = document.getElementById("modelLibraryPanel");
+const modelLibraryGrid = document.getElementById("modelLibraryGrid");
+const modelLibrarySearch = document.getElementById("modelLibrarySearch");
+const modelLibraryStatus = document.getElementById("modelLibraryStatus");
+const MODEL_LIBRARY_KEY = "hoanggia_edit_ai_model_library_v1";
+
+function readModelLibrary(){
+  try { return JSON.parse(localStorage.getItem(MODEL_LIBRARY_KEY) || "[]"); } catch { return []; }
+}
+function writeModelLibrary(items){ localStorage.setItem(MODEL_LIBRARY_KEY, JSON.stringify(items)); }
+function renderModelLibrary(query=""){
+  const items=readModelLibrary();
+  if(modelLibraryStatus) modelLibraryStatus.textContent = items.length ? items.length + " model đã lưu" : "Chưa có model đã lưu";
+  if(!modelLibraryGrid) return;
+  const q=query.trim().toLowerCase();
+  const filtered=items.filter(x => !q || [x.model,x.modelCode,x.dimensions,x.note].join(" ").toLowerCase().includes(q));
+  modelLibraryGrid.innerHTML = filtered.length ? filtered.map(x => `
+    <article class="model-library-card">
+      <strong>${x.modelCode || x.model || "Model chưa đặt tên"}</strong>
+      <span>${x.model || "Chưa phân loại"}</span>
+      <small>${x.dimensions || "Chưa có kích thước"} · ${x.viewRole || "KTS chưa xác định góc"}</small>
+      <div><button type="button" data-use-model="${x.id}">Dùng model</button><button type="button" data-delete-model="${x.id}">Xóa</button></div>
+    </article>`).join("") : "<p>Không có model phù hợp.</p>";
+  modelLibraryGrid.querySelectorAll("[data-use-model]").forEach(btn=>btn.addEventListener("click",()=>{
+    const item=items.find(x=>x.id===btn.dataset.useModel); if(!item) return;
+    referenceMeta.push({...referenceMetaDefaults(),...item,extraReferences:[],extraReferenceRoles:item.extraReferenceRoles||[]});
+    renderReferenceGallery(); modelLibraryPanel?.classList.add("hidden");
+    if(brainStatus) brainStatus.textContent="Đã nạp hồ sơ model " + (item.modelCode || item.model);
+  }));
+  modelLibraryGrid.querySelectorAll("[data-delete-model]").forEach(btn=>btn.addEventListener("click",()=>{
+    writeModelLibrary(items.filter(x=>x.id!==btn.dataset.deleteModel)); renderModelLibrary(modelLibrarySearch?.value||"");
+  }));
+}
+document.getElementById("openModelLibrary")?.addEventListener("click",()=>{ modelLibraryPanel?.classList.remove("hidden"); renderModelLibrary(); });
+document.getElementById("closeModelLibrary")?.addEventListener("click",()=>modelLibraryPanel?.classList.add("hidden"));
+modelLibrarySearch?.addEventListener("input",()=>renderModelLibrary(modelLibrarySearch.value));
+document.getElementById("saveModelLibrary")?.addEventListener("click",()=>{
+  if(!referenceMeta.length){ if(brainStatus) brainStatus.textContent="Chưa có model để lưu"; return; }
+  const meta=referenceMeta[0];
+  const items=readModelLibrary();
+  const id=(meta.modelCode||meta.model||"model").toLowerCase().replace(/[^a-z0-9]+/g,"-")+"-"+Date.now();
+  items.unshift({id,model:meta.model,modelCode:meta.modelCode||"",dimensions:meta.dimensions||"",priority:meta.priority,preservation:meta.preservation,views:meta.views,viewRole:meta.viewRole,note:meta.note||"",extraReferenceRoles:meta.extraReferenceRoles||[],savedAt:new Date().toISOString()});
+  writeModelLibrary(items); renderModelLibrary();
+  if(brainStatus) brainStatus.textContent="Đã lưu model " + (meta.modelCode || meta.model) + " vào thư viện";
+});
+renderModelLibrary();
+
 referenceTrigger?.addEventListener("click", () => referenceInput?.click());
 referenceInput?.addEventListener("change", () => {
   Array.from(referenceInput.files || []).forEach(file => {
