@@ -360,21 +360,21 @@ export function buildDirection({
 
   if (mode === "Furniture") {
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
+    body.push("NHIỆM VỤ: Chỉ thay sản phẩm nội thất đã chọn: " + target + ".");
+    if (hasReference) body.push(
+      "ẢNH MODEL / THAM CHIẾU: Coi các ảnh cung cấp là nhiều góc nhìn của cùng một model; giữ hình dáng, tỷ lệ, cấu tạo và chi tiết nhận diện.",
+      "HỢP NHẤT NHIỀU GÓC: Không xử lý từng ảnh như các model độc lập. Hợp nhất tất cả ảnh tham chiếu thành một model sản phẩm duy nhất trước khi chỉnh ảnh đích.",
+      "PHÂN TÍCH GÓC NHÌN: Với từng ảnh, dùng góc nhìn do KTS xác định; chỉ tự nhận diện khi KTS chưa xác định. Đối chiếu các ảnh để bổ sung hình học, vật liệu và cấu tạo bị che.",
+      "TỔNG HỢP GÓC ĐÍCH: Sau khi hợp nhất, tạo góc nhìn mới theo camera của ảnh không gian/KTS yêu cầu; không lấy góc chụp của ảnh model làm hướng đặt sản phẩm.",
+      "ĐỊNH HƯỚNG KHÔNG GIAN: Xác lập DÀI–RỘNG–CAO của model, đọc trục và vùng chiếm chỗ của đồ cũ, ánh xạ các trục tương ứng rồi dựng theo phối cảnh ảnh gốc.",
+      "QUY TẮC XOAY MODEL: Xoay model để trục dài của model khớp trục dài của đồ cũ trước khi áp phối cảnh ảnh đích.",
+      "KHÔNG SAO CHÉP HÌNH CHIẾU 2D: Hình dáng nhìn thấy trong ảnh model không phải hình chiếu phải xuất hiện nguyên xi ở ảnh đích.",
+      "KIỂM TRA THAM CHIẾU: Nếu có nhiều ảnh nhưng kết quả chỉ phản ánh một góc, phải phân tích và hợp nhất lại."
+    );
     body.push(
-      "NHIỆM VỤ: Chỉ thay sản phẩm nội thất đã chọn: " + target + ".",
-      "ẢNH MODEL / REFERENCE VIEW: Coi các ảnh cung cấp là nhiều góc nhìn của cùng một model; giữ silhouette, tỷ lệ, cấu tạo và chi tiết nhận diện.",
-      "MULTI-VIEW FUSION: Không xử lý từng ảnh tham chiếu như các model độc lập và không chọn một ảnh rồi bỏ qua các ảnh còn lại. Phải hợp nhất TẤT CẢ ảnh tham chiếu thành một Product Model duy nhất trước khi chỉnh ảnh đích.",
-      "VIEW ROLE ANALYSIS: Với từng ảnh tham chiếu, xác định vai trò góc nhìn riêng (FRONT / REAR / LEFT / RIGHT / LONG SIDE / SHORT SIDE / 3-4 / TOP / BOTTOM), các bề mặt nhìn thấy, phần chân/đế, mép mặt bàn, vật liệu và chi tiết bị che. Dùng các góc còn lại để bổ sung hình học mà một ảnh đơn lẻ không thể hiện.",
-      "CROSS-VIEW CONSISTENCY: Đối chiếu các điểm nhận dạng giữa nhiều ảnh để suy ra cùng một cấu tạo 3D; không được bê nguyên hình chiếu của bất kỳ ảnh tham chiếu nào vào ảnh đích.",
-      "TARGET-VIEW SYNTHESIS: Sau khi hợp nhất multi-view, sinh góc nhìn mới theo camera của ảnh không gian/KTS yêu cầu, kể cả khi không có ảnh tham chiếu chụp đúng góc đó. Góc đầu ra do target scene quyết định, không do ảnh reference gần nhất quyết định.",
-      "REFERENCE COVERAGE GATE: Nếu có từ 2 ảnh tham chiếu trở lên nhưng prompt/đầu ra chỉ phản ánh một góc ảnh, coi là MULTI-VIEW NOT FUSED và phải phân tích lại trước khi xuất.",
-      "PHÂN TÍCH DIỆN MODEL: Tự xác định FRONT / REAR / LEFT / RIGHT / LONG SIDE / SHORT SIDE / 3-4 / TOP / BOTTOM / UNKNOWN. Nếu KTS đã khai báo diện ảnh thì ưu tiên tuyệt đối dữ liệu KTS.",
-      "ĐỊNH HƯỚNG KHÔNG GIAN (Spatial Orientation): Reference camera ≠ Target camera. Không lấy hướng chụp của ảnh model làm hướng đặt sản phẩm. Xác lập LENGTH–WIDTH–HEIGHT của model, đọc trục và footprint của đồ cũ, map các trục tương ứng rồi render theo camera/perspective của ảnh gốc.",
-      "QUY TẮC XOAY MODEL: Ảnh model chỉ mô tả vật thể ở một diện quan sát. Trước khi thay, phải tái dựng nhận thức 3D của model rồi xoay model để trục LENGTH của model trùng với trục LENGTH của đồ cũ. Ví dụ đồ cũ chạy từ tiền cảnh vào hậu cảnh nhưng ảnh model chụp ngang cạnh dài: KHÔNG đặt nguyên mặt ngang đó vào cảnh; phải xoay model khoảng 90° quanh trục đứng để đúng hướng đồ cũ, sau đó áp perspective của ảnh đích.",
-      "KHÔNG SAO CHÉP HÌNH CHIẾU 2D: Không được coi silhouette nhìn thấy trong ảnh model là hình dạng phải xuất hiện nguyên xi ở ảnh đích. Các chi tiết chân/đế phải tự thay đổi hình chiếu theo góc nhìn mới.",
       "KHÓA VỊ TRÍ: Giữ vị trí, tiếp xúc sàn và quan hệ không gian của đồ cũ theo lựa chọn của KTS.",
-      "QUALITY GATE: Nếu hướng/trục dài-rộng của model mâu thuẫn với đồ cũ hoặc perspective ảnh gốc, coi là ORIENTATION CONFLICT và phải hiệu chỉnh trước khi xuất.",
-      f.editRule + " " + f.realism + " " + f.referenceRule
+      hasReference ? "KIỂM TRA CUỐI: Nếu hướng/trục dài-rộng của model mâu thuẫn với đồ cũ hoặc phối cảnh ảnh gốc, phải hiệu chỉnh trước khi xuất." : "Không có model tham chiếu: thực hiện theo mô tả chữ và các lựa chọn của KTS; không tự giả định có ảnh/model tham chiếu.",
+      [f.editRule, f.realism, hasReference ? f.referenceRule : ""].filter(Boolean).join(" ")
     );
   } else if (mode === "Material") {
     const m = materialDirection(analysis);
