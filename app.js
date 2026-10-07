@@ -131,6 +131,9 @@ const lightingTargetGallery = document.getElementById("lightingTargetGallery");
 const lightingTargetTrigger = document.getElementById("lightingTargetTrigger");
 const lightingTargetPlaceholder = document.getElementById("lightingTargetPlaceholder");
 const lightingTargetCount = document.getElementById("lightingTargetCount");
+const lightingPreserve = document.getElementById("lightingPreserve");
+const lightingChange = document.getElementById("lightingChange");
+const lightingTargetAnalysis = document.getElementById("lightingTargetAnalysis");
 let lightingReferenceFile = null, lightingReferenceUrl = null;
 let lightingTargetFiles = [], lightingTargetUrls = [];
 
@@ -849,7 +852,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
     if (currentMode === "Lighting") {
       if (!lightingReferenceFile) throw new Error("EXPERT 03 cần HÌNH ẢNH THAM CHIẾU ánh sáng.");
       if (!lightingTargetFiles.length) throw new Error("EXPERT 03 cần ít nhất 1 HÌNH ẢNH NHẬN THAM CHIẾU.");
-      const prompts = lightingTargetFiles.map(file => buildIndependentLightingPrompt({ referenceName: lightingReferenceFile.name, targetName: file.name, brief: brief?.value || "", decisions: decisionsNow, aiTarget: selectedAITarget }));
+      const prompts = lightingTargetFiles.map(file => buildIndependentLightingPrompt({ referenceName: lightingReferenceFile.name, targetName: file.name, brief: brief?.value || "", decisions: decisionsNow, aiTarget: selectedAITarget, preserve: lightingPreserve?.value || "", change: lightingChange?.value || "", targetAnalysis: lightingTargetAnalysis?.value || "" }));
       if (resultContent) resultContent.textContent = prompts.map((prompt, i) => "════════════════════════════════════════\nEXPERT 03 · PROMPT " + String(i + 1).padStart(2, "0") + " — " + lightingTargetFiles[i].name + "\n════════════════════════════════════════\n" + prompt).join("\n\n");
       if (reasoningSummary) reasoningSummary.innerHTML = "<div><b>EXPERT 03 · ÁNH SÁNG</b><span>Ingo Maurer · bộ não độc lập.</span></div><div><b>" + lightingTargetFiles.length + " Prompt riêng</b><span>Một nguồn ánh sáng tham chiếu → từng ảnh nhận độc lập.</span></div><div><b>KHÓA LIÊN MIỀN</b><span>Không đọc quyết định từ Expert 01/02/04/05/06/07/08.</span></div>";
       result?.classList.remove("hidden"); result?.scrollIntoView({ behavior: "smooth", block: "start" });
