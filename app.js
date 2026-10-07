@@ -39,6 +39,8 @@ undoPromptRevision?.addEventListener("click",()=>{
 const sceneInput = document.getElementById("sceneInput");
 const referenceInput = document.getElementById("referenceInput");
 const scenePreview = document.getElementById("scenePreview");
+const sceneGallery = document.getElementById("sceneGallery");
+const sceneTrigger = document.getElementById("sceneTrigger");
 const referenceGallery = document.getElementById("referenceGallery");
 const scenePlaceholder = document.getElementById("scenePlaceholder");
 const referencePlaceholder = document.getElementById("referencePlaceholder");
@@ -415,11 +417,25 @@ function setPreview(input, preview, placeholder, label) {
     if (brainStatus) brainStatus.textContent = label + " đã tải";
   });
 }
-setPreview(sceneInput, scenePreview, scenePlaceholder, "Ảnh không gian");
-sceneInput?.addEventListener("change", () => {
-  sceneFiles = Array.from(sceneInput.files || []);
-  sceneFile = sceneFiles[0] || null;
-  if (brainStatus && sceneFiles.length > 1) brainStatus.textContent = sceneFiles.length + " ảnh đích đã tải";
+sceneTrigger?.addEventListener("click",()=>sceneInput?.click());
+function renderSceneGallery(){
+  if(!sceneGallery) return;
+  sceneGallery.innerHTML="";
+  sceneFiles.forEach((file,i)=>{
+    const card=document.createElement("div");
+    card.className="reference-thumb scene-target-card";
+    card.innerHTML='<img src="'+URL.createObjectURL(file)+'" alt="Ảnh đích '+(i+1)+'"><span>ẢNH ĐÍCH '+String(i+1).padStart(2,"0")+'</span><button type="button" class="reference-remove" title="Xóa ảnh">×</button>';
+    card.querySelector(".reference-remove")?.addEventListener("click",()=>{sceneFiles.splice(i,1);sceneFile=sceneFiles[0]||null;renderSceneGallery();});
+    sceneGallery.appendChild(card);
+  });
+  scenePlaceholder?.classList.toggle("hidden",sceneFiles.length>0);
+}
+sceneInput?.addEventListener("change",()=>{
+  sceneFiles=[...sceneFiles,...Array.from(sceneInput.files||[])];
+  sceneFile=sceneFiles[0]||null;
+  renderSceneGallery();
+  sceneInput.value="";
+  if(brainStatus) brainStatus.textContent=sceneFiles.length+" ảnh đích đã tải";
 });
 
 function referenceMetaDefaults() {
