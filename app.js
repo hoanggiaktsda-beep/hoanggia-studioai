@@ -95,7 +95,8 @@ const modeReferenceConfig = {
   Camera: {title:"Ảnh góc máy tham chiếu", note:"Tùy chọn · dùng để tham chiếu vị trí máy, bố cục và phối cảnh", action:"＋ Thêm ảnh góc máy tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu góc máy"},
   ReferenceReplica: {title:"Ảnh không gian tham chiếu", note:"Tùy chọn · nguồn hình ảnh để sao chép khi KTS cung cấp", action:"＋ Thêm ảnh không gian tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không được giả định có ảnh tham chiếu"}
 };
-let modeReferenceFile=null, modeReferenceUrl=null;
+const modeReferenceFiles = {Lighting:null, Camera:null, ReferenceReplica:null};
+const modeReferenceUrls = {Lighting:null, Camera:null, ReferenceReplica:null};
 function renderModeReference(){
   const cfg=modeReferenceConfig[currentMode];
   modeReferencePanel?.classList.toggle("hidden",!cfg);
@@ -104,21 +105,25 @@ function renderModeReference(){
   if(modeReferenceNote) modeReferenceNote.textContent=cfg.note;
   if(modeReferenceAction) modeReferenceAction.textContent=cfg.action;
   if(modeReferenceHelp) modeReferenceHelp.textContent=cfg.help;
+  const file=modeReferenceFiles[currentMode], url=modeReferenceUrls[currentMode];
+  if(modeReferencePreview){modeReferencePreview.src=url||"";modeReferencePreview.classList.toggle("visible",Boolean(file));}
+  modeReferencePlaceholder?.classList.toggle("hidden",Boolean(file));
+  modeReferenceRemove?.classList.toggle("hidden",!file);
+  if(modeReferenceInput) modeReferenceInput.value="";
 }
 function clearModeReference(){
-  if(modeReferenceUrl) URL.revokeObjectURL(modeReferenceUrl);
-  modeReferenceUrl=null; modeReferenceFile=null;
-  if(modeReferenceInput) modeReferenceInput.value="";
-  if(modeReferencePreview){modeReferencePreview.src="";modeReferencePreview.classList.remove("visible");}
-  modeReferencePlaceholder?.classList.remove("hidden"); modeReferenceRemove?.classList.add("hidden");
+  const mode=currentMode;
+  if(modeReferenceUrls[mode]) URL.revokeObjectURL(modeReferenceUrls[mode]);
+  modeReferenceUrls[mode]=null; modeReferenceFiles[mode]=null;
+  renderModeReference();
 }
 modeReferenceInput?.addEventListener("change",()=>{
-  const file=modeReferenceInput.files?.[0]; if(!file) return;
-  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){alert("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP.");clearModeReference();return;}
-  if(modeReferenceUrl) URL.revokeObjectURL(modeReferenceUrl);
-  modeReferenceFile=file; modeReferenceUrl=URL.createObjectURL(file);
-  if(modeReferencePreview){modeReferencePreview.src=modeReferenceUrl;modeReferencePreview.classList.add("visible");}
-  modeReferencePlaceholder?.classList.add("hidden"); modeReferenceRemove?.classList.remove("hidden");
+  const file=modeReferenceInput.files?.[0]; if(!file||!modeReferenceConfig[currentMode]) return;
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){alert("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP.");return;}
+  const mode=currentMode;
+  if(modeReferenceUrls[mode]) URL.revokeObjectURL(modeReferenceUrls[mode]);
+  modeReferenceFiles[mode]=file; modeReferenceUrls[mode]=URL.createObjectURL(file);
+  renderModeReference();
 });
 modeReferenceRemove?.addEventListener("click",clearModeReference);
 const spaceSyncPanel = document.getElementById("spaceSyncPanel");
@@ -770,8 +775,8 @@ document.getElementById("generate")?.addEventListener("click", () => {
               : "selected spatial system";
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
   const productReferenceRoles = referenceFiles.length ? referenceMeta.map((m, i) => `Ảnh model ${i + 1}: ${m.model}; mã=${m.modelCode || "chưa có"}; kích thước=${m.dimensions || "chưa có"}; góc KTS=${m.viewRole || "KTS chưa xác định"}; ưu tiên=${m.priority}; bảo toàn=${m.preservation}; ghi chú=${m.note || "không"}; ảnh bổ sung=${(m.extraReferences || []).map(f => f.name).join(", ") || "không"}`).join(" | ") : "";
-  const modeSpecificReference = modeReferenceFile && modeReferenceConfig[currentMode]
-    ? `${modeReferenceConfig[currentMode].title}: ${modeReferenceFile.name}`
+  const modeSpecificReference = modeReferenceFiles[currentMode] && modeReferenceConfig[currentMode]
+    ? `${modeReferenceConfig[currentMode].title}: ${modeReferenceFiles[currentMode].name}`
     : "";
   const referenceRoles = [productReferenceRoles, modeSpecificReference].filter(Boolean).join(" | ");
   const activeReplicaProductSource = decisionsNow.productSourcePriority === "UPLOADED_PRODUCT_REFERENCE"
