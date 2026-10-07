@@ -627,3 +627,16 @@ footer{
 #lightingExpertPanel .reference-gallery{display:flex;gap:8px;overflow-x:auto;width:100%}
 #lightingExpertPanel .reference-card{min-width:110px;max-width:140px}
 #lightingExpertPanel .reference-card img{width:100%;height:78px;object-fit:cover}
+
+/* Expert 03 — same 01/02 upload language */
+.lighting-pair-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.lighting-pair-card{border:1px solid var(--line,#303535);border-radius:16px;padding:20px;min-width:0}
+.lighting-main-upload{min-height:330px!important;height:330px!important;display:flex;align-items:center;justify-content:center;overflow:auto}
+.lighting-main-upload img{max-width:100%;max-height:300px;object-fit:contain}
+.lighting-pair-card .reference-gallery{display:flex;gap:10px;flex-wrap:wrap;width:100%;align-content:flex-start}
+.lighting-pair-card .reference-card{width:140px}
+.lighting-pair-card .reference-card img{width:100%;height:100px;object-fit:cover}
+.lighting-compact-controls{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;margin-top:14px}
+.lighting-compact-controls label{font-size:10px;letter-spacing:.06em}
+.lighting-compact-controls input{width:100%;box-sizing:border-box;margin-top:5px}
+@media(max-width:900px){.lighting-pair-grid,.lighting-compact-controls{grid-template-columns:1fr}.lighting-main-upload{height:240px!important;min-height:240px!important}}
