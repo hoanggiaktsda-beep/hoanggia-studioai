@@ -290,6 +290,11 @@ sceneInput?.addEventListener("change", () => { sceneFile = sceneInput.files?.[0]
 function referenceMetaDefaults() {
   return {
     model: "Sofa",
+    modelCode: "",
+    dimensions: "",
+    viewRole: "KTS chưa xác định",
+    extraReferences: [],
+    extraReferenceRoles: [],
     priority: "Giữ nguyên toàn bộ model cung cấp",
     preservation: "Bảo toàn 100% hình dáng và cấu tạo",
     views: "Nhiều góc nhìn của cùng một model",
@@ -297,11 +302,13 @@ function referenceMetaDefaults() {
   };
 }
 
+function escapeAttribute(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"); }
+
 function renderReferenceGallery() {
   if (!referenceGallery) return;
   referenceGallery.innerHTML = "";
   referenceFiles.forEach((file, i) => {
-    const meta = referenceMeta[i] || referenceMetaDefaults();
+    const meta = {...referenceMetaDefaults(), ...referenceMeta[i]};
     referenceMeta[i] = meta;
     const card = document.createElement("div");
     card.className = "reference-thumb evidence-card";
@@ -310,11 +317,14 @@ function renderReferenceGallery() {
       <span>${String(i + 1).padStart(2, "0")}</span>
       <button type="button" class="reference-remove" title="Xóa ảnh">×</button>
       <div class="evidence-details">
-        <div class="evidence-row"><label>MODEL</label><select class="evidence-model">${referenceOptions.object.map(x => `<option${meta.model === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>\n        <div class="evidence-row"><label>MÃ MODEL</label><input class="evidence-model-code" value="${meta.modelCode || ""}" placeholder="Ví dụ: BRT21022"></div>\n        <div class="evidence-row"><label>KÍCH THƯỚC</label><input class="evidence-dimensions" value="${meta.dimensions || ""}" placeholder="Ví dụ: 2600 × 1050 × 750 mm"><small>Nếu kích thước đọc rõ trên ảnh, hệ thống tự nhận diện và điền; KTS có thể sửa lại.</small></div>
+        <div class="evidence-row"><label>MODEL</label><select class="evidence-model">${referenceOptions.object.map(x => `<option${meta.model === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
+        <div class="evidence-row"><label>MÃ MODEL</label><input class="evidence-model-code" value="${escapeAttribute(meta.modelCode)}" placeholder="Ví dụ: BRT21022"></div>
+        <div class="evidence-row"><label>KÍCH THƯỚC</label><input class="evidence-dimensions" value="${escapeAttribute(meta.dimensions)}" placeholder="Ví dụ: 2600 × 1050 × 750 mm"><small>Nếu kích thước đọc rõ trên ảnh, hệ thống tự nhận diện và điền; KTS có thể sửa lại.</small></div>
         <div class="evidence-row"><label>ƯU TIÊN MODEL CUNG CẤP</label><select class="evidence-priority">${referenceOptions.priority.map(x => `<option${meta.priority === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>MỨC ĐỘ BẢO TOÀN</label><select class="evidence-preservation">${referenceOptions.preservation.map(x => `<option${meta.preservation === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
-        <div class="evidence-row"><label>CHUẨN HÓA GÓC NHÌN</label><select class="evidence-views">${referenceOptions.views.map(x => `<option${meta.views === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>\n        <div class="evidence-row"><label>GÓC NHÌN DO KTS XÁC ĐỊNH</label><select class="evidence-view-role">${referenceOptions.viewRole.map(x => `<option${meta.viewRole === x ? " selected" : ""}>${x}</option>`).join("")}</select><small>KTS xác định thì hệ thống phải dùng đúng góc này; không được AI đoán lại.</small></div>
-        <div class="evidence-row"><label>GHI CHÚ</label><input class="evidence-note" value="${meta.note || ""}" placeholder="Ghi chú riêng cho ảnh (tùy chọn)"></div>
+        <div class="evidence-row"><label>CHUẨN HÓA GÓC NHÌN</label><select class="evidence-views">${referenceOptions.views.map(x => `<option${meta.views === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
+        <div class="evidence-row"><label>GÓC NHÌN DO KTS XÁC ĐỊNH</label><select class="evidence-view-role">${referenceOptions.viewRole.map(x => `<option${meta.viewRole === x ? " selected" : ""}>${x}</option>`).join("")}</select><small>KTS xác định thì hệ thống phải dùng đúng góc này; không được AI đoán lại.</small></div>
+        <div class="evidence-row"><label>GHI CHÚ</label><input class="evidence-note" value="${escapeAttribute(meta.note)}" placeholder="Ghi chú riêng cho ảnh (tùy chọn)"></div>
         <div class="evidence-row evidence-extra-reference"><label>ẢNH THAM CHIẾU THÊM</label><button type="button" class="extra-reference-trigger">＋ Thêm góc của cùng sản phẩm</button><input class="extra-reference-input" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden><div class="extra-reference-gallery"></div><small>Có thể thêm nhiều ảnh của cùng một bàn/ghế/sofa để AI hiểu đủ mặt trước, bên, sau và chi tiết.</small></div>
       </div>`;
     card.querySelector(".reference-remove").addEventListener("click", e => {
@@ -324,20 +334,25 @@ function renderReferenceGallery() {
       renderReferenceGallery();
     });
     const model = card.querySelector(".evidence-model");
-    const modelCode = card.querySelector(".evidence-model-code");\n    const dimensions = card.querySelector(".evidence-dimensions");\n    const priority = card.querySelector(".evidence-priority");
+    const modelCode = card.querySelector(".evidence-model-code");
+    const dimensions = card.querySelector(".evidence-dimensions");
+    const priority = card.querySelector(".evidence-priority");
     const preservation = card.querySelector(".evidence-preservation");
     const views = card.querySelector(".evidence-views");
-    const viewRole = card.querySelector(".evidence-view-role");\n    const note = card.querySelector(".evidence-note");
+    const viewRole = card.querySelector(".evidence-view-role");
+    const note = card.querySelector(".evidence-note");
     const extraTrigger = card.querySelector(".extra-reference-trigger");
     const extraInput = card.querySelector(".extra-reference-input");
     const extraGallery = card.querySelector(".extra-reference-gallery");
-    meta.extraReferences = meta.extraReferences || [];\n    meta.extraReferenceRoles = meta.extraReferenceRoles || [];
+    meta.extraReferences = meta.extraReferences || [];
+    meta.extraReferenceRoles = meta.extraReferenceRoles || [];
     const renderExtraReferences = () => {
       extraGallery.innerHTML = "";
       meta.extraReferences.forEach((extraFile, extraIndex) => {
         const item = document.createElement("div");
         item.className = "extra-reference-item";
-        item.innerHTML = `<img src="${URL.createObjectURL(extraFile)}" alt="Góc tham chiếu thêm ${extraIndex + 1}"><button type="button" aria-label="Xóa ảnh">×</button><span>${String(extraIndex + 1).padStart(2,"0")}</span><select class="extra-view-role">${referenceOptions.viewRole.map(x => `<option${(meta.extraReferenceRoles[extraIndex] || "KTS chưa xác định") === x ? " selected" : ""}>${x}</option>`).join("")}</select>`;\n        item.querySelector(".extra-view-role").addEventListener("change", e => { meta.extraReferenceRoles[extraIndex] = e.target.value; });
+        item.innerHTML = `<img src="${URL.createObjectURL(extraFile)}" alt="Góc tham chiếu thêm ${extraIndex + 1}"><button type="button" aria-label="Xóa ảnh">×</button><span>${String(extraIndex + 1).padStart(2,"0")}</span><select class="extra-view-role">${referenceOptions.viewRole.map(x => `<option${(meta.extraReferenceRoles[extraIndex] || "KTS chưa xác định") === x ? " selected" : ""}>${x}</option>`).join("")}</select>`;
+        item.querySelector(".extra-view-role").addEventListener("change", e => { meta.extraReferenceRoles[extraIndex] = e.target.value; });
         item.querySelector("button").addEventListener("click", () => { meta.extraReferences.splice(extraIndex,1); meta.extraReferenceRoles.splice(extraIndex,1); renderExtraReferences(); });
         extraGallery.appendChild(item);
       });
@@ -354,11 +369,13 @@ function renderReferenceGallery() {
     const save = () => {
       referenceMeta[i] = { ...meta, model: model.value, modelCode: modelCode.value.trim(), dimensions: dimensions.value.trim(), priority: priority.value, preservation: preservation.value, views: views.value, viewRole: viewRole.value, note: note.value.trim(), extraReferences: meta.extraReferences || [], extraReferenceRoles: meta.extraReferenceRoles || [] };
     };
-    [model, modelCode, dimensions, priority, preservation, views, viewRole, note].forEach(el => el.addEventListener("change", save));\n    modelCode.addEventListener("input", save);\n    dimensions.addEventListener("input", save);
+    [model, modelCode, dimensions, priority, preservation, views, viewRole, note].forEach(el => el.addEventListener("change", save));
+    modelCode.addEventListener("input", save);
+    dimensions.addEventListener("input", save);
     note.addEventListener("input", save);
     referenceGallery.appendChild(card);
   });
-  referencePlaceholder?.classList.toggle("hidden", referenceFiles.length > 0);
+  referencePlaceholder?.classList.remove("hidden");
   if (brainStatus) brainStatus.textContent = referenceFiles.length ? `Đã chuẩn bị ${referenceFiles.length} thẻ bằng chứng mẫu` : "Hệ thống sẵn sàng";
 }
 
@@ -369,9 +386,12 @@ const modelLibraryStatus = document.getElementById("modelLibraryStatus");
 const MODEL_LIBRARY_KEY = "hoanggia_edit_ai_model_library_v1";
 
 function readModelLibrary(){
-  try { return JSON.parse(localStorage.getItem(MODEL_LIBRARY_KEY) || "[]"); } catch { return []; }
+  try { const items = JSON.parse(localStorage.getItem(MODEL_LIBRARY_KEY) || "[]"); return Array.isArray(items) ? items.filter(x => x && typeof x === "object") : []; } catch { return []; }
 }
-function writeModelLibrary(items){ localStorage.setItem(MODEL_LIBRARY_KEY, JSON.stringify(items)); }
+function writeModelLibrary(items){
+  try { localStorage.setItem(MODEL_LIBRARY_KEY, JSON.stringify(items)); return true; }
+  catch { if(brainStatus) brainStatus.textContent="Không thể lưu thư viện trên thiết bị này. Hãy kiểm tra dung lượng hoặc quyền lưu trữ."; return false; }
+}
 function renderModelLibrary(query=""){
   const items=readModelLibrary();
   if(modelLibraryStatus) modelLibraryStatus.textContent = items.length ? items.length + " model đã lưu" : "Chưa có model đã lưu";
@@ -380,19 +400,21 @@ function renderModelLibrary(query=""){
   const filtered=items.filter(x => !q || [x.model,x.modelCode,x.dimensions,x.note].join(" ").toLowerCase().includes(q));
   modelLibraryGrid.innerHTML = filtered.length ? filtered.map(x => `
     <article class="model-library-card">
-      <strong>${x.modelCode || x.model || "Model chưa đặt tên"}</strong>
-      <span>${x.model || "Chưa phân loại"}</span>
-      <small>${x.dimensions || "Chưa có kích thước"} · ${x.viewRole || "KTS chưa xác định góc"}</small>
-      <div><button type="button" data-use-model="${x.id}">Dùng model</button><button type="button" data-delete-model="${x.id}">Xóa</button></div>
+      <strong>${escapeAttribute(x.modelCode || x.model || "Model chưa đặt tên")}</strong>
+      <span>${escapeAttribute(x.model || "Chưa phân loại")}</span>
+      <small>${escapeAttribute(x.dimensions || "Chưa có kích thước")} · ${escapeAttribute(x.viewRole || "KTS chưa xác định góc")}</small>
+      <div><button type="button" data-use-model="${escapeAttribute(x.id)}">Dùng model</button><button type="button" data-delete-model="${escapeAttribute(x.id)}">Xóa</button></div>
     </article>`).join("") : "<p>Không có model phù hợp.</p>";
   modelLibraryGrid.querySelectorAll("[data-use-model]").forEach(btn=>btn.addEventListener("click",()=>{
     const item=items.find(x=>x.id===btn.dataset.useModel); if(!item) return;
-    referenceMeta.push({...referenceMetaDefaults(),...item,extraReferences:[],extraReferenceRoles:item.extraReferenceRoles||[]});
+    if (!referenceFiles.length) { if(brainStatus) brainStatus.textContent="Hãy tải ảnh model trước, rồi chọn hồ sơ trong thư viện."; return; }
+    const current = referenceMeta[0] || referenceMetaDefaults();
+    referenceMeta[0] = {...referenceMetaDefaults(),...item,extraReferences:current.extraReferences,extraReferenceRoles:current.extraReferenceRoles};
     renderReferenceGallery(); modelLibraryPanel?.classList.add("hidden");
     if(brainStatus) brainStatus.textContent="Đã nạp hồ sơ model " + (item.modelCode || item.model);
   }));
   modelLibraryGrid.querySelectorAll("[data-delete-model]").forEach(btn=>btn.addEventListener("click",()=>{
-    writeModelLibrary(items.filter(x=>x.id!==btn.dataset.deleteModel)); renderModelLibrary(modelLibrarySearch?.value||"");
+    if(writeModelLibrary(items.filter(x=>x.id!==btn.dataset.deleteModel))) renderModelLibrary(modelLibrarySearch?.value||"");
   }));
 }
 document.getElementById("openModelLibrary")?.addEventListener("click",()=>{ modelLibraryPanel?.classList.remove("hidden"); renderModelLibrary(); });
@@ -404,7 +426,8 @@ document.getElementById("saveModelLibrary")?.addEventListener("click",()=>{
   const items=readModelLibrary();
   const id=(meta.modelCode||meta.model||"model").toLowerCase().replace(/[^a-z0-9]+/g,"-")+"-"+Date.now();
   items.unshift({id,model:meta.model,modelCode:meta.modelCode||"",dimensions:meta.dimensions||"",priority:meta.priority,preservation:meta.preservation,views:meta.views,viewRole:meta.viewRole,note:meta.note||"",extraReferenceRoles:meta.extraReferenceRoles||[],savedAt:new Date().toISOString()});
-  writeModelLibrary(items); renderModelLibrary();
+  if(!writeModelLibrary(items)) return;
+  renderModelLibrary();
   if(brainStatus) brainStatus.textContent="Đã lưu model " + (meta.modelCode || meta.model) + " vào thư viện";
 });
 renderModelLibrary();
@@ -412,6 +435,7 @@ renderModelLibrary();
 referenceTrigger?.addEventListener("click", () => referenceInput?.click());
 referenceInput?.addEventListener("change", () => {
   Array.from(referenceInput.files || []).forEach(file => {
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) { alert("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP."); return; }
     referenceFiles.push(file);
     referenceMeta.push(referenceMetaDefaults());
   });

@@ -24,12 +24,12 @@
 <section class="editor-grid">
 <div class="panel upload-panel">
 <div class="panel-head"><div><span class="kicker">01</span><h2>Ảnh không gian / tham chiếu</h2></div><span class="panel-note">Ảnh gốc · Expert 07 dùng làm Source of Truth</span></div>
-<label class="upload-box" for="sceneInput"><img id="scenePreview" alt="Ảnh không gian"><div id="scenePlaceholder"><strong>＋ Tải ảnh không gian</strong><span>JPG / PNG · Ảnh render hoặc ảnh chụp</span></div></label><input id="sceneInput" type="file" accept="image/png,image/jpeg" hidden>
+<label class="upload-box" for="sceneInput"><img id="scenePreview" alt="Ảnh không gian"><div id="scenePlaceholder"><strong>＋ Tải ảnh không gian</strong><span>JPG / PNG / WebP · Ảnh render hoặc ảnh chụp</span></div></label><input id="sceneInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
 </div>
 <div class="panel upload-panel">
 <div class="panel-head"><div><span class="kicker">02</span><h2>Mẫu / sản phẩm cung cấp</h2></div><span class="panel-note">Có thể thêm nhiều ảnh · Expert 07 dùng làm Product Override</span></div>
-<div class="upload-box" id="referenceUploadBox"><div id="referenceGallery" class="reference-gallery"></div><div id="referencePlaceholder"><button type="button" class="upload-trigger" id="referenceTrigger">＋ Thêm ảnh mẫu nội thất</button><span>JPG / PNG · Có thể chọn nhiều ảnh, nhiều góc nhìn của cùng một mẫu</span></div></div>
-<input id="referenceInput" type="file" accept="image/png,image/jpeg" multiple hidden>
+<div class="upload-box" id="referenceUploadBox"><div id="referenceGallery" class="reference-gallery"></div><div id="referencePlaceholder"><button type="button" class="upload-trigger" id="referenceTrigger">＋ Thêm ảnh mẫu nội thất</button><span>JPG / PNG / WebP · Có thể chọn nhiều ảnh, nhiều góc nhìn của cùng một mẫu</span></div></div>
+<input id="referenceInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
 <div class="model-library-bar">
 <button type="button" class="ghost-btn" id="openModelLibrary">▦ Thư viện model</button>
 <button type="button" class="ghost-btn" id="saveModelLibrary">＋ Lưu model hiện tại</button>
@@ -164,7 +164,7 @@
         <img id="syncReferencePreview" alt="Ảnh tham chiếu">
         <div id="syncReferencePlaceholder"><strong>＋ Tải 1 ảnh tham chiếu</strong><span>Ảnh chuẩn để hệ thống đọc ngôn ngữ không gian</span></div>
       </label>
-      <input id="syncReferenceInput" type="file" accept="image/png,image/jpeg" hidden>
+      <input id="syncReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
       <p class="sync-help">Ảnh này được giữ cố định và dùng làm chuẩn chung cho tất cả ảnh cần đồng bộ.</p>
     </div>
     <div class="sync-target-card">
@@ -174,7 +174,7 @@
         <button type="button" class="upload-trigger" id="syncTargetTrigger">＋ Thêm ảnh cần đồng bộ</button>
         <span>Thêm nhiều ảnh khác nhau · mỗi ảnh sẽ nhận một câu prompt riêng</span>
       </div>
-      <input id="syncTargetInput" type="file" accept="image/png,image/jpeg" multiple hidden>
+      <input id="syncTargetInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
       <p class="sync-help">Mỗi ảnh được xử lý như một nhiệm vụ riêng để tránh lặp lại cùng một prompt cho nhiều ảnh.</p>
     </div>
   </div>
@@ -198,4 +198,4 @@
   </div>
   <div class="creatorFooterBottom">HOANGGIA AI · ARCHITECT × AI · INTERIOR DESIGN WORKSTATION</div>
 </footer>
-</main></div><script type="module" src="./app.js"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=14").catch(()=>{}));}</script></body></html>
+</main></div><script type="module" src="./app.js"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=15").catch(()=>{}));}</script></body></html>

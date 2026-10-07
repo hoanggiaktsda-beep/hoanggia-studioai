@@ -1,0 +1,69 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const http = require('node:http');
+const path = require('node:path');
+const { chromium } = require('playwright');
+const root = path.resolve(__dirname, '..');
+const server = http.createServer((req, res) => {
+  const name = req.url.split('?')[0];
+  const file = path.join(root, name === '/' ? 'index.html' : name);
+  try {
+    res.setHeader('Content-Type', file.endsWith('.js') ? 'text/javascript' : file.endsWith('.css') ? 'text/css' : file.endsWith('.html') ? 'text/html' : 'application/octet-stream');
+    res.end(fs.readFileSync(file));
+  } catch { res.writeHead(404).end(); }
+});
+(async () => {
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const browser = await chromium.launch({headless:true, ...(process.env.UPLOAD_TEST_BROWSER ? {executablePath:process.env.UPLOAD_TEST_BROWSER} : {})});
+  try {
+    const page = await browser.newPage({serviceWorkers:'block'});
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    const base = process.env.UPLOAD_TEST_URL || `http://127.0.0.1:${server.address().port}`;
+    await page.goto(base);
+    const image = name => ({name, mimeType:'image/png', buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jB1sAAAAASUVORK5CYII=', 'base64')});
+    await page.locator('#sceneInput').setInputFiles(image('scene.png'));
+    assert.ok(await page.locator('#scenePreview').evaluate(el => el.classList.contains('visible')));
+    const chooser = page.waitForEvent('filechooser');
+    await page.locator('#referenceTrigger').click();
+    await (await chooser).setFiles([image('model-a.png'),image('model-b.png')]);
+    assert.equal(await page.locator('.evidence-card').count(),2);
+    assert.ok(await page.locator('#referenceTrigger').isVisible());
+    await page.locator('#referenceInput').setInputFiles(image('model-c.png'));
+    assert.equal(await page.locator('.evidence-card').count(),3);
+    let card = page.locator('.evidence-card').first();
+    await card.locator('.evidence-model-code').fill('BRT21022');
+    await card.locator('.evidence-dimensions').fill('2600 × 1050 × 750 mm');
+    await card.locator('.evidence-view-role').selectOption({label:'Cạnh dài / ngang'});
+    const extraChooser = page.waitForEvent('filechooser');
+    await card.locator('.extra-reference-trigger').click();
+    await (await extraChooser).setFiles([image('extra-a.png'),image('extra-b.png')]);
+    assert.equal(await card.locator('.extra-reference-item').count(),2);
+    await card.locator('.extra-view-role').first().selectOption({label:'Bên trái / LEFT'});
+    await card.locator('.evidence-note').fill('Ghi chú "có dấu" <giữ nguyên>');
+    await page.locator('#saveModelLibrary').click();
+    await page.locator('#openModelLibrary').click();
+    await page.locator('[data-use-model]').first().click();
+    card = page.locator('.evidence-card').first();
+    assert.equal(await card.locator('.evidence-model-code').inputValue(),'BRT21022');
+    assert.equal(await card.locator('.evidence-dimensions').inputValue(),'2600 × 1050 × 750 mm');
+    assert.equal(await card.locator('.evidence-note').inputValue(),'Ghi chú "có dấu" <giữ nguyên>');
+    assert.equal(await card.locator('.extra-view-role').first().inputValue(),'Bên trái / LEFT');
+    await card.locator('.extra-reference-item button').first().click();
+    assert.equal(await card.locator('.extra-reference-item').count(),1);
+    await page.locator('.reference-remove').filter({visible:true}).first().click();
+    assert.equal(await page.locator('.evidence-card').count(),2);
+    await page.locator('[data-mode="Material"]').click();
+    await page.locator('#materialInput').setInputFiles(image('material.png'));
+    assert.ok(await page.locator('#materialPreview').evaluate(el=>el.classList.contains('visible')));
+    await page.locator('#materialRemove').click();
+    await page.locator('#newProject').click();
+    assert.equal(await page.locator('.evidence-card').count(),0);
+    await page.evaluate(()=>localStorage.setItem('hoanggia_edit_ai_model_library_v1','{}'));
+    await page.reload();
+    await page.locator('#referenceInput').setInputFiles(image('after-reload.png'));
+    assert.equal(await page.locator('.evidence-card').count(),1);
+    assert.deepEqual(errors,[]);
+    console.log('PASS: scene, multiple models, add-more, extra views, metadata, library, material, reset, corrupt storage; no runtime errors');
+  } finally { await browser.close(); server.close(); }
+})().catch(error=>{console.error(error);server.close();process.exitCode=1;});
