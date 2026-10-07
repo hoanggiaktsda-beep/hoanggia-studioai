@@ -553,3 +553,14 @@ footer{
 .result-panel:has(pre.prompt-protected) pre{
   min-height:180px;
 }
+
+/* Additional multi-view references per product card */
+.evidence-extra-reference{margin-top:2px}
+.extra-reference-trigger{width:100%;min-height:38px;padding:9px 10px;border:1px dashed rgba(201,168,106,.38);border-radius:7px;background:rgba(201,168,106,.025);color:#c9a86a;font:600 10px/1.3 inherit;cursor:pointer;text-align:left}
+.extra-reference-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:7px}
+.extra-reference-item{position:relative;min-width:0;aspect-ratio:1/1;border:1px solid #292c31;border-radius:6px;overflow:hidden;background:#0b0d0e}
+.extra-reference-item img{width:100%;height:100%;display:block;object-fit:contain}
+.extra-reference-item button{position:absolute;right:3px;top:3px;width:22px;height:22px;border:1px solid rgba(255,255,255,.22);border-radius:50%;background:rgba(0,0,0,.72);color:#fff;cursor:pointer;line-height:18px}
+.extra-reference-item span{position:absolute;left:4px;bottom:4px;padding:2px 4px;border-radius:4px;background:rgba(0,0,0,.68);color:#ddd;font-size:8px}
+.evidence-extra-reference small{display:block;margin-top:6px;color:#656a71;font-size:8px;line-height:1.45}
+@media(max-width:899px){.extra-reference-trigger{font-size:13px!important;min-height:44px}.evidence-extra-reference small{font-size:11px}}
