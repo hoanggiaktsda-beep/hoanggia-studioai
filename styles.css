@@ -598,3 +598,6 @@ footer{
   #referenceUploadBox .evidence-details{grid-template-columns:minmax(0,1fr);padding:10px}
   #referenceUploadBox .evidence-advanced-grid{grid-template-columns:minmax(0,1fr)}
 }
+
+.prompt-revision{margin-top:18px;padding:16px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.025)}
+.prompt-revision h3{margin:3px 0 0}.prompt-revision-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.prompt-revision-grid label{display:flex;flex-direction:column;gap:7px}.prompt-revision-grid label>span{font-size:11px;letter-spacing:.08em;opacity:.72}.prompt-revision textarea{width:100%;box-sizing:border-box;resize:vertical;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#101211;color:inherit;font:inherit;line-height:1.5}.prompt-revision-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:12px}.prompt-revision-actions span{font-size:12px;opacity:.78}@media(max-width:700px){.prompt-revision-grid{grid-template-columns:1fr}}
