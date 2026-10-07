@@ -53,6 +53,46 @@ const materialTarget = document.getElementById("materialTarget");
 const materialComponent = document.getElementById("materialComponent");
 const materialMapping = document.getElementById("materialMapping");
 const materialFinish = document.getElementById("materialFinish");
+const modeReferencePanel = document.getElementById("modeReferencePanel");
+const modeReferenceInput = document.getElementById("modeReferenceInput");
+const modeReferencePreview = document.getElementById("modeReferencePreview");
+const modeReferencePlaceholder = document.getElementById("modeReferencePlaceholder");
+const modeReferenceRemove = document.getElementById("modeReferenceRemove");
+const modeReferenceTitle = document.getElementById("modeReferenceTitle");
+const modeReferenceNote = document.getElementById("modeReferenceNote");
+const modeReferenceAction = document.getElementById("modeReferenceAction");
+const modeReferenceHelp = document.getElementById("modeReferenceHelp");
+const modeReferenceConfig = {
+  Lighting: {title:"Ảnh ánh sáng tham chiếu", note:"Tùy chọn · dùng để tham chiếu không khí, hướng sáng và tương phản", action:"＋ Thêm ảnh ánh sáng tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu ánh sáng"},
+  Camera: {title:"Ảnh góc máy tham chiếu", note:"Tùy chọn · dùng để tham chiếu vị trí máy, bố cục và phối cảnh", action:"＋ Thêm ảnh góc máy tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu góc máy"},
+  ReferenceReplica: {title:"Ảnh không gian tham chiếu", note:"Tùy chọn · nguồn hình ảnh để sao chép khi KTS cung cấp", action:"＋ Thêm ảnh không gian tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không được giả định có ảnh tham chiếu"}
+};
+let modeReferenceFile=null, modeReferenceUrl=null;
+function renderModeReference(){
+  const cfg=modeReferenceConfig[currentMode];
+  modeReferencePanel?.classList.toggle("hidden",!cfg);
+  if(!cfg) return;
+  if(modeReferenceTitle) modeReferenceTitle.textContent=cfg.title;
+  if(modeReferenceNote) modeReferenceNote.textContent=cfg.note;
+  if(modeReferenceAction) modeReferenceAction.textContent=cfg.action;
+  if(modeReferenceHelp) modeReferenceHelp.textContent=cfg.help;
+}
+function clearModeReference(){
+  if(modeReferenceUrl) URL.revokeObjectURL(modeReferenceUrl);
+  modeReferenceUrl=null; modeReferenceFile=null;
+  if(modeReferenceInput) modeReferenceInput.value="";
+  if(modeReferencePreview){modeReferencePreview.src="";modeReferencePreview.classList.remove("visible");}
+  modeReferencePlaceholder?.classList.remove("hidden"); modeReferenceRemove?.classList.add("hidden");
+}
+modeReferenceInput?.addEventListener("change",()=>{
+  const file=modeReferenceInput.files?.[0]; if(!file) return;
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){alert("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP.");clearModeReference();return;}
+  if(modeReferenceUrl) URL.revokeObjectURL(modeReferenceUrl);
+  modeReferenceFile=file; modeReferenceUrl=URL.createObjectURL(file);
+  if(modeReferencePreview){modeReferencePreview.src=modeReferenceUrl;modeReferencePreview.classList.add("visible");}
+  modeReferencePlaceholder?.classList.add("hidden"); modeReferenceRemove?.classList.remove("hidden");
+});
+modeReferenceRemove?.addEventListener("click",clearModeReference);
 const spaceSyncPanel = document.getElementById("spaceSyncPanel");
 const syncReferenceInput = document.getElementById("syncReferenceInput");
 const syncReferencePreview = document.getElementById("syncReferencePreview");
@@ -110,7 +150,7 @@ for (const kind of ["Face", "Body", "Outfit"]) {
   remove?.addEventListener("click", clearReference);
 }
 let currentMode = "Furniture";
-let selectedAITarget = "ChatGPT Images";
+let selectedAITarget = "ChatGPT Images";\nqueueMicrotask(renderModeReference);
 
 const aiTargetProfiles = {
   "ChatGPT Images": "Format for OpenAI image editing: direct conversational edit instruction, explicit target, preservation locks, spatial consistency and precise requested change.",
