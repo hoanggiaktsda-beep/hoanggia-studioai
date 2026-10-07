@@ -620,3 +620,10 @@ footer{
 .lighting-lock-row input{width:100%;box-sizing:border-box;margin-top:5px;min-height:36px}
 .lighting-rule{margin-top:10px!important;padding:9px 12px!important}
 @media(max-width:800px){.lighting-workspace,.lighting-lock-row{grid-template-columns:1fr}.lighting-dropzone{height:130px!important;min-height:130px!important}}
+
+/* Expert 03 follows the proven Expert 02 visual system */
+#lightingExpertPanel .material-reference-grid{align-items:stretch}
+#lightingExpertPanel #lightingTargetUploadBox{min-height:110px}
+#lightingExpertPanel .reference-gallery{display:flex;gap:8px;overflow-x:auto;width:100%}
+#lightingExpertPanel .reference-card{min-width:110px;max-width:140px}
+#lightingExpertPanel .reference-card img{width:100%;height:78px;object-fit:cover}
