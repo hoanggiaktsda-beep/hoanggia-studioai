@@ -674,3 +674,7 @@ footer{
 #cameraExpertPanel .lighting-target-add{min-height:92px!important;height:92px!important;margin-top:10px;display:flex;align-items:center;justify-content:center}
 #cameraExpertPanel .lighting-target-help{text-align:center;margin:8px 8px 0;font-size:11px;line-height:1.45;color:var(--muted,#7f8b91)}
 @media(max-width:700px){#cameraExpertPanel .lighting-target-card{grid-template-columns:1fr}#cameraExpertPanel .lighting-target-card>img{width:100%!important;max-width:none!important;height:180px!important;max-height:180px!important}}
+
+/* Experts 03/04 — explicit per-image remove action */
+#lightingExpertPanel .lighting-card-remove,#cameraExpertPanel .lighting-card-remove{display:flex!important;align-items:center;gap:5px;width:auto!important;min-width:54px;height:30px;padding:0 9px;border-radius:999px;z-index:5}
+#lightingExpertPanel .lighting-card-remove .remove-label,#cameraExpertPanel .lighting-card-remove .remove-label{display:inline;font-size:10px;letter-spacing:.04em}
