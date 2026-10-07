@@ -61,27 +61,22 @@
 </div>
 <div class="sync-rule"><strong>MATERIAL MAPPING ENGINE</strong><span>Ảnh gốc = hình học và bối cảnh được khóa. Ảnh vật liệu = nguồn màu, texture, vân, scale và finish. Chỉ ánh xạ vào đúng vùng được chọn; không dán texture phẳng và không thay thiết kế.</span></div>
 </section>
-<section class="panel mode-reference-panel hidden lighting-expert-compact" id="lightingExpertPanel">
-<div class="panel-head"><div><span class="kicker">03 · EXPERT ĐỘC LẬP</span><h2>Ánh sáng · Ingo Maurer</h2></div><span class="panel-note">Chỉ xử lý ánh sáng</span></div>
-<div class="lighting-workspace">
-  <div class="lighting-upload-card">
-    <label>01 · ÁNH SÁNG THAM CHIẾU</label>
-    <label class="lighting-dropzone" for="lightingReferenceInput"><img id="lightingReferencePreview" alt="Ảnh ánh sáng tham chiếu"><div id="lightingReferencePlaceholder"><strong>＋ Thêm ảnh</strong><span>JPG · PNG · WebP</span></div></label>
+<section class="panel material-reference-panel hidden" id="lightingExpertPanel">
+<div class="panel-head"><div><span class="kicker">03L</span><h2>Ánh sáng tham chiếu</h2></div><span class="panel-note">Expert độc lập · Ingo Maurer · chỉ xử lý ánh sáng</span></div>
+<div class="material-reference-grid">
+  <div class="material-source-card">
+    <label class="upload-box material-upload-box" for="lightingReferenceInput"><img id="lightingReferencePreview" alt="Ảnh ánh sáng tham chiếu"><div id="lightingReferencePlaceholder"><strong>＋ Đưa ảnh ánh sáng vào</strong><span>JPG / PNG / WebP · Nguồn ánh sáng</span></div></label>
     <input id="lightingReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
-    <button type="button" id="lightingReferenceRemove" class="character-reference-remove hidden">Xóa ảnh</button>
+    <button type="button" id="lightingReferenceRemove" class="character-reference-remove hidden">Xóa ảnh ánh sáng</button>
   </div>
-  <div class="lighting-upload-card">
-    <label>02 · ẢNH NHẬN <span id="lightingTargetCount">0 ảnh</span></label>
-    <div class="lighting-dropzone" id="lightingTargetUploadBox"><div id="lightingTargetGallery" class="reference-gallery"></div><div id="lightingTargetPlaceholder"><button type="button" class="upload-trigger" id="lightingTargetTrigger">＋ Thêm ảnh nhận</button><span>Nhiều ảnh · mỗi ảnh một Prompt</span></div></div>
-    <input id="lightingTargetInput" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden>
+  <div class="material-map-card">
+    <div class="intent-field"><label>ẢNH NHẬN THAM CHIẾU <span id="lightingTargetCount">0 ảnh</span></label><div class="upload-box material-upload-box" id="lightingTargetUploadBox"><div id="lightingTargetGallery" class="reference-gallery"></div><div id="lightingTargetPlaceholder"><button type="button" class="upload-trigger" id="lightingTargetTrigger">＋ Đưa ảnh nhận vào</button><span>Có thể chọn nhiều ảnh · mỗi ảnh một Prompt</span></div></div><input id="lightingTargetInput" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden></div>
+    <div class="intent-field"><label for="lightingPreserve">GIỮ NGUYÊN</label><input id="lightingPreserve" value="Thiết kế · vật liệu · camera · bố cục · tỷ lệ"></div>
+    <div class="intent-field"><label for="lightingChange">THAY ĐỔI</label><input id="lightingChange" value="Chỉ ánh sáng theo ảnh tham chiếu"></div>
+    <div class="intent-field"><label for="lightingTargetAnalysis">GHI CHÚ</label><input id="lightingTargetAnalysis" placeholder="Tùy chọn · ví dụ: chỉ thay ánh sáng trần"></div>
   </div>
 </div>
-<div class="lighting-lock-row">
-  <label>GIỮ <input id="lightingPreserve" value="Thiết kế · vật liệu · camera · bố cục · tỷ lệ"></label>
-  <label>THAY <input id="lightingChange" value="Ánh sáng theo ảnh tham chiếu"></label>
-  <label>GHI CHÚ <input id="lightingTargetAnalysis" placeholder="Tùy chọn"></label>
-</div>
-<div class="sync-rule lighting-rule"><strong>QUY TẮC 03</strong><span>Ảnh nhận giữ nguyên không gian · chỉ chuyển ánh sáng từ ảnh tham chiếu.</span></div>
+<div class="sync-rule"><strong>LIGHTING MAPPING ENGINE</strong><span>Ảnh nhận = thiết kế được khóa. Ảnh tham chiếu = nguồn ánh sáng. Chỉ ánh xạ đặc tính ánh sáng; không thay nội thất, vật liệu hay camera.</span></div>
 </section>
 <section class="panel mode-reference-panel hidden" id="modeReferencePanel">
 <div class="panel-head"><div><span class="kicker" id="modeReferenceKicker">03R</span><h2 id="modeReferenceTitle">Ảnh tham chiếu</h2></div><span class="panel-note" id="modeReferenceNote">Tùy chọn · chỉ dùng khi KTS tải ảnh</span></div>
@@ -235,4 +230,4 @@
   </div>
   <div class="creatorFooterBottom">HOANGGIA AI · ARCHITECT × AI · INTERIOR DESIGN WORKSTATION</div>
 </footer>
-</main></div><script type="module" src="./app.js?v=33"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
+</main></div><script type="module" src="./app.js?v=34"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
