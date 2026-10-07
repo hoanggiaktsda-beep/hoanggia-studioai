@@ -142,12 +142,22 @@ function renderLightingTargets() {
   if (!lightingTargetGallery) return;
   lightingTargetGallery.innerHTML = "";
   lightingTargetFiles.forEach((file, index) => {
-    const item = document.createElement("div"); item.className = "reference-card";
-    const img = document.createElement("img"); img.src = lightingTargetUrls[index]; img.alt = "Ảnh nhận tham chiếu " + (index + 1);
-    const meta = document.createElement("div"); meta.className = "reference-card-meta"; meta.textContent = (index + 1) + ". " + file.name;
-    const remove = document.createElement("button"); remove.type = "button"; remove.className = "character-reference-remove"; remove.textContent = "Xóa";
-    remove.addEventListener("click", () => { URL.revokeObjectURL(lightingTargetUrls[index]); lightingTargetFiles.splice(index,1); lightingTargetUrls.splice(index,1); renderLightingTargets(); });
-    item.append(img, meta, remove); lightingTargetGallery.appendChild(item);
+    const card = document.createElement("div");
+    card.className = "lighting-target-card evidence-card";
+    const img = document.createElement("img"); img.src = lightingTargetUrls[index]; img.alt = "Ảnh nhận " + (index + 1);
+    const badge = document.createElement("span"); badge.className = "lighting-target-badge"; badge.textContent = String(index + 1).padStart(2, "0");
+    const remove = document.createElement("button"); remove.type = "button"; remove.className = "reference-remove"; remove.title = "Xóa ảnh"; remove.textContent = "×";
+    const details = document.createElement("div"); details.className = "evidence-details";
+    details.innerHTML =
+      '<div class="evidence-row"><label>GIỮ NGUYÊN</label><input class="lighting-target-preserve" value="Thiết kế · vật liệu · camera · bố cục · tỷ lệ"></div>' +
+      '<div class="evidence-row"><label>THAY ĐỔI</label><input class="lighting-target-change" value="Chỉ ánh sáng theo ảnh tham chiếu"></div>' +
+      '<details class="evidence-advanced"><summary>Thiết lập ảnh nhận</summary><div class="evidence-advanced-grid">' +
+      '<div class="evidence-row"><label>PHẠM VI ÁNH SÁNG</label><select class="lighting-target-scope"><option>Toàn cảnh</option><option>Ánh sáng tự nhiên</option><option>Đèn trần</option><option>Đèn hắt</option><option>Đèn trang trí</option><option>Vùng ánh sáng</option></select></div>' +
+      '<div class="evidence-row"><label>MỨC ĐỘ BÁM THAM CHIẾU</label><select class="lighting-target-strength"><option>Trung bình</option><option>Cao</option><option>Rất cao</option><option>Thấp</option></select></div>' +
+      '<div class="evidence-row"><label>GHI CHÚ</label><input class="lighting-target-note" placeholder="Ví dụ: chỉ thay ánh sáng trần"></div>' +
+      '</div></details>';
+    remove.addEventListener("click", (event) => { event.stopPropagation(); URL.revokeObjectURL(lightingTargetUrls[index]); lightingTargetFiles.splice(index,1); lightingTargetUrls.splice(index,1); renderLightingTargets(); });
+    card.append(img,badge,remove,details); lightingTargetGallery.appendChild(card);
   });
   lightingTargetPlaceholder?.classList.toggle("hidden", lightingTargetFiles.length > 0);
   if (lightingTargetCount) lightingTargetCount.textContent = lightingTargetFiles.length + " ảnh · " + lightingTargetFiles.length + " Prompt riêng";
@@ -854,7 +864,16 @@ document.getElementById("generate")?.addEventListener("click", () => {
     if (currentMode === "Lighting") {
       if (!lightingReferenceFile) throw new Error("EXPERT 03 cần HÌNH ẢNH THAM CHIẾU ánh sáng.");
       if (!lightingTargetFiles.length) throw new Error("EXPERT 03 cần ít nhất 1 HÌNH ẢNH NHẬN THAM CHIẾU.");
-      const prompts = lightingTargetFiles.map(file => buildIndependentLightingPrompt({ referenceName: lightingReferenceFile.name, targetName: file.name, brief: brief?.value || "", decisions: decisionsNow, aiTarget: selectedAITarget, preserve: lightingPreserve?.value || "", change: lightingChange?.value || "", targetAnalysis: lightingTargetAnalysis?.value || "" }));
+      const targetCards = Array.from(lightingTargetGallery?.querySelectorAll(".lighting-target-card") || []);
+      const prompts = lightingTargetFiles.map((file, index) => {
+        const card = targetCards[index];
+        const preserve = card?.querySelector(".lighting-target-preserve")?.value || "Thiết kế · vật liệu · camera · bố cục · tỷ lệ";
+        const change = card?.querySelector(".lighting-target-change")?.value || "Chỉ ánh sáng theo ảnh tham chiếu";
+        const scope = card?.querySelector(".lighting-target-scope")?.value || "Toàn cảnh";
+        const strength = card?.querySelector(".lighting-target-strength")?.value || "Trung bình";
+        const note = card?.querySelector(".lighting-target-note")?.value || "";
+        return buildIndependentLightingPrompt({ referenceName: lightingReferenceFile.name, targetName: file.name, brief: brief?.value || "", decisions: { target: scope, strength }, aiTarget: selectedAITarget, preserve, change, targetAnalysis: note });
+      });
       if (resultContent) resultContent.textContent = prompts.map((prompt, i) => "════════════════════════════════════════\nEXPERT 03 · PROMPT " + String(i + 1).padStart(2, "0") + " — " + lightingTargetFiles[i].name + "\n════════════════════════════════════════\n" + prompt).join("\n\n");
       if (reasoningSummary) reasoningSummary.innerHTML = "<div><b>EXPERT 03 · ÁNH SÁNG</b><span>Ingo Maurer · bộ não độc lập.</span></div><div><b>" + lightingTargetFiles.length + " Prompt riêng</b><span>Một nguồn ánh sáng tham chiếu → từng ảnh nhận độc lập.</span></div><div><b>KHÓA LIÊN MIỀN</b><span>Không đọc quyết định từ Expert 01/02/04/05/06/07/08.</span></div>";
       result?.classList.remove("hidden"); result?.scrollIntoView({ behavior: "smooth", block: "start" });
