@@ -32,6 +32,24 @@
 <input id="referenceInput" type="file" accept="image/png,image/jpeg" multiple hidden>
 </div>
 </section>
+<section class="panel material-reference-panel hidden" id="materialReferencePanel">
+<div class="panel-head"><div><span class="kicker">02M</span><h2>Vật liệu tham chiếu</h2></div><span class="panel-note">Chỉ hiện khi chọn Đổi vật liệu · ảnh vật liệu là nguồn ưu tiên nếu có</span></div>
+<div class="material-domain-switch" role="group" aria-label="Phân loại vật liệu"><button type="button" class="material-domain active" data-material-domain="Architecture">01 · KIẾN TRÚC</button><button type="button" class="material-domain" data-material-domain="Interior">02 · NỘI THẤT</button></div>
+<div class="material-reference-grid">
+  <div class="material-source-card">
+    <label class="upload-box material-upload-box" for="materialInput"><img id="materialPreview" alt="Ảnh vật liệu tham chiếu"><div id="materialPlaceholder"><strong>＋ Đưa vật liệu vào</strong><span>JPG / PNG / WebP · Tùy chọn</span></div></label>
+    <input id="materialInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+    <button type="button" id="materialRemove" class="character-reference-remove hidden">Xóa vật liệu</button>
+  </div>
+  <div class="material-map-card">
+    <div class="intent-field"><label for="materialTarget">VÙNG ÁP DỤNG</label><select id="materialTarget"></select></div>
+    <div class="intent-field"><label for="materialComponent">BỘ PHẬN / CHI TIẾT</label><input id="materialComponent" type="text" placeholder="Ví dụ: mặt cánh tủ, mặt bàn, mảng tường sau TV..."></div>
+    <div class="intent-field"><label for="materialMapping">CÁCH ÁNH XẠ VẬT LIỆU</label><select id="materialMapping"><option>Giữ đúng màu + texture + tỷ lệ thực tế</option><option>Ưu tiên hướng vân / vein</option><option>Bookmatch / ghép vân đối xứng</option><option>Continuous grain / nối vân liên tục</option><option>Random natural variation / biến thiên tự nhiên</option></select></div>
+    <div class="intent-field"><label for="materialFinish">HOÀN THIỆN BỀ MẶT</label><select id="materialFinish"><option>Đọc theo ảnh vật liệu</option><option>Matte / mờ</option><option>Satin / bán mờ</option><option>Honed / mài mờ</option><option>Polished / bóng</option><option>Brushed / xước</option><option>Textured / có chiều sâu</option></select></div>
+  </div>
+</div>
+<div class="sync-rule"><strong>MATERIAL MAPPING ENGINE</strong><span>Ảnh gốc = hình học và bối cảnh được khóa. Ảnh vật liệu = nguồn màu, texture, vân, scale và finish. Chỉ ánh xạ vào đúng vùng được chọn; không dán texture phẳng và không thay thiết kế.</span></div>
+</section>
 <section class="panel reference-controls">
 <div class="panel-head"><div><span class="kicker">03</span><h2>Chọn chuyên gia quyết định</h2></div><span class="panel-note">Chỉ tạo yêu cầu AI</span></div>
 <div class="mode-grid"><button class="mode-card active" data-mode="Furniture"><strong>01</strong><span>Thay nội thất</span><small>Antonio Citterio · tỷ lệ · công năng · cấu tạo</small></button><button class="mode-card" data-mode="Material"><strong>02</strong><span>Đổi vật liệu</span><small>Peter Zumthor · hiện diện vật liệu · xúc giác</small></button><button class="mode-card" data-mode="Lighting"><strong>03</strong><span>Ánh sáng</span><small>Ingo Maurer · logic nguồn sáng · không khí</small></button><button class="mode-card" data-mode="Camera"><strong>04</strong><span>Góc máy</span><small>Iwan Baan · kiến trúc · bối cảnh · câu chuyện</small></button><button class="mode-card" data-mode="Removal"><strong>05</strong><span>Loại bỏ nội thất</span><small>John Knoll · xóa vật thể · phục hồi nền · cleanup</small></button><button class="mode-card" data-mode="AspectRatio"><strong>06</strong><span>Tỷ lệ khung hình</span><small>Müller-Brockmann · grid · composition · outpainting</small></button><button class="mode-card" data-mode="ReferenceReplica"><strong>07</strong><span>Sao chép tham chiếu</span><small>Van Duysen × Baan · fidelity · Product Override</small></button><button class="mode-card" data-mode="SpaceSync"><strong>08</strong><span>Đồng bộ hóa không gian</span><small>Không gian · trục · lưu thông · tỷ lệ · hierarchy</small></button><a class="mode-card" href="./expert09.html" style="text-decoration:none;color:inherit"><strong>09</strong><span>Multi-Shot Storyboard ↗</span><small>Kiến trúc / Nội thất · 4 bộ não · Multi-Shot / Multi-View</small></a></div>
