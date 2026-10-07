@@ -5,7 +5,7 @@
 <meta name="theme-color" content="#070807">
 <meta name="description" content="HOANGGIA AI — Hệ thống quyết định kiến trúc với chín chuyên gia cho nội thất, vật liệu, ánh sáng, góc máy, loại bỏ vật thể, tỷ lệ khung hình và sao chép tham chiếu.">
 <title>HOANGGIA AI — Hệ thống quyết định kiến trúc</title>
-<link rel="stylesheet" href="./styles.css?v=23"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/brand-mark.svg" type="image/svg+xml"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=13">
+<link rel="stylesheet" href="./styles.css?v=24"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/brand-mark.svg" type="image/svg+xml"><link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png?v=13">
 
 <style id="hg-home-navigation-style">.hg-home-navigation{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:12px;z-index:2147483000;width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.23);border-radius:12px;background:rgba(14,17,17,.94);color:#f5f5f1;box-shadow:0 3px 14px rgba(0,0,0,.28);backdrop-filter:blur(12px);text-decoration:none;transition:background .15s ease,transform .15s ease}.hg-home-navigation:hover,.hg-home-navigation:focus-visible{background:#303a34;transform:translateY(-1px);outline:2px solid rgba(230,230,220,.35);outline-offset:2px}.hg-home-navigation svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}@media(max-width:640px){.hg-home-navigation{width:38px;height:38px;top:calc(8px + env(safe-area-inset-top,0px));right:8px}}</style>
 </head>
@@ -24,23 +24,12 @@
 <section class="editor-grid">
 <div class="panel upload-panel">
 <div class="panel-head"><div><span class="kicker">01</span><h2>Ảnh không gian / tham chiếu</h2></div><span class="panel-note">Ảnh gốc · Expert 07 dùng làm Source of Truth</span></div>
-<label class="upload-box" for="sceneInput"><img id="scenePreview" alt="Ảnh không gian"><div id="scenePlaceholder"><strong>＋ Tải ảnh không gian</strong><span>JPG / PNG / WebP · Ảnh render hoặc ảnh chụp</span></div></label><input id="sceneInput" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden>
+<label class="upload-box" for="sceneInput"><img id="scenePreview" alt="Ảnh không gian"><div id="scenePlaceholder"><strong>＋ Tải ảnh không gian</strong><span>JPG / PNG · Ảnh render hoặc ảnh chụp</span></div></label><input id="sceneInput" type="file" accept="image/png,image/jpeg" hidden>
 </div>
 <div class="panel upload-panel">
 <div class="panel-head"><div><span class="kicker">02</span><h2>Mẫu / sản phẩm cung cấp</h2></div><span class="panel-note">Có thể thêm nhiều ảnh · Expert 07 dùng làm Product Override</span></div>
-<div class="upload-box" id="referenceUploadBox"><div id="referenceGallery" class="reference-gallery"></div><div id="referencePlaceholder"><button type="button" class="upload-trigger" id="referenceTrigger">＋ Thêm ảnh mẫu nội thất</button><span>JPG / PNG / WebP · Có thể chọn nhiều ảnh, nhiều góc nhìn của cùng một mẫu</span></div></div>
-<input id="referenceInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
-<div class="model-library-bar">
-<button type="button" class="ghost-btn" id="openModelLibrary">▦ Thư viện model</button>
-<button type="button" class="ghost-btn" id="saveModelLibrary">＋ Lưu model hiện tại</button>
-<span id="modelLibraryStatus">Chưa có model đã lưu</span>
-</div>
-<div id="modelLibraryPanel" class="model-library-panel hidden">
-<div class="model-library-head"><strong>THƯ VIỆN MODEL</strong><button type="button" class="reference-remove" id="closeModelLibrary">×</button></div>
-<div class="model-library-tools"><input id="modelLibrarySearch" type="search" placeholder="Tìm theo tên, mã model, loại sản phẩm..."></div>
-<div id="modelLibraryGrid" class="model-library-grid"></div>
-<small>Thư viện trên thiết bị này lưu hồ sơ model, kích thước và góc nhìn KTS. Ảnh gốc có thể cần chọn lại nếu trình duyệt không còn quyền truy cập.</small>
-</div>
+<div class="upload-box" id="referenceUploadBox"><div id="referenceGallery" class="reference-gallery"></div><div id="referencePlaceholder"><button type="button" class="upload-trigger" id="referenceTrigger">＋ Thêm ảnh mẫu nội thất</button><span>JPG / PNG · Có thể chọn nhiều ảnh, nhiều góc nhìn của cùng một mẫu</span></div></div>
+<input id="referenceInput" type="file" accept="image/png,image/jpeg" multiple hidden>
 </div>
 </section>
 <section class="panel material-reference-panel hidden" id="materialReferencePanel">
@@ -60,17 +49,6 @@
   </div>
 </div>
 <div class="sync-rule"><strong>MATERIAL MAPPING ENGINE</strong><span>Ảnh gốc = hình học và bối cảnh được khóa. Ảnh vật liệu = nguồn màu, texture, vân, scale và finish. Chỉ ánh xạ vào đúng vùng được chọn; không dán texture phẳng và không thay thiết kế.</span></div>
-</section>
-<section class="panel mode-reference-panel hidden" id="modeReferencePanel">
-<div class="panel-head"><div><span class="kicker" id="modeReferenceKicker">03R</span><h2 id="modeReferenceTitle">Ảnh tham chiếu</h2></div><span class="panel-note" id="modeReferenceNote">Tùy chọn · chỉ dùng khi KTS tải ảnh</span></div>
-<label class="upload-box material-upload-box" for="modeReferenceInput"><img id="modeReferencePreview" alt="Ảnh tham chiếu"><div id="modeReferencePlaceholder"><strong id="modeReferenceAction">＋ Thêm ảnh tham chiếu</strong><span id="modeReferenceHelp">JPG / PNG / WebP · Không bắt buộc</span></div></label>
-<input id="modeReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
-<button type="button" id="modeReferenceRemove" class="character-reference-remove hidden">Xóa ảnh tham chiếu</button>
-<div class="mode-reference-details" id="modeReferenceDetails">
-  <div class="panel-head"><div><span class="kicker">CHI TIẾT THAM CHIẾU</span><h3 id="modeReferenceDetailTitle">Điều khiển ảnh tham chiếu</h3></div><span class="panel-note">KTS chủ động xác định phần AI được phép học theo</span></div>
-  <div class="decision-grid" id="modeReferenceDetailControls"></div>
-  <label class="reference-note-field"><span>GHI CHÚ RIÊNG CHO ẢNH THAM CHIẾU</span><textarea id="modeReferenceDetailNote" rows="3" placeholder="Ví dụ: chỉ lấy ánh sáng ấm từ bên phải, không lấy nhân vật hay bối cảnh."></textarea></label>
-</div>
 </section>
 <section class="panel reference-controls">
 <div class="panel-head"><div><span class="kicker">03</span><h2>Chọn chuyên gia quyết định</h2></div><span class="panel-note">Chỉ tạo yêu cầu AI</span></div>
@@ -175,7 +153,7 @@
         <img id="syncReferencePreview" alt="Ảnh tham chiếu">
         <div id="syncReferencePlaceholder"><strong>＋ Tải 1 ảnh tham chiếu</strong><span>Ảnh chuẩn để hệ thống đọc ngôn ngữ không gian</span></div>
       </label>
-      <input id="syncReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+      <input id="syncReferenceInput" type="file" accept="image/png,image/jpeg" hidden>
       <p class="sync-help">Ảnh này được giữ cố định và dùng làm chuẩn chung cho tất cả ảnh cần đồng bộ.</p>
     </div>
     <div class="sync-target-card">
@@ -185,7 +163,7 @@
         <button type="button" class="upload-trigger" id="syncTargetTrigger">＋ Thêm ảnh cần đồng bộ</button>
         <span>Thêm nhiều ảnh khác nhau · mỗi ảnh sẽ nhận một câu prompt riêng</span>
       </div>
-      <input id="syncTargetInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+      <input id="syncTargetInput" type="file" accept="image/png,image/jpeg" multiple hidden>
       <p class="sync-help">Mỗi ảnh được xử lý như một nhiệm vụ riêng để tránh lặp lại cùng một prompt cho nhiều ảnh.</p>
     </div>
   </div>
@@ -193,16 +171,7 @@
 </section>
 <section class="decision-bar"><div><span class="kicker">HỆ THỐNG QUYẾT ĐỊNH KIẾN TRÚC</span><h2>Ốc quyết định. Chuyên gia suy luận. HOANGGIA AI kiểm soát.</h2><p>Bảy Expert chuyên môn hoạt động theo phạm vi được khóa; SpaceSync là lớp tổng hợp riêng của 4 Expert thiết kế ban đầu.</p></div><div class="decision-status"><span>QUYẾT ĐỊNH</span><strong id="decisionCount">0 / 5</strong></div></section>
 <section class="action-panel"><div class="action-main"><span class="kicker">04</span><h2>Xây dựng yêu cầu AI</h2><p id="resultText">Ảnh không gian + mẫu cung cấp + quyết định → tạo yêu cầu AI, không tạo ảnh.</p><div class="ai-target"><div class="ai-target-head"><span>NỀN TẢNG AI ĐẦU RA</span><small>Chọn nền tảng để định hình yêu cầu AI</small></div><div class="ai-target-options"><button type="button" class="ai-target-option active" data-ai-target="ChatGPT Images">ChatGPT Images</button><button type="button" class="ai-target-option" data-ai-target="GPT Image 2.5">GPT Image 2.5</button><button type="button" class="ai-target-option" data-ai-target="Nano Banana Pro">Nano Banana Pro</button><button type="button" class="ai-target-option" data-ai-target="Nano Banana 2">Nano Banana 2</button><button type="button" class="ai-target-option" data-ai-target="FLUX.2 Pro">FLUX.2 Pro</button><button type="button" class="ai-target-option" data-ai-target="Midjourney">Midjourney</button><button type="button" class="ai-target-option" data-ai-target="Seedream 5.0">Seedream 5.0</button><button type="button" class="ai-target-option" data-ai-target="Adobe Firefly">Adobe Firefly</button><button type="button" class="ai-target-option" data-ai-target="Ideogram">Ideogram</button><button type="button" class="ai-target-option" data-ai-target="Lovart">Lovart</button><button type="button" class="ai-target-option" data-ai-target="Nano Banana">Nano Banana</button><button type="button" class="ai-target-option" data-ai-target="Khác">Khác</button></div></div></div><button class="primary-btn" id="generate">TẠO YÊU CẦU AI <span>↗</span></button></section>
-<section class="result-panel hidden" id="result"><div class="result-head"><div><span class="kicker">KẾT QUẢ YÊU CẦU AI</span><h2>Yêu cầu AI hoàn chỉnh</h2></div><div class="prompt-unlock" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input id="copyPassword" type="password" placeholder="Mật khẩu sao chép" autocomplete="off" aria-label="Mật khẩu sao chép" style="padding:10px;border-radius:8px;background:#151716;color:#fff;border:1px solid #555;max-width:190px"><button class="copy-btn" id="unlockCopy" type="button">🔓 Mở khóa sao chép</button><button class="copy-btn" id="copy" type="button" disabled style="opacity:.45">Sao chép yêu cầu AI</button><span id="copyLockStatus" role="status" style="font-size:12px;color:#d5b879">🔒 Chưa mở khóa</span></div></div><div id="reasoningSummary" class="reasoning-summary"></div><pre id="resultContent"></pre>
-<div class="prompt-revision">
-  <div class="panel-head"><div><span class="kicker">HIỆU CHỈNH PROMPT</span><h3>Sửa một phần Prompt</h3></div><span class="panel-note">Thay đúng đoạn cần sửa · không nối thêm Prompt</span></div>
-  <div class="prompt-revision-grid">
-    <label><span>ĐOẠN PROMPT CẦN SỬA</span><textarea id="promptRevisionSource" rows="5" placeholder="Copy chính xác câu hoặc đoạn cần sửa từ Prompt phía trên và dán vào đây."></textarea></label>
-    <label><span>SỬA THÀNH</span><textarea id="promptRevisionReplacement" rows="5" placeholder="Nhập nội dung thay thế. Ví dụ: Sofa đặt theo diện tường A, hướng nhìn sang trái, ánh sáng chính từ bên phải."></textarea></label>
-  </div>
-  <div class="prompt-revision-actions"><button type="button" class="ghost-btn" id="applyPromptRevision">Cập nhật Prompt</button><button type="button" class="ghost-btn" id="undoPromptRevision" disabled>Hoàn tác lần sửa gần nhất</button><span id="promptRevisionStatus" role="status"></span></div>
-</div>
-</section>
+<section class="result-panel hidden" id="result"><div class="result-head"><div><span class="kicker">KẾT QUẢ YÊU CẦU AI</span><h2>Yêu cầu AI hoàn chỉnh</h2></div><div class="prompt-unlock" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input id="copyPassword" type="password" placeholder="Mật khẩu sao chép" autocomplete="off" aria-label="Mật khẩu sao chép" style="padding:10px;border-radius:8px;background:#151716;color:#fff;border:1px solid #555;max-width:190px"><button class="copy-btn" id="unlockCopy" type="button">🔓 Mở khóa sao chép</button><button class="copy-btn" id="copy" type="button" disabled style="opacity:.45">Sao chép yêu cầu AI</button><span id="copyLockStatus" role="status" style="font-size:12px;color:#d5b879">🔒 Chưa mở khóa</span></div></div><div id="reasoningSummary" class="reasoning-summary"></div><pre id="resultContent"></pre></section>
 <footer>
   <div class="creatorFooter">
     <div class="creatorIdentity">
@@ -218,4 +187,4 @@
   </div>
   <div class="creatorFooterBottom">HOANGGIA AI · ARCHITECT × AI · INTERIOR DESIGN WORKSTATION</div>
 </footer>
-</main></div><script type="module" src="./app.js?v=23"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
+</main></div><script type="module" src="./app.js?v=24"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js?v=14").catch(()=>{}));}</script></body></html>
