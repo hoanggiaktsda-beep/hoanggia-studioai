@@ -640,3 +640,10 @@ footer{
 .lighting-compact-controls label{font-size:10px;letter-spacing:.06em}
 .lighting-compact-controls input{width:100%;box-sizing:border-box;margin-top:5px}
 @media(max-width:900px){.lighting-pair-grid,.lighting-compact-controls{grid-template-columns:1fr}.lighting-main-upload{height:240px!important;min-height:240px!important}}
+
+#lightingExpertPanel .lighting-target-settings{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+#lightingExpertPanel .lighting-target-settings label{font-size:10px;letter-spacing:.06em}
+#lightingExpertPanel .lighting-target-settings label:last-child{grid-column:1/-1}
+#lightingExpertPanel .lighting-target-settings input{width:100%;box-sizing:border-box;margin-top:5px;min-height:34px}
+#lightingExpertPanel .lighting-target-rule{margin-top:10px!important;padding:8px 10px!important}
+@media(max-width:900px){#lightingExpertPanel .lighting-target-settings{grid-template-columns:1fr}#lightingExpertPanel .lighting-target-settings label:last-child{grid-column:auto}}
