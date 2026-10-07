@@ -601,3 +601,22 @@ footer{
 
 .prompt-revision{margin-top:18px;padding:16px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.025)}
 .prompt-revision h3{margin:3px 0 0}.prompt-revision-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.prompt-revision-grid label{display:flex;flex-direction:column;gap:7px}.prompt-revision-grid label>span{font-size:11px;letter-spacing:.08em;opacity:.72}.prompt-revision textarea{width:100%;box-sizing:border-box;resize:vertical;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#101211;color:inherit;font:inherit;line-height:1.5}.prompt-revision-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:12px}.prompt-revision-actions span{font-size:12px;opacity:.78}@media(max-width:700px){.prompt-revision-grid{grid-template-columns:1fr}}
+
+
+/* Expert 03 — compact lighting workspace */
+.lighting-expert-compact{padding:16px!important}
+.lighting-expert-compact .panel-head{margin-bottom:12px}
+.lighting-workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.lighting-upload-card{min-width:0}
+.lighting-upload-card>label:first-child{display:flex;justify-content:space-between;gap:8px;margin:0 0 6px;font-size:11px;letter-spacing:.08em}
+.lighting-dropzone{min-height:150px!important;height:150px!important;border:1px dashed var(--line,#3a3a3a);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:auto;cursor:pointer;padding:10px;box-sizing:border-box}
+.lighting-dropzone>div:not(.reference-gallery){text-align:center}
+.lighting-dropzone img{max-width:100%;max-height:128px;object-fit:contain}
+.lighting-expert-compact .reference-gallery{width:100%;display:flex;gap:8px;align-items:center;overflow-x:auto}
+.lighting-expert-compact .reference-card{min-width:110px;max-width:140px}
+.lighting-expert-compact .reference-card img{height:86px;width:100%;object-fit:cover}
+.lighting-lock-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;margin-top:10px}
+.lighting-lock-row label{font-size:10px;letter-spacing:.06em}
+.lighting-lock-row input{width:100%;box-sizing:border-box;margin-top:5px;min-height:36px}
+.lighting-rule{margin-top:10px!important;padding:9px 12px!important}
+@media(max-width:800px){.lighting-workspace,.lighting-lock-row{grid-template-columns:1fr}.lighting-dropzone{height:130px!important;min-height:130px!important}}
