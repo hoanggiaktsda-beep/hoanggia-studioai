@@ -535,3 +535,21 @@ footer{
  .material-reference-panel .material-upload-box{min-height:200px}
  .material-reference-panel .material-upload-box img{height:200px}
 }
+
+/* Prompt protection — lock viewing/selection until password unlock */
+.result-panel pre.prompt-protected{
+  position:relative;
+  color:transparent!important;
+  text-shadow:none!important;
+  user-select:none!important;
+  -webkit-user-select:none!important;
+  pointer-events:none!important;
+  caret-color:transparent!important;
+  filter:blur(7px);
+  overflow:hidden;
+}
+.result-panel pre.prompt-protected::selection{background:transparent;color:transparent}
+.result-panel pre.prompt-protected::-moz-selection{background:transparent;color:transparent}
+.result-panel:has(pre.prompt-protected) pre{
+  min-height:180px;
+}
