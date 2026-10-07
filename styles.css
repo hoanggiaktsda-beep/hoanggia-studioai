@@ -647,3 +647,14 @@ footer{
 #lightingExpertPanel .lighting-target-settings input{width:100%;box-sizing:border-box;margin-top:5px;min-height:34px}
 #lightingExpertPanel .lighting-target-rule{margin-top:10px!important;padding:8px 10px!important}
 @media(max-width:900px){#lightingExpertPanel .lighting-target-settings{grid-template-columns:1fr}#lightingExpertPanel .lighting-target-settings label:last-child{grid-column:auto}}
+
+/* Expert 03 — target evidence cards follow Expert 01/02 interaction */
+#lightingExpertPanel .lighting-target-evidence{display:grid;gap:10px}
+#lightingExpertPanel .lighting-target-card{position:relative;display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;border:1px solid var(--line,#303535);border-radius:12px;padding:10px;margin-bottom:10px}
+#lightingExpertPanel .lighting-target-card>img{width:150px;height:120px;object-fit:cover;border-radius:8px}
+#lightingExpertPanel .lighting-target-badge{position:absolute;left:16px;top:16px;border-radius:999px;padding:3px 6px;background:#111;font-size:10px}
+#lightingExpertPanel .lighting-target-card>.reference-remove{position:absolute;right:10px;top:10px}
+#lightingExpertPanel .lighting-target-card .evidence-details{padding-right:26px}
+#lightingExpertPanel .lighting-target-add{min-height:92px!important;height:auto!important;margin-top:8px}
+#lightingExpertPanel .lighting-target-add>div{text-align:center}
+@media(max-width:700px){#lightingExpertPanel .lighting-target-card{grid-template-columns:1fr}#lightingExpertPanel .lighting-target-card>img{width:100%;height:180px}}
