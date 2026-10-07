@@ -365,6 +365,8 @@ export function buildDirection({
       "ẢNH MODEL / REFERENCE VIEW: Coi các ảnh cung cấp là nhiều góc nhìn của cùng một model; giữ silhouette, tỷ lệ, cấu tạo và chi tiết nhận diện.",
       "PHÂN TÍCH DIỆN MODEL: Tự xác định FRONT / REAR / LEFT / RIGHT / LONG SIDE / SHORT SIDE / 3-4 / TOP / BOTTOM / UNKNOWN. Nếu KTS đã khai báo diện ảnh thì ưu tiên tuyệt đối dữ liệu KTS.",
       "ĐỊNH HƯỚNG KHÔNG GIAN (Spatial Orientation): Reference camera ≠ Target camera. Không lấy hướng chụp của ảnh model làm hướng đặt sản phẩm. Xác lập LENGTH–WIDTH–HEIGHT của model, đọc trục và footprint của đồ cũ, map các trục tương ứng rồi render theo camera/perspective của ảnh gốc.",
+      "QUY TẮC XOAY MODEL: Ảnh model chỉ mô tả vật thể ở một diện quan sát. Trước khi thay, phải tái dựng nhận thức 3D của model rồi xoay model để trục LENGTH của model trùng với trục LENGTH của đồ cũ. Ví dụ đồ cũ chạy từ tiền cảnh vào hậu cảnh nhưng ảnh model chụp ngang cạnh dài: KHÔNG đặt nguyên mặt ngang đó vào cảnh; phải xoay model khoảng 90° quanh trục đứng để đúng hướng đồ cũ, sau đó áp perspective của ảnh đích.",
+      "KHÔNG SAO CHÉP HÌNH CHIẾU 2D: Không được coi silhouette nhìn thấy trong ảnh model là hình dạng phải xuất hiện nguyên xi ở ảnh đích. Các chi tiết chân/đế phải tự thay đổi hình chiếu theo góc nhìn mới.",
       "KHÓA VỊ TRÍ: Giữ vị trí, tiếp xúc sàn và quan hệ không gian của đồ cũ theo lựa chọn của KTS.",
       "QUALITY GATE: Nếu hướng/trục dài-rộng của model mâu thuẫn với đồ cũ hoặc perspective ảnh gốc, coi là ORIENTATION CONFLICT và phải hiệu chỉnh trước khi xuất.",
       f.editRule + " " + f.realism + " " + f.referenceRule
