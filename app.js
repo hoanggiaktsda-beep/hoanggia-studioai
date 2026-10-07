@@ -90,13 +90,6 @@ const modeReferenceTitle = document.getElementById("modeReferenceTitle");
 const modeReferenceNote = document.getElementById("modeReferenceNote");
 const modeReferenceAction = document.getElementById("modeReferenceAction");
 const modeReferenceHelp = document.getElementById("modeReferenceHelp");
-const modeTargets = document.getElementById("modeTargets");
-const modeTargetsTitle = document.getElementById("modeTargetsTitle");
-const modeTargetGallery = document.getElementById("modeTargetGallery");
-const modeTargetPlaceholder = document.getElementById("modeTargetPlaceholder");
-const modeTargetTrigger = document.getElementById("modeTargetTrigger");
-const modeTargetInput = document.getElementById("modeTargetInput");
-const modeTargetFiles = {Lighting:[], Camera:[], ReferenceReplica:[]};
 const modeReferenceDetailTitle = document.getElementById("modeReferenceDetailTitle");
 const modeReferenceDetailControls = document.getElementById("modeReferenceDetailControls");
 const modeReferenceDetailNote = document.getElementById("modeReferenceDetailNote");
@@ -145,29 +138,7 @@ const modeReferenceConfig = {
 };
 const modeReferenceFiles = {Lighting:null, Camera:null, ReferenceReplica:null};
 const modeReferenceUrls = {Lighting:null, Camera:null, ReferenceReplica:null};
-function renderModeTargets(){
-  const active=Boolean(modeReferenceConfig[currentMode]);
-  modeTargets?.classList.toggle("hidden",!active);
-  if(!active||!modeTargetGallery) return;
-  if(modeTargetsTitle) modeTargetsTitle.textContent=currentMode==="Lighting"?"Ảnh cần nhận ánh sáng":currentMode==="Camera"?"Ảnh cần nhận góc máy":"Ảnh cần sao chép tham chiếu";
-  const files=modeTargetFiles[currentMode]||[];
-  modeTargetGallery.innerHTML="";
-  files.forEach((file,i)=>{
-    const card=document.createElement("div"); card.className="reference-thumb";
-    card.innerHTML='<img src="'+URL.createObjectURL(file)+'" alt="Ảnh đích '+(i+1)+'"><span>ẢNH '+String(i+1).padStart(2,"0")+'</span><button type="button" class="reference-remove">×</button>';
-    card.querySelector("button")?.addEventListener("click",()=>{files.splice(i,1);renderModeTargets();});
-    modeTargetGallery.appendChild(card);
-  });
-  modeTargetPlaceholder?.classList.toggle("hidden",files.length>0);
-}
-modeTargetTrigger?.addEventListener("click",()=>modeTargetInput?.click());
-modeTargetInput?.addEventListener("change",()=>{
-  if(!modeReferenceConfig[currentMode]) return;
-  modeTargetFiles[currentMode].push(...Array.from(modeTargetInput.files||[]));
-  modeTargetInput.value=""; renderModeTargets();
-});
 function renderModeReference(){
-  renderModeTargets();
   const cfg=modeReferenceConfig[currentMode];
   modeReferencePanel?.classList.toggle("hidden",!cfg);
   if(!cfg) return;
@@ -315,7 +286,6 @@ materialRemove?.addEventListener("click",()=>{
 renderMaterialTargets();
 let referenceFiles = [];
 let sceneFile = null;
-let sceneFiles = [];
 let referenceMeta = [];
 let syncReferenceFile = null;
 let syncTargetFiles = [];
@@ -444,26 +414,8 @@ function setPreview(input, preview, placeholder, label) {
     if (brainStatus) brainStatus.textContent = label + " đã tải";
   });
 }
-sceneTrigger?.addEventListener("click",()=>sceneInput?.click());
-function renderSceneGallery(){
-  if(!sceneGallery) return;
-  sceneGallery.innerHTML="";
-  sceneFiles.forEach((file,i)=>{
-    const card=document.createElement("div");
-    card.className="reference-thumb scene-target-card";
-    card.innerHTML='<img src="'+URL.createObjectURL(file)+'" alt="Ảnh đích '+(i+1)+'"><span>ẢNH ĐÍCH '+String(i+1).padStart(2,"0")+'</span><button type="button" class="reference-remove" title="Xóa ảnh">×</button>';
-    card.querySelector(".reference-remove")?.addEventListener("click",()=>{sceneFiles.splice(i,1);sceneFile=sceneFiles[0]||null;renderSceneGallery();});
-    sceneGallery.appendChild(card);
-  });
-  scenePlaceholder?.classList.toggle("hidden",batchTargets.length>0);
-}
-sceneInput?.addEventListener("change",()=>{
-  sceneFiles=[...sceneFiles,...Array.from(sceneInput.files||[])];
-  sceneFile=sceneFiles[0]||null;
-  renderSceneGallery();
-  sceneInput.value="";
-  if(brainStatus) brainStatus.textContent=batchTargets.length+" ảnh đích đã tải";
-});
+setPreview(sceneInput, scenePreview, scenePlaceholder, "Ảnh không gian");
+sceneInput?.addEventListener("change", () => { sceneFile = sceneInput.files?.[0] || null; });
 
 function referenceMetaDefaults() {
   return {
@@ -968,38 +920,6 @@ document.getElementById("generate")?.addEventListener("click", () => {
       result?.classList.remove("hidden");
       result?.scrollIntoView({ behavior: "smooth", block: "start" });
       if (brainStatus) brainStatus.textContent = "Đã tạo " + prompts.length + " prompt đồng bộ riêng";
-      return;
-    }
-    if (["Lighting","Camera","ReferenceReplica"].includes(currentMode) && modeTargetFiles[currentMode]?.length) {
-      const batchTargets = modeTargetFiles[currentMode];
-      const refFile = modeReferenceFiles[currentMode];
-      if (!refFile) throw new Error("Hãy thêm ảnh tham chiếu cho mục " + currentMode + ".");
-      const detailState = modeReferenceDetailState[currentMode] || {};
-      const detailText = Object.entries(detailState).filter(([k,v]) => k !== "note" && v).map(([k,v]) => k + "=" + v).join("; ");
-      const prompts = batchTargets.map((file,index) => {
-        const batchBrief = [
-          "ẢNH ĐÍCH " + (index+1) + "/" + batchTargets.length + ": " + file.name,
-          "ẢNH THAM CHIẾU CỐ ĐỊNH: " + refFile.name,
-          "Mỗi ảnh đích là một nhiệm vụ độc lập.",
-          "Thiết lập tham chiếu: " + detailText,
-          detailState.note ? "Ghi chú KTS: " + detailState.note : "",
-          replacement ? "Yêu cầu chung: " + replacement : ""
-        ].filter(Boolean).join("\n");
-        return buildDirection({
-          brief: batchBrief, mode: currentMode, output, camera,
-          target: target + " — ảnh đích " + (index+1),
-          replacement: batchBrief, params, decisions: decisionsNow, model,
-          referenceRoles: modeReferenceConfig[currentMode].title + ": " + refFile.name + " | Ảnh đích: " + file.name,
-          aiTarget: selectedAITarget,
-          aiProfile: aiTargetProfiles[selectedAITarget] || aiTargetProfiles["Khác"]
-        }).prompt;
-      });
-      if(resultContent) resultContent.textContent=prompts.map((prompt,i)=>
-        "════════════════════════════════════════\nPROMPT "+String(i+1).padStart(2,"0")+" — ẢNH ĐÍCH: "+batchTargets[i].name+"\n════════════════════════════════════════\n"+prompt
-      ).join("\n\n");
-      result?.classList.remove("hidden");
-      result?.scrollIntoView({behavior:"smooth",block:"start"});
-      if(brainStatus) brainStatus.textContent="Đã tạo "+prompts.length+" prompt riêng từ 1 ảnh tham chiếu.";
       return;
     }
     if (currentMode === "SpaceSync" && !syncTargetFiles.length) {
