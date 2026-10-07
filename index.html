@@ -79,7 +79,15 @@
 </div>
 <div class="sync-rule"><strong>QUY TẮC 03</strong><span>Ảnh nhận là Source of Truth của không gian · ảnh tham chiếu chỉ cung cấp ánh sáng.</span></div>
 </section>
-<section class="panel mode-reference-panel hidden" id="modeReferencePanel">
+<section class="panel hidden lighting-expert-01-02" id="cameraExpertPanel">
+<div class="panel-head"><div><span class="kicker">04 · EXPERT ĐỘC LẬP</span><h2>Góc máy · Iwan Baan</h2></div><span class="panel-note">Chỉ xử lý camera</span></div>
+<div class="lighting-pair-grid">
+<div class="lighting-pair-card"><div class="panel-head"><div><span class="kicker">01</span><h2>Ảnh góc máy tham chiếu</h2></div><span class="panel-note">Nguồn camera</span></div>
+<label class="upload-box lighting-main-upload" for="cameraReferenceInput"><img id="cameraReferencePreview" alt="Ảnh góc máy tham chiếu"><div id="cameraReferencePlaceholder"><strong>＋ Đưa ảnh góc máy vào</strong><span>JPG / PNG / WebP · Nguồn tham chiếu camera</span></div></label><input id="cameraReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden><button type="button" id="cameraReferenceRemove" class="character-reference-remove hidden">Xóa ảnh góc máy</button></div>
+<div class="lighting-pair-card"><div class="panel-head"><div><span class="kicker">02</span><h2>Ảnh nhận tham chiếu</h2></div><span class="panel-note" id="cameraTargetCount">0 ảnh · 0 Prompt riêng</span></div>
+<div class="lighting-target-evidence" id="cameraTargetGallery"></div><div class="upload-box lighting-target-add" id="cameraTargetUploadBox"><div id="cameraTargetPlaceholder"><button type="button" class="upload-trigger" id="cameraTargetTrigger">＋ Thêm ảnh nhận tham chiếu</button></div></div><div class="lighting-target-help">JPG / PNG / WebP · Có thể chọn nhiều ảnh không gian khác nhau · mỗi ảnh nhận tạo một Prompt góc máy riêng</div><input id="cameraTargetInput" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden></div>
+</div><div class="sync-rule"><strong>QUY TẮC 04</strong><span>Ảnh nhận là Source of Truth của không gian · ảnh tham chiếu chỉ cung cấp camera.</span></div>
+</section><section class="panel mode-reference-panel hidden" id="modeReferencePanel">
 <div class="panel-head"><div><span class="kicker" id="modeReferenceKicker">03R</span><h2 id="modeReferenceTitle">Ảnh tham chiếu</h2></div><span class="panel-note" id="modeReferenceNote">Tùy chọn · chỉ dùng khi KTS tải ảnh</span></div>
 <label class="upload-box material-upload-box" for="modeReferenceInput"><img id="modeReferencePreview" alt="Ảnh tham chiếu"><div id="modeReferencePlaceholder"><strong id="modeReferenceAction">＋ Thêm ảnh tham chiếu</strong><span id="modeReferenceHelp">JPG / PNG / WebP · Không bắt buộc</span></div></label>
 <input id="modeReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
@@ -231,4 +239,4 @@
   </div>
   <div class="creatorFooterBottom">HOANGGIA AI · ARCHITECT × AI · INTERIOR DESIGN WORKSTATION</div>
 </footer>
-</main></div><script type="module" src="./app.js?v=39"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
+</main></div><script type="module" src="./app.js?v=40"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
