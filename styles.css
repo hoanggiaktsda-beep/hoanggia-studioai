@@ -660,3 +660,17 @@ footer{
 @media(max-width:700px){#lightingExpertPanel .lighting-target-card{grid-template-columns:1fr}#lightingExpertPanel .lighting-target-card>img{width:100%;height:180px}}
 
 #lightingExpertPanel .lighting-target-help{display:block!important;text-align:center;margin:8px 8px 0;font-size:11px;line-height:1.45;color:var(--muted,#7f8b91)}
+
+/* Expert 04 — restore card proportions to match Expert 02 */
+#cameraExpertPanel .lighting-pair-grid{align-items:start}
+#cameraExpertPanel .lighting-pair-card{min-height:0}
+#cameraExpertPanel .lighting-target-evidence{display:grid;gap:12px}
+#cameraExpertPanel .lighting-target-card{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;align-items:start;border:1px solid var(--line,#303535);border-radius:12px;padding:10px;min-height:0;height:auto;overflow:hidden}
+#cameraExpertPanel .lighting-target-card>img{display:block;width:150px!important;height:120px!important;max-width:150px!important;max-height:120px!important;object-fit:cover!important;border-radius:8px}
+#cameraExpertPanel .lighting-target-card .evidence-details{min-width:0;padding-right:26px}
+#cameraExpertPanel .lighting-target-card .evidence-row{margin-bottom:8px}
+#cameraExpertPanel .lighting-target-card .evidence-row input,#cameraExpertPanel .lighting-target-card .evidence-row select{width:100%;box-sizing:border-box;min-height:34px}
+#cameraExpertPanel .lighting-target-card .evidence-advanced{margin-top:4px}
+#cameraExpertPanel .lighting-target-add{min-height:92px!important;height:92px!important;margin-top:10px;display:flex;align-items:center;justify-content:center}
+#cameraExpertPanel .lighting-target-help{text-align:center;margin:8px 8px 0;font-size:11px;line-height:1.45;color:var(--muted,#7f8b91)}
+@media(max-width:700px){#cameraExpertPanel .lighting-target-card{grid-template-columns:1fr}#cameraExpertPanel .lighting-target-card>img{width:100%!important;max-width:none!important;height:180px!important;max-height:180px!important}}
