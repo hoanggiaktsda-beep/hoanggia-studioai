@@ -2,6 +2,7 @@ import { reason as cognitiveReason } from "./core/cognitive-core.js";
 import { buildDirection } from "./core/prompt-engine.js";
 import { editModeDirection } from "./core/edit-engine.js";
 import { expertFor } from "./core/expert-decision-layer.js";
+import { buildIndependentLightingPrompt } from "./core/lighting-engine.js";
 
 const brief = document.getElementById("brief");
 const result = document.getElementById("result");
@@ -121,6 +122,52 @@ modeReferenceInput?.addEventListener("change",()=>{
   modeReferencePlaceholder?.classList.add("hidden"); modeReferenceRemove?.classList.remove("hidden");
 });
 modeReferenceRemove?.addEventListener("click",clearModeReference);
+const lightingExpertPanel = document.getElementById("lightingExpertPanel");
+const lightingReferenceInput = document.getElementById("lightingReferenceInput");
+const lightingReferencePreview = document.getElementById("lightingReferencePreview");
+const lightingReferencePlaceholder = document.getElementById("lightingReferencePlaceholder");
+const lightingReferenceRemove = document.getElementById("lightingReferenceRemove");
+const lightingTargetInput = document.getElementById("lightingTargetInput");
+const lightingTargetGallery = document.getElementById("lightingTargetGallery");
+const lightingTargetTrigger = document.getElementById("lightingTargetTrigger");
+const lightingTargetPlaceholder = document.getElementById("lightingTargetPlaceholder");
+const lightingTargetCount = document.getElementById("lightingTargetCount");
+let lightingReferenceFile = null, lightingReferenceUrl = null;
+let lightingTargetFiles = [], lightingTargetUrls = [];
+
+function renderLightingTargets() {
+  if (!lightingTargetGallery) return;
+  lightingTargetGallery.innerHTML = "";
+  lightingTargetFiles.forEach((file, index) => {
+    const item = document.createElement("div"); item.className = "reference-card";
+    const img = document.createElement("img"); img.src = lightingTargetUrls[index]; img.alt = "Ảnh nhận tham chiếu " + (index + 1);
+    const meta = document.createElement("div"); meta.className = "reference-card-meta"; meta.textContent = (index + 1) + ". " + file.name;
+    const remove = document.createElement("button"); remove.type = "button"; remove.className = "character-reference-remove"; remove.textContent = "Xóa";
+    remove.addEventListener("click", () => { URL.revokeObjectURL(lightingTargetUrls[index]); lightingTargetFiles.splice(index,1); lightingTargetUrls.splice(index,1); renderLightingTargets(); });
+    item.append(img, meta, remove); lightingTargetGallery.appendChild(item);
+  });
+  lightingTargetPlaceholder?.classList.toggle("hidden", lightingTargetFiles.length > 0);
+  if (lightingTargetCount) lightingTargetCount.textContent = lightingTargetFiles.length + " ảnh · " + lightingTargetFiles.length + " Prompt riêng";
+}
+lightingReferenceInput?.addEventListener("change", () => {
+  const file = lightingReferenceInput.files?.[0]; if (!file) return;
+  if (!["image/jpeg","image/png","image/webp"].includes(file.type)) { alert("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP."); lightingReferenceInput.value=""; return; }
+  if (lightingReferenceUrl) URL.revokeObjectURL(lightingReferenceUrl);
+  lightingReferenceFile=file; lightingReferenceUrl=URL.createObjectURL(file);
+  if (lightingReferencePreview) { lightingReferencePreview.src=lightingReferenceUrl; lightingReferencePreview.classList.add("visible"); }
+  lightingReferencePlaceholder?.classList.add("hidden"); lightingReferenceRemove?.classList.remove("hidden");
+});
+lightingReferenceRemove?.addEventListener("click", () => {
+  if (lightingReferenceUrl) URL.revokeObjectURL(lightingReferenceUrl);
+  lightingReferenceFile=null; lightingReferenceUrl=null; if (lightingReferenceInput) lightingReferenceInput.value="";
+  if (lightingReferencePreview) { lightingReferencePreview.src=""; lightingReferencePreview.classList.remove("visible"); }
+  lightingReferencePlaceholder?.classList.remove("hidden"); lightingReferenceRemove?.classList.add("hidden");
+});
+lightingTargetTrigger?.addEventListener("click", () => lightingTargetInput?.click());
+lightingTargetInput?.addEventListener("change", () => {
+  Array.from(lightingTargetInput.files || []).filter(file => ["image/jpeg","image/png","image/webp"].includes(file.type)).forEach(file => { lightingTargetFiles.push(file); lightingTargetUrls.push(URL.createObjectURL(file)); });
+  lightingTargetInput.value=""; renderLightingTargets();
+});
 const spaceSyncPanel = document.getElementById("spaceSyncPanel");
 const syncReferenceInput = document.getElementById("syncReferenceInput");
 const syncReferencePreview = document.getElementById("syncReferencePreview");
@@ -695,6 +742,7 @@ document.querySelectorAll(".ai-target-option").forEach(btn => {
 });
 
 function renderMode(mode) {
+  if (lightingExpertPanel) lightingExpertPanel.classList.toggle("hidden", mode !== "Lighting");
   if (spaceSyncPanel) spaceSyncPanel.classList.toggle("hidden", mode !== "SpaceSync");
   if (materialReferencePanel) materialReferencePanel.classList.toggle("hidden", mode !== "Material");
   if (cameraContextPanel) cameraContextPanel.classList.toggle("hidden", mode !== "Camera");
@@ -799,6 +847,16 @@ document.getElementById("generate")?.addEventListener("click", () => {
   ].filter(Boolean).join("\n") : "";
   const replacement = [brief?.value?.trim() || "", materialContext].filter(Boolean).join("\n");
   try {
+    if (currentMode === "Lighting") {
+      if (!lightingReferenceFile) throw new Error("EXPERT 03 cần HÌNH ẢNH THAM CHIẾU ánh sáng.");
+      if (!lightingTargetFiles.length) throw new Error("EXPERT 03 cần ít nhất 1 HÌNH ẢNH NHẬN THAM CHIẾU.");
+      const prompts = lightingTargetFiles.map(file => buildIndependentLightingPrompt({ referenceName: lightingReferenceFile.name, targetName: file.name, brief: brief?.value || "", decisions: decisionsNow, aiTarget: selectedAITarget }));
+      if (resultContent) resultContent.textContent = prompts.map((prompt, i) => "════════════════════════════════════════\nEXPERT 03 · PROMPT " + String(i + 1).padStart(2, "0") + " — " + lightingTargetFiles[i].name + "\n════════════════════════════════════════\n" + prompt).join("\n\n");
+      if (reasoningSummary) reasoningSummary.innerHTML = "<div><b>EXPERT 03 · ÁNH SÁNG</b><span>Ingo Maurer · bộ não độc lập.</span></div><div><b>" + lightingTargetFiles.length + " Prompt riêng</b><span>Một nguồn ánh sáng tham chiếu → từng ảnh nhận độc lập.</span></div><div><b>KHÓA LIÊN MIỀN</b><span>Không đọc quyết định từ Expert 01/02/04/05/06/07/08.</span></div>";
+      result?.classList.remove("hidden"); result?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (brainStatus) brainStatus.textContent = "EXPERT 03 đã tạo " + prompts.length + " Prompt ánh sáng độc lập";
+      return;
+    }
     if (currentMode === "ReferenceReplica" && !sceneFile) {
       throw new Error("Reference Replica cần 1 ảnh tham chiếu scene làm Source of Truth.");
     }
