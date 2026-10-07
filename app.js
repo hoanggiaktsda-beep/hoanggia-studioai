@@ -166,7 +166,8 @@ const referenceOptions = {
   object: ["Sofa","Sofa góc / sectional","Sofa bed","Daybed","Chaise longue","Bench / ghế băng","Ottoman / pouf","Ghế đơn / armchair","Ghế lounge","Ghế thư giãn / recliner","Ghế rocking","Stool / ghế đôn","Bàn trà","Bàn bên / side table","Bàn console","Bàn pedestal","Bàn ăn","Bàn bar / đảo","Bàn làm việc","Bàn trang điểm","Bàn đầu giường / nightstand","Ghế ăn","Ghế bar / counter stool","Ghế làm việc / task chair","Ghế văn phòng","Giường","Đầu giường / headboard","Tủ đầu giường","Tủ quần áo / wardrobe","Tủ thấp / sideboard","Tủ cao / cabinet","Tủ TV / media unit","Tủ giày","Tủ rượu","Tủ trưng bày / vitrine","Tủ sách / bookcase","Kệ mở / shelving","Kệ treo tường","Hệ tủ built-in","Tủ bếp","Đảo bếp","Vanity / tủ lavabo","Gương","Đèn thả / pendant","Đèn chùm / chandelier","Đèn bàn","Đèn sàn","Đèn tường","Thảm","Rèm","Vách ngăn / screen","Bình phong","Kệ trang trí","Chậu cây / planter","Decor / phụ kiện","Nội thất ngoài trời","Khác"],
   priority: ["Giữ nguyên toàn bộ model cung cấp","Ưu tiên hình dáng + cấu tạo","Ưu tiên hình dáng + vật liệu","Ưu tiên ngôn ngữ thiết kế"],
   preservation: ["Bảo toàn 100% hình dáng và cấu tạo","Giữ silhouette, tối ưu tỷ lệ vừa không gian","Cho phép tinh chỉnh nhẹ theo không gian"],
-  views: ["Nhiều góc nhìn của cùng một model","Một góc nhìn chính","Góc chính + ảnh chi tiết"]
+  views: ["Nhiều góc nhìn của cùng một model","Một góc nhìn chính","Góc chính + ảnh chi tiết"],
+  viewRole: ["KTS chưa xác định","Cạnh dài / ngang","Cạnh ngắn / đầu bàn","Chính diện / FRONT","Mặt sau / REAR","Bên trái / LEFT","Bên phải / RIGHT","Góc 3/4 trái","Góc 3/4 phải","Trên xuống / TOP","Dưới lên / BOTTOM","Chi tiết / DETAIL","Khác / tự ghi chú"]
 };
 
 const decisions = {
@@ -312,7 +313,7 @@ function renderReferenceGallery() {
         <div class="evidence-row"><label>MODEL</label><select class="evidence-model">${referenceOptions.object.map(x => `<option${meta.model === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>ƯU TIÊN MODEL CUNG CẤP</label><select class="evidence-priority">${referenceOptions.priority.map(x => `<option${meta.priority === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>MỨC ĐỘ BẢO TOÀN</label><select class="evidence-preservation">${referenceOptions.preservation.map(x => `<option${meta.preservation === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
-        <div class="evidence-row"><label>CHUẨN HÓA GÓC NHÌN</label><select class="evidence-views">${referenceOptions.views.map(x => `<option${meta.views === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
+        <div class="evidence-row"><label>CHUẨN HÓA GÓC NHÌN</label><select class="evidence-views">${referenceOptions.views.map(x => `<option${meta.views === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>\n        <div class="evidence-row"><label>GÓC NHÌN DO KTS XÁC ĐỊNH</label><select class="evidence-view-role">${referenceOptions.viewRole.map(x => `<option${meta.viewRole === x ? " selected" : ""}>${x}</option>`).join("")}</select><small>KTS xác định thì hệ thống phải dùng đúng góc này; không được AI đoán lại.</small></div>
         <div class="evidence-row"><label>GHI CHÚ</label><input class="evidence-note" value="${meta.note || ""}" placeholder="Ghi chú riêng cho ảnh (tùy chọn)"></div>
         <div class="evidence-row evidence-extra-reference"><label>ẢNH THAM CHIẾU THÊM</label><button type="button" class="extra-reference-trigger">＋ Thêm góc của cùng sản phẩm</button><input class="extra-reference-input" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden><div class="extra-reference-gallery"></div><small>Có thể thêm nhiều ảnh của cùng một bàn/ghế/sofa để AI hiểu đủ mặt trước, bên, sau và chi tiết.</small></div>
       </div>`;
@@ -326,34 +327,34 @@ function renderReferenceGallery() {
     const priority = card.querySelector(".evidence-priority");
     const preservation = card.querySelector(".evidence-preservation");
     const views = card.querySelector(".evidence-views");
-    const note = card.querySelector(".evidence-note");
+    const viewRole = card.querySelector(".evidence-view-role");\n    const note = card.querySelector(".evidence-note");
     const extraTrigger = card.querySelector(".extra-reference-trigger");
     const extraInput = card.querySelector(".extra-reference-input");
     const extraGallery = card.querySelector(".extra-reference-gallery");
-    meta.extraReferences = meta.extraReferences || [];
+    meta.extraReferences = meta.extraReferences || [];\n    meta.extraReferenceRoles = meta.extraReferenceRoles || [];
     const renderExtraReferences = () => {
       extraGallery.innerHTML = "";
       meta.extraReferences.forEach((extraFile, extraIndex) => {
         const item = document.createElement("div");
         item.className = "extra-reference-item";
-        item.innerHTML = `<img src="${URL.createObjectURL(extraFile)}" alt="Góc tham chiếu thêm ${extraIndex + 1}"><button type="button" aria-label="Xóa ảnh">×</button><span>${String(extraIndex + 1).padStart(2,"0")}</span>`;
-        item.querySelector("button").addEventListener("click", () => { meta.extraReferences.splice(extraIndex,1); renderExtraReferences(); });
+        item.innerHTML = `<img src="${URL.createObjectURL(extraFile)}" alt="Góc tham chiếu thêm ${extraIndex + 1}"><button type="button" aria-label="Xóa ảnh">×</button><span>${String(extraIndex + 1).padStart(2,"0")}</span><select class="extra-view-role">${referenceOptions.viewRole.map(x => `<option${(meta.extraReferenceRoles[extraIndex] || "KTS chưa xác định") === x ? " selected" : ""}>${x}</option>`).join("")}</select>`;\n        item.querySelector(".extra-view-role").addEventListener("change", e => { meta.extraReferenceRoles[extraIndex] = e.target.value; });
+        item.querySelector("button").addEventListener("click", () => { meta.extraReferences.splice(extraIndex,1); meta.extraReferenceRoles.splice(extraIndex,1); renderExtraReferences(); });
         extraGallery.appendChild(item);
       });
     };
     extraTrigger?.addEventListener("click", () => extraInput?.click());
     extraInput?.addEventListener("change", () => {
       Array.from(extraInput.files || []).forEach(extraFile => {
-        if (["image/jpeg","image/png","image/webp"].includes(extraFile.type)) meta.extraReferences.push(extraFile);
+        if (["image/jpeg","image/png","image/webp"].includes(extraFile.type)) { meta.extraReferences.push(extraFile); meta.extraReferenceRoles.push("KTS chưa xác định"); }
       });
       extraInput.value = "";
       renderExtraReferences();
     });
     renderExtraReferences();
     const save = () => {
-      referenceMeta[i] = { ...meta, model: model.value, priority: priority.value, preservation: preservation.value, views: views.value, note: note.value.trim(), extraReferences: meta.extraReferences || [] };
+      referenceMeta[i] = { ...meta, model: model.value, priority: priority.value, preservation: preservation.value, views: views.value, viewRole: viewRole.value, note: note.value.trim(), extraReferences: meta.extraReferences || [], extraReferenceRoles: meta.extraReferenceRoles || [] };
     };
-    [model, priority, preservation, views, note].forEach(el => el.addEventListener("change", save));
+    [model, priority, preservation, views, viewRole, note].forEach(el => el.addEventListener("change", save));
     note.addEventListener("input", save);
     referenceGallery.appendChild(card);
   });
