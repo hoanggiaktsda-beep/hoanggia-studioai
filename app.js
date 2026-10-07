@@ -91,9 +91,24 @@ const modeReferenceNote = document.getElementById("modeReferenceNote");
 const modeReferenceAction = document.getElementById("modeReferenceAction");
 const modeReferenceHelp = document.getElementById("modeReferenceHelp");
 const modeReferenceConfig = {
-  Lighting: {title:"Ảnh ánh sáng tham chiếu", note:"Tùy chọn · dùng để tham chiếu không khí, hướng sáng và tương phản", action:"＋ Thêm ảnh ánh sáng tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu ánh sáng"},
-  Camera: {title:"Ảnh góc máy tham chiếu", note:"Tùy chọn · dùng để tham chiếu vị trí máy, bố cục và phối cảnh", action:"＋ Thêm ảnh góc máy tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu góc máy"},
-  ReferenceReplica: {title:"Ảnh không gian tham chiếu", note:"Tùy chọn · nguồn hình ảnh để sao chép khi KTS cung cấp", action:"＋ Thêm ảnh không gian tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không được giả định có ảnh tham chiếu"}
+  Lighting: {
+    title:"Ảnh ánh sáng tham chiếu",
+    note:"Tùy chọn · chỉ tham chiếu đặc tính ánh sáng, không sao chép kiến trúc hay nội thất",
+    action:"＋ Thêm ảnh ánh sáng tham chiếu",
+    help:"AI đọc: hướng sáng · độ mềm/cứng · nhiệt độ màu · tương phản · vùng sáng/tối · cường độ · không khí. Giữ nguyên kiến trúc, vật liệu, nội thất và góc máy của ảnh gốc."
+  },
+  Camera: {
+    title:"Ảnh góc máy tham chiếu",
+    note:"Tùy chọn · chỉ tham chiếu ngôn ngữ camera và bố cục",
+    action:"＋ Thêm ảnh góc máy tham chiếu",
+    help:"AI đọc: vị trí máy · cao độ · hướng nhìn · tiêu cự/FOV · phối cảnh · đường chân trời · bố cục. Không sao chép đồ vật, vật liệu, ánh sáng hay kiến trúc từ ảnh tham chiếu."
+  },
+  ReferenceReplica: {
+    title:"Ảnh không gian tham chiếu",
+    note:"Nguồn tham chiếu để tái tạo đúng không gian theo mức KTS yêu cầu",
+    action:"＋ Thêm ảnh không gian tham chiếu",
+    help:"AI đọc: bố cục · hình học · tỷ lệ · vật liệu · nội thất · ánh sáng · quan hệ không gian. Ảnh tham chiếu là nguồn thiết kế; ảnh gốc quyết định khung hình và các vùng KTS yêu cầu bảo toàn."
+  }
 };
 const modeReferenceFiles = {Lighting:null, Camera:null, ReferenceReplica:null};
 const modeReferenceUrls = {Lighting:null, Camera:null, ReferenceReplica:null};
