@@ -331,7 +331,8 @@ function renderReferenceGallery() {
     const extraTrigger = card.querySelector(".extra-reference-trigger");
     const extraInput = card.querySelector(".extra-reference-input");
     const extraGallery = card.querySelector(".extra-reference-gallery");
-    meta.extraReferences = meta.extraReferences || [];\n    meta.extraReferenceRoles = meta.extraReferenceRoles || [];
+    meta.extraReferences = meta.extraReferences || [];
+    meta.extraReferenceRoles = meta.extraReferenceRoles || [];
     const renderExtraReferences = () => {
       extraGallery.innerHTML = "";
       meta.extraReferences.forEach((extraFile, extraIndex) => {
