@@ -69,6 +69,14 @@
 </div>
 <input id="modeReferenceInput" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden>
 <div class="sync-rule" id="modeReferenceBrainRule"><strong>BỘ NÃO ÁNH SÁNG 03</strong><span>Ảnh tham chiếu chỉ là nguồn học đặc tính ánh sáng: hướng sáng, độ mềm/cứng, nhiệt độ màu, tương phản, cường độ và bầu không khí. Không sao chép nhân vật, nội thất, vật liệu hay kiến trúc từ ảnh tham chiếu.</span></div>
+<div class="lighting-target-block">
+  <div class="panel-head"><div><span class="kicker">03B</span><h3>HÌNH ẢNH NHẬN THAM CHIẾU</h3></div><span class="panel-note" id="lightingTargetCount">0 ảnh · mỗi ảnh tạo một Prompt riêng</span></div>
+  <div class="upload-box" id="lightingTargetUploadBox">
+    <div id="lightingTargetGallery" class="reference-gallery"></div>
+    <div id="lightingTargetPlaceholder"><button type="button" class="upload-trigger" id="lightingTargetTrigger">＋ Thêm hình ảnh nhận tham chiếu</button><span>JPG / PNG / WebP · Có thể chọn nhiều ảnh không gian khác nhau</span></div>
+  </div>
+  <input id="lightingTargetInput" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden>
+</div>
 </section>
 <section class="panel reference-controls">
 <div class="panel-head"><div><span class="kicker">03</span><h2>Chọn chuyên gia quyết định</h2></div><span class="panel-note">Chỉ tạo yêu cầu AI</span></div>
@@ -216,4 +224,4 @@
   </div>
   <div class="creatorFooterBottom">HOANGGIA AI · ARCHITECT × AI · INTERIOR DESIGN WORKSTATION</div>
 </footer>
-</main></div><script type="module" src="./app.js?v=26"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
+</main></div><script type="module" src="./app.js?v=27"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",async()=>{try{const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));if("caches" in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith("hoanggia-ai-")).map(k=>caches.delete(k)));}}catch(e){}});}</script></body></html>
