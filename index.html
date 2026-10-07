@@ -61,6 +61,22 @@
 </div>
 <div class="sync-rule"><strong>MATERIAL MAPPING ENGINE</strong><span>Ảnh gốc = hình học và bối cảnh được khóa. Ảnh vật liệu = nguồn màu, texture, vân, scale và finish. Chỉ ánh xạ vào đúng vùng được chọn; không dán texture phẳng và không thay thiết kế.</span></div>
 </section>
+<section class="panel mode-reference-panel hidden" id="lightingExpertPanel">
+<div class="panel-head"><div><span class="kicker">03 · EXPERT ĐỘC LẬP</span><h2>Ánh sáng · Ingo Maurer</h2></div><span class="panel-note">Không dùng dữ liệu của Expert khác</span></div>
+<div class="intent-grid">
+  <div class="intent-field"><label>HÌNH ẢNH THAM CHIẾU ÁNH SÁNG</label>
+    <label class="upload-box material-upload-box" for="lightingReferenceInput"><img id="lightingReferencePreview" alt="Ảnh ánh sáng tham chiếu"><div id="lightingReferencePlaceholder"><strong>＋ Thêm ảnh ánh sáng tham chiếu</strong><span>Chỉ đọc đặc tính ánh sáng · JPG / PNG / WebP</span></div></label>
+    <input id="lightingReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+    <button type="button" id="lightingReferenceRemove" class="character-reference-remove hidden">Xóa ảnh tham chiếu</button>
+  </div>
+  <div class="intent-field"><label>HÌNH ẢNH NHẬN THAM CHIẾU</label>
+    <div class="upload-box" id="lightingTargetUploadBox"><div id="lightingTargetGallery" class="reference-gallery"></div><div id="lightingTargetPlaceholder"><button type="button" class="upload-trigger" id="lightingTargetTrigger">＋ Thêm hình ảnh nhận tham chiếu</button><span>Cho phép nhiều ảnh · mỗi ảnh tạo một Prompt riêng</span></div></div>
+    <input id="lightingTargetInput" type="file" multiple accept="image/png,image/jpeg,image/webp" hidden>
+    <span class="panel-note" id="lightingTargetCount">0 ảnh</span>
+  </div>
+</div>
+<div class="sync-rule"><strong>LIGHTING EXPERT 03</strong><span>Chỉ chuyển hướng sáng, nguồn sáng, độ mềm/cứng, cường độ, nhiệt độ màu, tương phản, phân bố sáng–tối và bầu không khí. Khóa kiến trúc, nội thất, vật liệu, camera, bố cục và tỷ lệ của ảnh nhận.</span></div>
+</section>
 <section class="panel mode-reference-panel hidden" id="modeReferencePanel">
 <div class="panel-head"><div><span class="kicker" id="modeReferenceKicker">03R</span><h2 id="modeReferenceTitle">Ảnh tham chiếu</h2></div><span class="panel-note" id="modeReferenceNote">Tùy chọn · chỉ dùng khi KTS tải ảnh</span></div>
 <label class="upload-box material-upload-box" for="modeReferenceInput"><img id="modeReferencePreview" alt="Ảnh tham chiếu"><div id="modeReferencePlaceholder"><strong id="modeReferenceAction">＋ Thêm ảnh tham chiếu</strong><span id="modeReferenceHelp">JPG / PNG / WebP · Không bắt buộc</span></div></label>
