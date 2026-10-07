@@ -704,6 +704,7 @@ function renderMode(mode) {
   if (materialReferencePanel) materialReferencePanel.classList.toggle("hidden", mode !== "Material");
   if (cameraContextPanel) cameraContextPanel.classList.toggle("hidden", mode !== "Camera");
   currentMode = mode;
+  renderModeReference();
   document.querySelectorAll(".mode-card").forEach(card => card.classList.toggle("active", card.dataset.mode === mode));
   renderExpert(mode);
   renderDecisions(mode);
