@@ -658,3 +658,5 @@ footer{
 #lightingExpertPanel .lighting-target-add{min-height:92px!important;height:auto!important;margin-top:8px}
 #lightingExpertPanel .lighting-target-add>div{text-align:center}
 @media(max-width:700px){#lightingExpertPanel .lighting-target-card{grid-template-columns:1fr}#lightingExpertPanel .lighting-target-card>img{width:100%;height:180px}}
+
+#lightingExpertPanel .lighting-target-help{display:block!important;text-align:center;margin:8px 8px 0;font-size:11px;line-height:1.45;color:var(--muted,#7f8b91)}
