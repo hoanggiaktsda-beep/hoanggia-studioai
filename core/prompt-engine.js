@@ -363,6 +363,11 @@ export function buildDirection({
     body.push(
       "NHIỆM VỤ: Chỉ thay sản phẩm nội thất đã chọn: " + target + ".",
       "ẢNH MODEL / REFERENCE VIEW: Coi các ảnh cung cấp là nhiều góc nhìn của cùng một model; giữ silhouette, tỷ lệ, cấu tạo và chi tiết nhận diện.",
+      "MULTI-VIEW FUSION: Không xử lý từng ảnh tham chiếu như các model độc lập và không chọn một ảnh rồi bỏ qua các ảnh còn lại. Phải hợp nhất TẤT CẢ ảnh tham chiếu thành một Product Model duy nhất trước khi chỉnh ảnh đích.",
+      "VIEW ROLE ANALYSIS: Với từng ảnh tham chiếu, xác định vai trò góc nhìn riêng (FRONT / REAR / LEFT / RIGHT / LONG SIDE / SHORT SIDE / 3-4 / TOP / BOTTOM), các bề mặt nhìn thấy, phần chân/đế, mép mặt bàn, vật liệu và chi tiết bị che. Dùng các góc còn lại để bổ sung hình học mà một ảnh đơn lẻ không thể hiện.",
+      "CROSS-VIEW CONSISTENCY: Đối chiếu các điểm nhận dạng giữa nhiều ảnh để suy ra cùng một cấu tạo 3D; không được bê nguyên hình chiếu của bất kỳ ảnh tham chiếu nào vào ảnh đích.",
+      "TARGET-VIEW SYNTHESIS: Sau khi hợp nhất multi-view, sinh góc nhìn mới theo camera của ảnh không gian/KTS yêu cầu, kể cả khi không có ảnh tham chiếu chụp đúng góc đó. Góc đầu ra do target scene quyết định, không do ảnh reference gần nhất quyết định.",
+      "REFERENCE COVERAGE GATE: Nếu có từ 2 ảnh tham chiếu trở lên nhưng prompt/đầu ra chỉ phản ánh một góc ảnh, coi là MULTI-VIEW NOT FUSED và phải phân tích lại trước khi xuất.",
       "PHÂN TÍCH DIỆN MODEL: Tự xác định FRONT / REAR / LEFT / RIGHT / LONG SIDE / SHORT SIDE / 3-4 / TOP / BOTTOM / UNKNOWN. Nếu KTS đã khai báo diện ảnh thì ưu tiên tuyệt đối dữ liệu KTS.",
       "ĐỊNH HƯỚNG KHÔNG GIAN (Spatial Orientation): Reference camera ≠ Target camera. Không lấy hướng chụp của ảnh model làm hướng đặt sản phẩm. Xác lập LENGTH–WIDTH–HEIGHT của model, đọc trục và footprint của đồ cũ, map các trục tương ứng rồi render theo camera/perspective của ảnh gốc.",
       "QUY TẮC XOAY MODEL: Ảnh model chỉ mô tả vật thể ở một diện quan sát. Trước khi thay, phải tái dựng nhận thức 3D của model rồi xoay model để trục LENGTH của model trùng với trục LENGTH của đồ cũ. Ví dụ đồ cũ chạy từ tiền cảnh vào hậu cảnh nhưng ảnh model chụp ngang cạnh dài: KHÔNG đặt nguyên mặt ngang đó vào cảnh; phải xoay model khoảng 90° quanh trục đứng để đúng hướng đồ cũ, sau đó áp perspective của ảnh đích.",
