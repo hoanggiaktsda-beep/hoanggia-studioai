@@ -90,6 +90,32 @@ const modeReferenceTitle = document.getElementById("modeReferenceTitle");
 const modeReferenceNote = document.getElementById("modeReferenceNote");
 const modeReferenceAction = document.getElementById("modeReferenceAction");
 const modeReferenceHelp = document.getElementById("modeReferenceHelp");
+const modeReferenceDetailTitle = document.getElementById("modeReferenceDetailTitle");
+const modeReferenceDetailControls = document.getElementById("modeReferenceDetailControls");
+const modeReferenceDetailNote = document.getElementById("modeReferenceDetailNote");
+const modeReferenceDetailState = {
+  Lighting:{direction:"Theo ảnh tham chiếu",quality:"Giữ đặc tính ánh sáng",strength:"Trung bình",note:""},
+  Camera:{view:"Theo ảnh tham chiếu",lens:"Theo ảnh tham chiếu",perspective:"Giữ phối cảnh hợp lý",strength:"Trung bình",note:""},
+  ReferenceReplica:{scope:"Toàn bộ thiết kế nhìn thấy",preserve:"Giữ khung hình ảnh gốc",strength:"Cao",note:""}
+};
+const modeReferenceDetailFields = {
+  Lighting:[
+    ["direction","Hướng sáng",["Theo ảnh tham chiếu","Từ trái","Từ phải","Từ trước","Từ sau","Từ trên xuống"]],
+    ["quality","Đặc tính ánh sáng",["Giữ đặc tính ánh sáng","Mềm / tán xạ","Cứng / định hướng","Ấm","Trung tính","Lạnh"]],
+    ["strength","Mức độ bám tham chiếu",["Thấp","Trung bình","Cao","Rất cao"]]
+  ],
+  Camera:[
+    ["view","Hướng nhìn",["Theo ảnh tham chiếu","Chính diện","Góc 3/4","Góc phòng","Trục chính","Góc thấp","Góc cao"]],
+    ["lens","Tiêu cự / trường nhìn",["Theo ảnh tham chiếu","Góc rộng","Tự nhiên","Tele nhẹ"]],
+    ["perspective","Phối cảnh",["Giữ phối cảnh hợp lý","Hai điểm tụ","Một điểm tụ","Giữ thẳng đứng"]],
+    ["strength","Mức độ bám tham chiếu",["Thấp","Trung bình","Cao","Rất cao"]]
+  ],
+  ReferenceReplica:[
+    ["scope","Phạm vi sao chép",["Toàn bộ thiết kế nhìn thấy","Bố cục + hình học","Nội thất + vật liệu","Chỉ chi tiết KTS ghi chú"]],
+    ["preserve","Ưu tiên bảo toàn",["Giữ khung hình ảnh gốc","Giữ kiến trúc ảnh gốc","Giữ camera ảnh gốc","Theo ảnh tham chiếu tối đa"]],
+    ["strength","Mức độ bám tham chiếu",["Trung bình","Cao","Rất cao"]]
+  ]
+};
 const modeReferenceConfig = {
   Lighting: {
     title:"Ảnh ánh sáng tham chiếu",
@@ -120,6 +146,21 @@ function renderModeReference(){
   if(modeReferenceNote) modeReferenceNote.textContent=cfg.note;
   if(modeReferenceAction) modeReferenceAction.textContent=cfg.action;
   if(modeReferenceHelp) modeReferenceHelp.textContent=cfg.help;
+  if(modeReferenceDetailTitle) modeReferenceDetailTitle.textContent =
+    currentMode==="Lighting" ? "Chi tiết ánh sáng tham chiếu" :
+    currentMode==="Camera" ? "Chi tiết góc máy tham chiếu" : "Chi tiết sao chép tham chiếu";
+  if(modeReferenceDetailControls){
+    const state=modeReferenceDetailState[currentMode];
+    modeReferenceDetailControls.innerHTML=(modeReferenceDetailFields[currentMode]||[]).map(([key,label,opts]) =>
+      '<label class="decision-field"><span>'+label+'</span><select data-ref-detail="'+key+'">'+opts.map(o=>'<option'+(state[key]===o?' selected':'')+'>'+o+'</option>').join('')+'</select></label>'
+    ).join('');
+    modeReferenceDetailControls.querySelectorAll("[data-ref-detail]").forEach(el=>el.addEventListener("change",()=>{state[el.dataset.refDetail]=el.value;}));
+  }
+  if(modeReferenceDetailNote){
+    modeReferenceDetailNote.value=modeReferenceDetailState[currentMode]?.note||"";
+    modeReferenceDetailNote.oninput=()=>{modeReferenceDetailState[currentMode].note=modeReferenceDetailNote.value;};
+    modeReferenceDetailNote.placeholder=currentMode==="Lighting" ? "Ví dụ: chỉ lấy ánh sáng ấm từ bên phải, không lấy nhân vật hay bối cảnh." : currentMode==="Camera" ? "Ví dụ: lấy đúng cao độ và góc 3/4, không lấy nội thất trong ảnh." : "Ví dụ: sao chép bố cục và vật liệu, giữ nguyên cửa sổ của ảnh gốc.";
+  }
   const file=modeReferenceFiles[currentMode], url=modeReferenceUrls[currentMode];
   if(modeReferencePreview){modeReferencePreview.src=url||"";modeReferencePreview.classList.toggle("visible",Boolean(file));}
   modeReferencePlaceholder?.classList.toggle("hidden",Boolean(file));
