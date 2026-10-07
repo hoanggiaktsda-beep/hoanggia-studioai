@@ -310,7 +310,7 @@ function renderReferenceGallery() {
       <span>${String(i + 1).padStart(2, "0")}</span>
       <button type="button" class="reference-remove" title="Xóa ảnh">×</button>
       <div class="evidence-details">
-        <div class="evidence-row"><label>MODEL</label><select class="evidence-model">${referenceOptions.object.map(x => `<option${meta.model === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
+        <div class="evidence-row"><label>MODEL</label><select class="evidence-model">${referenceOptions.object.map(x => `<option${meta.model === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>\n        <div class="evidence-row"><label>MÃ MODEL</label><input class="evidence-model-code" value="${meta.modelCode || ""}" placeholder="Ví dụ: BRT21022"></div>\n        <div class="evidence-row"><label>KÍCH THƯỚC</label><input class="evidence-dimensions" value="${meta.dimensions || ""}" placeholder="Ví dụ: 2600 × 1050 × 750 mm"><small>Nếu kích thước đọc rõ trên ảnh, hệ thống tự nhận diện và điền; KTS có thể sửa lại.</small></div>
         <div class="evidence-row"><label>ƯU TIÊN MODEL CUNG CẤP</label><select class="evidence-priority">${referenceOptions.priority.map(x => `<option${meta.priority === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>MỨC ĐỘ BẢO TOÀN</label><select class="evidence-preservation">${referenceOptions.preservation.map(x => `<option${meta.preservation === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>CHUẨN HÓA GÓC NHÌN</label><select class="evidence-views">${referenceOptions.views.map(x => `<option${meta.views === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>\n        <div class="evidence-row"><label>GÓC NHÌN DO KTS XÁC ĐỊNH</label><select class="evidence-view-role">${referenceOptions.viewRole.map(x => `<option${meta.viewRole === x ? " selected" : ""}>${x}</option>`).join("")}</select><small>KTS xác định thì hệ thống phải dùng đúng góc này; không được AI đoán lại.</small></div>
@@ -324,7 +324,7 @@ function renderReferenceGallery() {
       renderReferenceGallery();
     });
     const model = card.querySelector(".evidence-model");
-    const priority = card.querySelector(".evidence-priority");
+    const modelCode = card.querySelector(".evidence-model-code");\n    const dimensions = card.querySelector(".evidence-dimensions");\n    const priority = card.querySelector(".evidence-priority");
     const preservation = card.querySelector(".evidence-preservation");
     const views = card.querySelector(".evidence-views");
     const viewRole = card.querySelector(".evidence-view-role");\n    const note = card.querySelector(".evidence-note");
@@ -352,9 +352,9 @@ function renderReferenceGallery() {
     });
     renderExtraReferences();
     const save = () => {
-      referenceMeta[i] = { ...meta, model: model.value, priority: priority.value, preservation: preservation.value, views: views.value, viewRole: viewRole.value, note: note.value.trim(), extraReferences: meta.extraReferences || [], extraReferenceRoles: meta.extraReferenceRoles || [] };
+      referenceMeta[i] = { ...meta, model: model.value, modelCode: modelCode.value.trim(), dimensions: dimensions.value.trim(), priority: priority.value, preservation: preservation.value, views: views.value, viewRole: viewRole.value, note: note.value.trim(), extraReferences: meta.extraReferences || [], extraReferenceRoles: meta.extraReferenceRoles || [] };
     };
-    [model, priority, preservation, views, viewRole, note].forEach(el => el.addEventListener("change", save));
+    [model, modelCode, dimensions, priority, preservation, views, viewRole, note].forEach(el => el.addEventListener("change", save));\n    modelCode.addEventListener("input", save);\n    dimensions.addEventListener("input", save);
     note.addEventListener("input", save);
     referenceGallery.appendChild(card);
   });
