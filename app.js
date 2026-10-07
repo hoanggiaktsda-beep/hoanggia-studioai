@@ -320,11 +320,13 @@ function renderReferenceGallery() {
         <div class="evidence-row"><label>MODEL</label><select class="evidence-model">${referenceOptions.object.map(x => `<option${meta.model === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>MÃ MODEL</label><input class="evidence-model-code" value="${escapeAttribute(meta.modelCode)}" placeholder="Ví dụ: BRT21022"></div>
         <div class="evidence-row"><label>KÍCH THƯỚC</label><input class="evidence-dimensions" value="${escapeAttribute(meta.dimensions)}" placeholder="Ví dụ: 2600 × 1050 × 750 mm"><small>Nếu kích thước đọc rõ trên ảnh, hệ thống tự nhận diện và điền; KTS có thể sửa lại.</small></div>
+        <details class="evidence-advanced"${meta.advancedOpen ? " open" : ""}><summary>Thiết lập model và góc nhìn</summary><div class="evidence-advanced-grid">
         <div class="evidence-row"><label>ƯU TIÊN MODEL CUNG CẤP</label><select class="evidence-priority">${referenceOptions.priority.map(x => `<option${meta.priority === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>MỨC ĐỘ BẢO TOÀN</label><select class="evidence-preservation">${referenceOptions.preservation.map(x => `<option${meta.preservation === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>CHUẨN HÓA GÓC NHÌN</label><select class="evidence-views">${referenceOptions.views.map(x => `<option${meta.views === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>GÓC NHÌN DO KTS XÁC ĐỊNH</label><select class="evidence-view-role">${referenceOptions.viewRole.map(x => `<option${meta.viewRole === x ? " selected" : ""}>${x}</option>`).join("")}</select><small>KTS xác định thì hệ thống phải dùng đúng góc này; không được AI đoán lại.</small></div>
         <div class="evidence-row"><label>GHI CHÚ</label><input class="evidence-note" value="${escapeAttribute(meta.note)}" placeholder="Ghi chú riêng cho ảnh (tùy chọn)"></div>
+        </div></details>
         <div class="evidence-row evidence-extra-reference"><label>ẢNH THAM CHIẾU THÊM</label><button type="button" class="extra-reference-trigger">＋ Thêm góc của cùng sản phẩm</button><input class="extra-reference-input" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden><div class="extra-reference-gallery"></div><small>Có thể thêm nhiều ảnh của cùng một bàn/ghế/sofa để AI hiểu đủ mặt trước, bên, sau và chi tiết.</small></div>
       </div>`;
     card.querySelector(".reference-remove").addEventListener("click", e => {
@@ -334,6 +336,11 @@ function renderReferenceGallery() {
       renderReferenceGallery();
     });
     const model = card.querySelector(".evidence-model");
+    const advanced = card.querySelector(".evidence-advanced");
+    advanced.addEventListener("toggle", () => {
+      meta.advancedOpen = advanced.open;
+      if (referenceMeta[i]) referenceMeta[i].advancedOpen = advanced.open;
+    });
     const modelCode = card.querySelector(".evidence-model-code");
     const dimensions = card.querySelector(".evidence-dimensions");
     const priority = card.querySelector(".evidence-priority");

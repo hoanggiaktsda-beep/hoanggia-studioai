@@ -32,6 +32,7 @@ const server = http.createServer((req, res) => {
     await page.locator('#referenceInput').setInputFiles(image('model-c.png'));
     assert.equal(await page.locator('.evidence-card').count(),3);
     let card = page.locator('.evidence-card').first();
+    await card.locator('.evidence-advanced summary').click();
     await card.locator('.evidence-model-code').fill('BRT21022');
     await card.locator('.evidence-dimensions').fill('2600 × 1050 × 750 mm');
     await card.locator('.evidence-view-role').selectOption({label:'Cạnh dài / ngang'});
@@ -45,6 +46,7 @@ const server = http.createServer((req, res) => {
     await page.locator('#openModelLibrary').click();
     await page.locator('[data-use-model]').first().click();
     card = page.locator('.evidence-card').first();
+    if (!(await card.locator('.evidence-advanced').evaluate(el => el.open))) await card.locator('.evidence-advanced summary').click();
     assert.equal(await card.locator('.evidence-model-code').inputValue(),'BRT21022');
     assert.equal(await card.locator('.evidence-dimensions').inputValue(),'2600 × 1050 × 750 mm');
     assert.equal(await card.locator('.evidence-note').inputValue(),'Ghi chú "có dấu" <giữ nguyên>');

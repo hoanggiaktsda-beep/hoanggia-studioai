@@ -571,3 +571,30 @@ footer{
 .model-library-panel{margin-top:14px;padding:16px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(10,12,12,.72)}
 .model-library-head{display:flex;justify-content:space-between;align-items:center}.model-library-tools{margin:12px 0}.model-library-tools input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:inherit}
 .model-library-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.model-library-card{padding:12px;border:1px solid rgba(255,255,255,.1);border-radius:12px;display:flex;flex-direction:column;gap:6px}.model-library-card span,.model-library-card small{opacity:.72}.model-library-card div{display:flex;gap:8px;margin-top:5px}.model-library-card button{padding:7px 9px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:transparent;color:inherit;cursor:pointer}
+
+/* Keep product evidence cards proportional to the available panel width. */
+#referenceUploadBox{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:14px;cursor:default;container-type:inline-size}
+#referenceUploadBox .reference-gallery{grid-template-columns:minmax(0,1fr);padding:0;gap:14px;min-width:0}
+#referenceUploadBox .evidence-card{width:100%;min-width:0;text-align:left;padding-bottom:0}
+#referenceUploadBox .evidence-card>img{height:180px;min-height:0;max-height:180px;object-fit:contain;background:#111313;border-radius:7px 7px 0 0}
+#referenceUploadBox .evidence-card>span{bottom:auto;margin-top:0}
+#referenceUploadBox .evidence-details{padding:14px;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;min-width:0}
+#referenceUploadBox .evidence-row{min-width:0;align-content:start}
+#referenceUploadBox .evidence-row label{font-size:10px!important;letter-spacing:.04em;line-height:1.4;color:#a4aaa4!important}
+#referenceUploadBox .evidence-row select,#referenceUploadBox .evidence-row input{min-height:40px;padding:9px 10px;font-family:inherit;font-size:13px;line-height:1.4}
+#referenceUploadBox .evidence-row small{display:block;font-size:11px;line-height:1.5;color:#858d85;overflow-wrap:anywhere}
+#referenceUploadBox .evidence-advanced{grid-column:1/-1;min-width:0;border-top:1px solid #292d2b;padding-top:10px}
+#referenceUploadBox .evidence-advanced summary{cursor:pointer;font-size:13px;line-height:1.5;color:#c9a86a;padding:5px 0}
+#referenceUploadBox .evidence-advanced-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+#referenceUploadBox .evidence-row:has(.evidence-dimensions),#referenceUploadBox .evidence-row:has(.evidence-view-role),#referenceUploadBox .evidence-row:has(.evidence-note),#referenceUploadBox .evidence-extra-reference{grid-column:1/-1}
+#referenceUploadBox .extra-reference-trigger{width:100%;min-height:42px;text-align:center;font-size:13px;line-height:1.4}
+#referenceUploadBox .extra-reference-item img{min-height:0}
+#referencePlaceholder{width:100%;padding:12px;border:1px dashed #34383e;border-radius:7px}
+@container(min-width:540px){
+  #referenceUploadBox .evidence-card{display:grid;grid-template-columns:180px minmax(0,1fr);align-items:start}
+  #referenceUploadBox .evidence-card>img{height:180px;border-bottom:0;border-radius:7px 0 0 7px}
+}
+@container(max-width:280px){
+  #referenceUploadBox .evidence-details{grid-template-columns:minmax(0,1fr);padding:10px}
+  #referenceUploadBox .evidence-advanced-grid{grid-template-columns:minmax(0,1fr)}
+}
