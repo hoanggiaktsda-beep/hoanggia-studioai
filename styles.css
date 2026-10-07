@@ -468,3 +468,6 @@ footer{
   .mode-card{padding:9px}
   .topbar .crumb{max-width:48vw}
 }
+
+/* Material Reference Engine */
+.material-reference-panel{margin-top:18px}.material-domain-switch{display:flex;gap:10px;margin:0 0 18px}.material-domain{flex:1;padding:13px 16px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:#111412;color:#d8d8d2;font-weight:700;cursor:pointer}.material-domain.active{background:#303a34;border-color:rgba(255,255,255,.35);color:#fff}.material-reference-grid{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(320px,1.2fr);gap:18px}.material-source-card,.material-map-card{min-width:0}.material-upload-box{min-height:260px}.material-upload-box img{max-height:250px;object-fit:contain}.material-map-card{display:grid;grid-template-columns:1fr 1fr;gap:14px}.material-map-card .intent-field input{width:100%;box-sizing:border-box;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:#111412;color:#f5f5f1}@media(max-width:760px){.material-reference-grid,.material-map-card{grid-template-columns:1fr}.material-domain-switch{flex-direction:column}}
