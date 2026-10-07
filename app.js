@@ -7,7 +7,34 @@ const brief = document.getElementById("brief");
 const result = document.getElementById("result");
 const resultContent = document.getElementById("resultContent");
 const resultText = document.getElementById("resultText");
-const brainStatus = document.getElementById("brainStatus");
+const brainStatus = document.getElementById("brainStatus");\nconst promptRevisionSource = document.getElementById("promptRevisionSource");
+const promptRevisionReplacement = document.getElementById("promptRevisionReplacement");
+const applyPromptRevision = document.getElementById("applyPromptRevision");
+const undoPromptRevision = document.getElementById("undoPromptRevision");
+const promptRevisionStatus = document.getElementById("promptRevisionStatus");
+let previousPromptBeforeRevision = null;
+
+applyPromptRevision?.addEventListener("click",()=>{
+  const source=(promptRevisionSource?.value||"").trim();
+  const replacement=(promptRevisionReplacement?.value||"").trim();
+  const current=resultContent?.textContent||"";
+  if(!source){ if(promptRevisionStatus) promptRevisionStatus.textContent="Hãy dán chính xác đoạn Prompt cần sửa."; return; }
+  if(!replacement){ if(promptRevisionStatus) promptRevisionStatus.textContent="Hãy nhập nội dung muốn sửa thành."; return; }
+  const occurrences=current.split(source).length-1;
+  if(occurrences===0){ if(promptRevisionStatus) promptRevisionStatus.textContent="Không tìm thấy chính xác đoạn cần sửa. Prompt được giữ nguyên."; return; }
+  if(occurrences>1){ if(promptRevisionStatus) promptRevisionStatus.textContent="Đoạn này xuất hiện nhiều hơn một lần. Hãy copy đoạn dài hơn để xác định duy nhất."; return; }
+  previousPromptBeforeRevision=current;
+  resultContent.textContent=current.replace(source,replacement);
+  if(undoPromptRevision) undoPromptRevision.disabled=false;
+  if(promptRevisionStatus) promptRevisionStatus.textContent="Đã thay đúng đoạn được chọn. Không thêm nội dung thừa vào Prompt.";
+});
+undoPromptRevision?.addEventListener("click",()=>{
+  if(previousPromptBeforeRevision===null) return;
+  resultContent.textContent=previousPromptBeforeRevision;
+  previousPromptBeforeRevision=null;
+  if(undoPromptRevision) undoPromptRevision.disabled=true;
+  if(promptRevisionStatus) promptRevisionStatus.textContent="Đã hoàn tác lần sửa gần nhất.";
+});
 const sceneInput = document.getElementById("sceneInput");
 const referenceInput = document.getElementById("referenceInput");
 const scenePreview = document.getElementById("scenePreview");
