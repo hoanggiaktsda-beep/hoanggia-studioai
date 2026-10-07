@@ -3,6 +3,7 @@ import { buildDirection } from "./core/prompt-engine.js";
 import { editModeDirection } from "./core/edit-engine.js";
 import { expertFor } from "./core/expert-decision-layer.js";
 import { buildIndependentLightingPrompt } from "./core/lighting-engine.js";
+import { buildIndependentCameraPrompt } from "./core/camera-engine.js";
 
 const brief = document.getElementById("brief");
 const result = document.getElementById("result");
@@ -121,6 +122,10 @@ modeReferenceInput?.addEventListener("change",()=>{
   modeReferencePlaceholder?.classList.add("hidden"); modeReferenceRemove?.classList.remove("hidden");
 });
 modeReferenceRemove?.addEventListener("click",clearModeReference);
+const cameraExpertPanel=document.getElementById("cameraExpertPanel");
+const cameraReferenceInput=document.getElementById("cameraReferenceInput"), cameraReferencePreview=document.getElementById("cameraReferencePreview"), cameraReferencePlaceholder=document.getElementById("cameraReferencePlaceholder"), cameraReferenceRemove=document.getElementById("cameraReferenceRemove");
+const cameraTargetInput=document.getElementById("cameraTargetInput"), cameraTargetGallery=document.getElementById("cameraTargetGallery"), cameraTargetUploadBox=document.getElementById("cameraTargetUploadBox"), cameraTargetTrigger=document.getElementById("cameraTargetTrigger"), cameraTargetPlaceholder=document.getElementById("cameraTargetPlaceholder"), cameraTargetCount=document.getElementById("cameraTargetCount");
+let cameraReferenceFile=null,cameraReferenceUrl=null,cameraTargetFiles=[],cameraTargetUrls=[];
 const lightingExpertPanel = document.getElementById("lightingExpertPanel");
 const lightingReferenceInput = document.getElementById("lightingReferenceInput");
 const lightingReferencePreview = document.getElementById("lightingReferencePreview");
@@ -162,6 +167,11 @@ function renderLightingTargets() {
   lightingTargetPlaceholder?.classList.toggle("hidden", lightingTargetFiles.length > 0);
   if (lightingTargetCount) lightingTargetCount.textContent = lightingTargetFiles.length + " ảnh · " + lightingTargetFiles.length + " Prompt riêng";
 }
+function renderCameraTargets(){if(!cameraTargetGallery)return;cameraTargetGallery.innerHTML="";cameraTargetFiles.forEach((file,index)=>{const card=document.createElement("div");card.className="lighting-target-card evidence-card";const img=document.createElement("img");img.src=cameraTargetUrls[index];img.alt="Ảnh nhận "+(index+1);const badge=document.createElement("span");badge.className="lighting-target-badge";badge.textContent=String(index+1).padStart(2,"0");const remove=document.createElement("button");remove.type="button";remove.className="reference-remove";remove.textContent="×";const details=document.createElement("div");details.className="evidence-details";details.innerHTML='<div class="evidence-row"><label>GIỮ NGUYÊN</label><input class="camera-target-preserve" value="Kiến trúc · nội thất · vật liệu · ánh sáng · tỷ lệ vật thể"></div><div class="evidence-row"><label>THAY ĐỔI</label><input class="camera-target-change" value="Chỉ góc máy theo ảnh tham chiếu"></div><details class="evidence-advanced"><summary>Thiết lập ảnh nhận</summary><div class="evidence-advanced-grid"><div class="evidence-row"><label>GHI CHÚ</label><input class="camera-target-note" placeholder="Ví dụ: ưu tiên giữ thẳng đứng"></div></div></details>';remove.addEventListener("click",e=>{e.stopPropagation();URL.revokeObjectURL(cameraTargetUrls[index]);cameraTargetFiles.splice(index,1);cameraTargetUrls.splice(index,1);renderCameraTargets();});card.append(img,badge,remove,details);cameraTargetGallery.appendChild(card);});cameraTargetPlaceholder?.classList.toggle("hidden",cameraTargetFiles.length>0);if(cameraTargetCount)cameraTargetCount.textContent=cameraTargetFiles.length+" ảnh · "+cameraTargetFiles.length+" Prompt riêng";}
+cameraReferenceInput?.addEventListener("change",()=>{const file=cameraReferenceInput.files?.[0];if(!file)return;if(cameraReferenceUrl)URL.revokeObjectURL(cameraReferenceUrl);cameraReferenceFile=file;cameraReferenceUrl=URL.createObjectURL(file);if(cameraReferencePreview){cameraReferencePreview.src=cameraReferenceUrl;cameraReferencePreview.classList.add("visible");}cameraReferencePlaceholder?.classList.add("hidden");cameraReferenceRemove?.classList.remove("hidden");});
+cameraReferenceRemove?.addEventListener("click",()=>{if(cameraReferenceUrl)URL.revokeObjectURL(cameraReferenceUrl);cameraReferenceFile=null;cameraReferenceUrl=null;if(cameraReferenceInput)cameraReferenceInput.value="";if(cameraReferencePreview){cameraReferencePreview.src="";cameraReferencePreview.classList.remove("visible");}cameraReferencePlaceholder?.classList.remove("hidden");cameraReferenceRemove?.classList.add("hidden");});
+cameraTargetUploadBox?.addEventListener("click",e=>{if(e.target.closest(".reference-remove"))return;cameraTargetInput?.click();});cameraTargetTrigger?.addEventListener("click",e=>{e.stopPropagation();cameraTargetInput?.click();});cameraTargetInput?.addEventListener("change",()=>{Array.from(cameraTargetInput.files||[]).filter(file=>["image/jpeg","image/png","image/webp"].includes(file.type)).forEach(file=>{cameraTargetFiles.push(file);cameraTargetUrls.push(URL.createObjectURL(file));});cameraTargetInput.value="";renderCameraTargets();});
+
 lightingReferenceInput?.addEventListener("change", () => {
   const file = lightingReferenceInput.files?.[0]; if (!file) return;
   if (!["image/jpeg","image/png","image/webp"].includes(file.type)) { alert("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP."); lightingReferenceInput.value=""; return; }
@@ -757,6 +767,7 @@ document.querySelectorAll(".ai-target-option").forEach(btn => {
 
 function renderMode(mode) {
   if (lightingExpertPanel) lightingExpertPanel.classList.toggle("hidden", mode !== "Lighting");
+  if (cameraExpertPanel) cameraExpertPanel.classList.toggle("hidden", mode !== "Camera");
   if (spaceSyncPanel) spaceSyncPanel.classList.toggle("hidden", mode !== "SpaceSync");
   if (materialReferencePanel) materialReferencePanel.classList.toggle("hidden", mode !== "Material");
   if (cameraContextPanel) cameraContextPanel.classList.toggle("hidden", mode !== "Camera");
@@ -861,6 +872,14 @@ document.getElementById("generate")?.addEventListener("click", () => {
   ].filter(Boolean).join("\n") : "";
   const replacement = [brief?.value?.trim() || "", materialContext].filter(Boolean).join("\n");
   try {
+    if(currentMode==="Camera"){
+      if(!cameraReferenceFile) throw new Error("EXPERT 04 cần ẢNH GÓC MÁY THAM CHIẾU.");
+      if(!cameraTargetFiles.length) throw new Error("EXPERT 04 cần ít nhất 1 ẢNH NHẬN THAM CHIẾU.");
+      const cards=Array.from(cameraTargetGallery?.querySelectorAll(".lighting-target-card")||[]);
+      const prompts=cameraTargetFiles.map((file,index)=>{const card=cards[index];return buildIndependentCameraPrompt({referenceName:cameraReferenceFile.name,targetName:file.name,brief:brief?.value||"",preserve:card?.querySelector(".camera-target-preserve")?.value||"",change:card?.querySelector(".camera-target-change")?.value||"",targetAnalysis:card?.querySelector(".camera-target-note")?.value||"",aiTarget:selectedAITarget});});
+      if(resultContent)resultContent.textContent=prompts.map((p,i)=>"════════════════════════════════════════\nEXPERT 04 · PROMPT "+String(i+1).padStart(2,"0")+" — "+cameraTargetFiles[i].name+"\n════════════════════════════════════════\n"+p).join("\n\n");
+      result?.classList.remove("hidden");result?.scrollIntoView({behavior:"smooth",block:"start"});if(brainStatus)brainStatus.textContent="EXPERT 04 đã tạo "+prompts.length+" Prompt góc máy độc lập";return;
+    }
     if (currentMode === "Lighting") {
       if (!lightingReferenceFile) throw new Error("EXPERT 03 cần HÌNH ẢNH THAM CHIẾU ánh sáng.");
       if (!lightingTargetFiles.length) throw new Error("EXPERT 03 cần ít nhất 1 HÌNH ẢNH NHẬN THAM CHIẾU.");
