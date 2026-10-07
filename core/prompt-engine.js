@@ -360,7 +360,15 @@ export function buildDirection({
 
   if (mode === "Furniture") {
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
-    body.push(task + ".", "Use supplied reference images as one identical furniture model; preserve silhouette, proportions, construction and distinctive details.", "Keep original position, scale, floor contact and perspective.", f.editRule + " " + f.realism + " " + f.referenceRule);
+    body.push(
+      "NHIỆM VỤ: Chỉ thay sản phẩm nội thất đã chọn: " + target + ".",
+      "ẢNH MODEL / REFERENCE VIEW: Coi các ảnh cung cấp là nhiều góc nhìn của cùng một model; giữ silhouette, tỷ lệ, cấu tạo và chi tiết nhận diện.",
+      "PHÂN TÍCH DIỆN MODEL: Tự xác định FRONT / REAR / LEFT / RIGHT / LONG SIDE / SHORT SIDE / 3-4 / TOP / BOTTOM / UNKNOWN. Nếu KTS đã khai báo diện ảnh thì ưu tiên tuyệt đối dữ liệu KTS.",
+      "ĐỊNH HƯỚNG KHÔNG GIAN (Spatial Orientation): Reference camera ≠ Target camera. Không lấy hướng chụp của ảnh model làm hướng đặt sản phẩm. Xác lập LENGTH–WIDTH–HEIGHT của model, đọc trục và footprint của đồ cũ, map các trục tương ứng rồi render theo camera/perspective của ảnh gốc.",
+      "KHÓA VỊ TRÍ: Giữ vị trí, tiếp xúc sàn và quan hệ không gian của đồ cũ theo lựa chọn của KTS.",
+      "QUALITY GATE: Nếu hướng/trục dài-rộng của model mâu thuẫn với đồ cũ hoặc perspective ảnh gốc, coi là ORIENTATION CONFLICT và phải hiệu chỉnh trước khi xuất.",
+      f.editRule + " " + f.realism + " " + f.referenceRule
+    );
   } else if (mode === "Material") {
     const m = materialDirection(analysis);
     const md = materialDecisionEngine({target, brief, decisions, analysis, material: replacement, referenceRoles});
