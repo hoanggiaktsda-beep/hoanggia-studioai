@@ -7,7 +7,8 @@ const brief = document.getElementById("brief");
 const result = document.getElementById("result");
 const resultContent = document.getElementById("resultContent");
 const resultText = document.getElementById("resultText");
-const brainStatus = document.getElementById("brainStatus");\nconst promptRevisionSource = document.getElementById("promptRevisionSource");
+const brainStatus = document.getElementById("brainStatus");
+const promptRevisionSource = document.getElementById("promptRevisionSource");
 const promptRevisionReplacement = document.getElementById("promptRevisionReplacement");
 const applyPromptRevision = document.getElementById("applyPromptRevision");
 const undoPromptRevision = document.getElementById("undoPromptRevision");
@@ -177,7 +178,8 @@ for (const kind of ["Face", "Body", "Outfit"]) {
   remove?.addEventListener("click", clearReference);
 }
 let currentMode = "Furniture";
-let selectedAITarget = "ChatGPT Images";\nqueueMicrotask(renderModeReference);
+let selectedAITarget = "ChatGPT Images";
+queueMicrotask(renderModeReference);
 
 const aiTargetProfiles = {
   "ChatGPT Images": "Format for OpenAI image editing: direct conversational edit instruction, explicit target, preservation locks, spatial consistency and precise requested change.",
