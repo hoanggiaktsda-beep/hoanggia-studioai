@@ -66,6 +66,11 @@
 <label class="upload-box material-upload-box" for="modeReferenceInput"><img id="modeReferencePreview" alt="Ảnh tham chiếu"><div id="modeReferencePlaceholder"><strong id="modeReferenceAction">＋ Thêm ảnh tham chiếu</strong><span id="modeReferenceHelp">JPG / PNG / WebP · Không bắt buộc</span></div></label>
 <input id="modeReferenceInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
 <button type="button" id="modeReferenceRemove" class="character-reference-remove hidden">Xóa ảnh tham chiếu</button>
+<div class="mode-reference-details" id="modeReferenceDetails">
+  <div class="panel-head"><div><span class="kicker">CHI TIẾT THAM CHIẾU</span><h3 id="modeReferenceDetailTitle">Điều khiển ảnh tham chiếu</h3></div><span class="panel-note">KTS chủ động xác định phần AI được phép học theo</span></div>
+  <div class="decision-grid" id="modeReferenceDetailControls"></div>
+  <label class="reference-note-field"><span>GHI CHÚ RIÊNG CHO ẢNH THAM CHIẾU</span><textarea id="modeReferenceDetailNote" rows="3" placeholder="Ví dụ: chỉ lấy ánh sáng ấm từ bên phải, không lấy nhân vật hay bối cảnh."></textarea></label>
+</div>
 </section>
 <section class="panel reference-controls">
 <div class="panel-head"><div><span class="kicker">03</span><h2>Chọn chuyên gia quyết định</h2></div><span class="panel-note">Chỉ tạo yêu cầu AI</span></div>
