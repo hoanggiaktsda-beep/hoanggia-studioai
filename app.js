@@ -44,6 +44,15 @@ const cameraExterior = document.getElementById("cameraExterior");
 const cameraStory = document.getElementById("cameraStory");
 const cameraCharacterDescription = document.getElementById("cameraCharacterDescription");
 const cameraSceneDescription = document.getElementById("cameraSceneDescription");
+const materialReferencePanel = document.getElementById("materialReferencePanel");
+const materialInput = document.getElementById("materialInput");
+const materialPreview = document.getElementById("materialPreview");
+const materialPlaceholder = document.getElementById("materialPlaceholder");
+const materialRemove = document.getElementById("materialRemove");
+const materialTarget = document.getElementById("materialTarget");
+const materialComponent = document.getElementById("materialComponent");
+const materialMapping = document.getElementById("materialMapping");
+const materialFinish = document.getElementById("materialFinish");
 const spaceSyncPanel = document.getElementById("spaceSyncPanel");
 const syncReferenceInput = document.getElementById("syncReferenceInput");
 const syncReferencePreview = document.getElementById("syncReferencePreview");
@@ -117,6 +126,34 @@ const aiTargetProfiles = {
   "Nano Banana": "Format for legacy Nano Banana image editing: explicit image-editing instructions, precise target boundaries and strong preservation constraints.",
   "Khác": "Format as a concise production-ready image-editing prompt that clearly states the target, changes, preservation and realism."
 };
+let materialFile = null;
+let materialUrl = null;
+let materialDomain = "Architecture";
+const materialTargets = {
+  Architecture: ["Mặt tiền / facade","Tường kiến trúc","Sàn","Trần","Mái","Cột / dầm","Cầu thang","Cửa / khung cửa","Lan can","Sân / terrace","Đường dạo / landscape hardscape","Khác / tự mô tả"],
+  Interior: ["Tường nội thất","Sàn nội thất","Trần nội thất","Hệ tủ / built-in","Cánh tủ","Mặt bàn / countertop","Sofa","Armchair / ghế đơn","Ghế ăn","Giường / đầu giường","Rèm","Thảm","Đá trang trí","Gỗ / veneer","Da / vải","Kim loại","Kính","Khác / tự mô tả"]
+};
+function renderMaterialTargets(){
+  if(!materialTarget) return;
+  materialTarget.innerHTML=(materialTargets[materialDomain]||[]).map(x=>`<option>${x}</option>`).join("");
+  document.querySelectorAll(".material-domain").forEach(b=>b.classList.toggle("active",b.dataset.materialDomain===materialDomain));
+}
+document.querySelectorAll(".material-domain").forEach(btn=>btn.addEventListener("click",()=>{ materialDomain=btn.dataset.materialDomain||"Architecture"; renderMaterialTargets(); }));
+materialInput?.addEventListener("change",()=>{
+  const file=materialInput.files?.[0]; if(!file) return;
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){ alert("Chỉ hỗ trợ ảnh vật liệu JPG, PNG hoặc WebP."); materialInput.value=""; return; }
+  if(materialUrl) URL.revokeObjectURL(materialUrl);
+  materialFile=file; materialUrl=URL.createObjectURL(file);
+  if(materialPreview){ materialPreview.src=materialUrl; materialPreview.classList.add("visible"); }
+  materialPlaceholder?.classList.add("hidden"); materialRemove?.classList.remove("hidden");
+});
+materialRemove?.addEventListener("click",()=>{
+  if(materialUrl) URL.revokeObjectURL(materialUrl); materialUrl=null; materialFile=null;
+  if(materialInput) materialInput.value="";
+  if(materialPreview){ materialPreview.src=""; materialPreview.classList.remove("visible"); }
+  materialPlaceholder?.classList.remove("hidden"); materialRemove?.classList.add("hidden");
+});
+renderMaterialTargets();
 let referenceFiles = [];
 let sceneFile = null;
 let referenceMeta = [];
@@ -487,6 +524,7 @@ document.querySelectorAll(".ai-target-option").forEach(btn => {
 
 function renderMode(mode) {
   if (spaceSyncPanel) spaceSyncPanel.classList.toggle("hidden", mode !== "SpaceSync");
+  if (materialReferencePanel) materialReferencePanel.classList.toggle("hidden", mode !== "Material");
   if (cameraContextPanel) cameraContextPanel.classList.toggle("hidden", mode !== "Camera");
   currentMode = mode;
   document.querySelectorAll(".mode-card").forEach(card => card.classList.toggle("active", card.dataset.mode === mode));
@@ -509,6 +547,9 @@ document.getElementById("newProject")?.addEventListener("click", () => {
   renderAITargets();
   referenceFiles = [];
   referenceMeta = [];
+  materialRemove?.click();
+  materialDomain = "Architecture"; renderMaterialTargets();
+  if (materialComponent) materialComponent.value = "";
   sceneFile = null;
   syncReferenceFile = null;
   syncTargetFiles = [];
@@ -570,7 +611,17 @@ document.getElementById("generate")?.addEventListener("click", () => {
   const params = { ...designIntent() };
   const output = "production prompt";
   const camera = {};
-  const replacement = brief?.value?.trim() || "";
+  const materialContext = currentMode === "Material" ? [
+    "MATERIAL DOMAIN: " + (materialDomain === "Architecture" ? "KIẾN TRÚC" : "NỘI THẤT"),
+    "TARGET AREA: " + (materialTarget?.value || "Chưa chỉ định"),
+    "TARGET COMPONENT: " + (materialComponent?.value?.trim() || "Không có mô tả bổ sung"),
+    "MATERIAL REFERENCE IMAGE: " + (materialFile?.name || "Không có — suy luận từ mô tả chữ"),
+    "MAPPING: " + (materialMapping?.value || ""),
+    "FINISH: " + (materialFinish?.value || ""),
+    materialFile ? "REFERENCE PRIORITY: Ảnh vật liệu là Source of Truth cho màu, texture, vân, scale và đặc tính bề mặt. Ánh xạ vật liệu theo hình học, perspective, UV, cạnh, khe, mối nối và ánh sáng thực tế; không dán texture phẳng." : "",
+    "PRESERVATION LOCK: Chỉ thay vật liệu tại đúng vùng mục tiêu. Giữ nguyên hình học, kích thước, cấu tạo, camera, ánh sáng, bóng, phản xạ và mọi vùng ngoài phạm vi; chỉ cập nhật phản ứng quang học cần thiết của chính vật liệu mới."
+  ].filter(Boolean).join("\n") : "";
+  const replacement = [brief?.value?.trim() || "", materialContext].filter(Boolean).join("\n");
   try {
     if (currentMode === "ReferenceReplica" && !sceneFile) {
       throw new Error("Reference Replica cần 1 ảnh tham chiếu scene làm Source of Truth.");
