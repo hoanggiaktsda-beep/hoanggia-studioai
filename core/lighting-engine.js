@@ -161,46 +161,21 @@ export function buildIndependentLightingPrompt({
   if (!referenceName) throw new Error("EXPERT 03 cần HÌNH ẢNH THAM CHIẾU ánh sáng.");
   if (!targetName) throw new Error("EXPERT 03 cần HÌNH ẢNH NHẬN THAM CHIẾU.");
 
-  const d = lightingDecisionEngine({
-    target: decisions.target || "Toàn cảnh",
-    brief,
-    decisions,
-    referenceRoles: "Chỉ dùng ảnh " + referenceName + " làm bằng chứng ánh sáng."
-  });
+  const keep = preserve.trim() || "Thiết kế, vật liệu, camera, bố cục và tỷ lệ";
+  const replaceLight = change.trim() || "Chỉ ánh sáng theo ảnh tham chiếu";
 
   return [
-    "HOANGGIA EDIT AI — EXPERT 03 / ÁNH SÁNG",
-    "CHUYÊN GIA: Ingo Maurer · Lighting Intelligence",
-    "TRẠNG THÁI: ĐỘC LẬP HOÀN TOÀN. Không nhận quyết định, ảnh tham chiếu hoặc dữ liệu chuyên môn từ Expert 01/02/04/05/06/07/08.",
-    "",
-    "ẢNH THAM CHIẾU ÁNH SÁNG: " + referenceName,
-    "ẢNH NHẬN THAM CHIẾU: " + targetName,
-    "",
-    "NHIỆM VỤ:",
-    "Phân tích hệ ánh sáng của ảnh tham chiếu và chuyển DUY NHẤT đặc tính ánh sáng sang ảnh nhận.",
-    "Đọc: hướng sáng, nguồn sáng, độ mềm/cứng, cường độ, nhiệt độ màu, tương phản, phân bố sáng–tối, bóng đổ, phản xạ và bầu không khí.",
-    "",
-    "PHÂN TÍCH ẢNH NHẬN — GIỮ LẠI:",
-    preserve.trim() || "Giữ nguyên kiến trúc, hình học, nội thất, sản phẩm, vật liệu và màu vật liệu, tỷ lệ, kích thước, camera, góc nhìn, phối cảnh, bố cục và vị trí vật thể.",
-    "",
-    "PHÂN TÍCH ẢNH NHẬN — ĐƯỢC PHÉP THAY ĐỔI:",
-    change.trim() || "Chỉ thay đổi hệ ánh sáng: hướng sáng, nguồn sáng, độ mềm/cứng, cường độ, nhiệt độ màu, tương phản, phân bố sáng–tối, bóng đổ, phản xạ, ánh sáng dội và độ phơi sáng.",
-    targetAnalysis.trim() ? "GHI CHÚ PHÂN TÍCH ẢNH NHẬN: " + targetAnalysis.trim() : null,
-    "",
-    "KHÓA BẢO TOÀN ẢNH NHẬN:",
-    "- Giữ nguyên kiến trúc, hình học, nội thất, sản phẩm, vật liệu, tỷ lệ và kích thước.",
-    "- Giữ nguyên camera, góc nhìn, phối cảnh, bố cục và vị trí vật thể.",
-    "- Không sao chép nhân vật, đồ vật, vật liệu, kiến trúc hoặc bố cục từ ảnh tham chiếu ánh sáng.",
-    "- Chỉ cập nhật phản ứng quang học cần thiết: vùng sáng/tối, bóng đổ, phản xạ, bounce light và exposure.",
-    "",
-    "QUY TRÌNH EXPERT 03:",
-    ...d.decisionSequence,
-    "",
-    "KIỂM ĐỊNH:",
-    ...d.qualityGates.map(x => "- " + x),
-    brief.trim() ? "" : null,
-    brief.trim() ? "YÊU CẦU BỔ SUNG CỦA KTS: " + brief.trim() : null,
-    "",
-    "ĐẦU RA DÀNH CHO: " + aiTarget
+    "EXPERT 03 — ÁNH SÁNG",
+    "Ảnh ánh sáng tham chiếu: " + referenceName,
+    "Ảnh nhận: " + targetName,
+    "GIỮ NGUYÊN: " + keep + ".",
+    "CHỈ THAY: " + replaceLight + ".",
+    "Đọc từ ảnh tham chiếu: hướng/nguồn sáng, mềm-cứng, cường độ, nhiệt độ màu, tương phản, sáng-tối, bóng đổ và phản xạ.",
+    "Không sao chép kiến trúc, nội thất, vật liệu, vật thể, nhân vật hoặc bố cục từ ảnh tham chiếu.",
+    targetAnalysis.trim() ? "GHI CHÚ: " + targetAnalysis.trim() : "",
+    brief.trim() ? "YÊU CẦU: " + brief.trim() : "",
+    "Kết quả phải chân thực vật lý, đúng nguồn sáng và không làm biến dạng ảnh nhận.",
+    "Đầu ra: " + aiTarget
   ].filter(Boolean).join("\n");
 }
+
