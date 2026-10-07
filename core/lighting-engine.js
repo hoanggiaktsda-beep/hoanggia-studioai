@@ -153,7 +153,10 @@ export function buildIndependentLightingPrompt({
   targetName = "",
   brief = "",
   decisions = {},
-  aiTarget = "ChatGPT Images"
+  aiTarget = "ChatGPT Images",
+  preserve = "",
+  change = "",
+  targetAnalysis = ""
 } = {}) {
   if (!referenceName) throw new Error("EXPERT 03 cần HÌNH ẢNH THAM CHIẾU ánh sáng.");
   if (!targetName) throw new Error("EXPERT 03 cần HÌNH ẢNH NHẬN THAM CHIẾU.");
@@ -176,6 +179,13 @@ export function buildIndependentLightingPrompt({
     "NHIỆM VỤ:",
     "Phân tích hệ ánh sáng của ảnh tham chiếu và chuyển DUY NHẤT đặc tính ánh sáng sang ảnh nhận.",
     "Đọc: hướng sáng, nguồn sáng, độ mềm/cứng, cường độ, nhiệt độ màu, tương phản, phân bố sáng–tối, bóng đổ, phản xạ và bầu không khí.",
+    "",
+    "PHÂN TÍCH ẢNH NHẬN — GIỮ LẠI:",
+    preserve.trim() || "Giữ nguyên kiến trúc, hình học, nội thất, sản phẩm, vật liệu và màu vật liệu, tỷ lệ, kích thước, camera, góc nhìn, phối cảnh, bố cục và vị trí vật thể.",
+    "",
+    "PHÂN TÍCH ẢNH NHẬN — ĐƯỢC PHÉP THAY ĐỔI:",
+    change.trim() || "Chỉ thay đổi hệ ánh sáng: hướng sáng, nguồn sáng, độ mềm/cứng, cường độ, nhiệt độ màu, tương phản, phân bố sáng–tối, bóng đổ, phản xạ, ánh sáng dội và độ phơi sáng.",
+    targetAnalysis.trim() ? "GHI CHÚ PHÂN TÍCH ẢNH NHẬN: " + targetAnalysis.trim() : null,
     "",
     "KHÓA BẢO TOÀN ẢNH NHẬN:",
     "- Giữ nguyên kiến trúc, hình học, nội thất, sản phẩm, vật liệu, tỷ lệ và kích thước.",
