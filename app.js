@@ -91,20 +91,38 @@ const modeReferenceNote = document.getElementById("modeReferenceNote");
 const modeReferenceAction = document.getElementById("modeReferenceAction");
 const modeReferenceHelp = document.getElementById("modeReferenceHelp");
 const modeReferenceConfig = {
-  Lighting: {title:"Ảnh ánh sáng tham chiếu", note:"Tùy chọn · dùng để tham chiếu không khí, hướng sáng và tương phản", action:"＋ Thêm ảnh ánh sáng tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu ánh sáng"},
-  Camera: {title:"Ảnh góc máy tham chiếu", note:"Tùy chọn · dùng để tham chiếu vị trí máy, bố cục và phối cảnh", action:"＋ Thêm ảnh góc máy tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu góc máy"},
-  ReferenceReplica: {title:"Ảnh không gian tham chiếu", note:"Tùy chọn · nguồn hình ảnh để sao chép khi KTS cung cấp", action:"＋ Thêm ảnh không gian tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không được giả định có ảnh tham chiếu"}
+  Lighting: {title:"Ảnh ánh sáng tham chiếu", note:"Bộ não riêng 03 · Ingo Maurer", action:"＋ Thêm ảnh ánh sáng tham chiếu", help:"JPG / PNG / WebP · Có thể chọn nhiều ảnh ánh sáng tham chiếu"}
 };
-let modeReferenceFile=null, modeReferenceUrl=null;
+let modeReferenceFiles=[], modeReferenceUrls=[];
+const modeReferenceGallery=document.getElementById("modeReferenceGallery");
+const modeReferenceTrigger=document.getElementById("modeReferenceTrigger");
 function renderModeReference(){
   const cfg=modeReferenceConfig[currentMode];
   modeReferencePanel?.classList.toggle("hidden",!cfg);
   if(!cfg) return;
   if(modeReferenceTitle) modeReferenceTitle.textContent=cfg.title;
   if(modeReferenceNote) modeReferenceNote.textContent=cfg.note;
-  if(modeReferenceAction) modeReferenceAction.textContent=cfg.action;
   if(modeReferenceHelp) modeReferenceHelp.textContent=cfg.help;
 }
+function renderLightingReferences(){
+  if(!modeReferenceGallery) return;
+  modeReferenceGallery.innerHTML="";
+  modeReferenceUrls.forEach(url=>URL.revokeObjectURL(url)); modeReferenceUrls=[];
+  modeReferenceFiles.forEach((file,i)=>{
+    const url=URL.createObjectURL(file); modeReferenceUrls.push(url);
+    const card=document.createElement("div"); card.className="reference-thumb";
+    card.innerHTML='<img src="'+url+'" alt="Ảnh ánh sáng tham chiếu '+(i+1)+'"><span>ÁNH SÁNG '+String(i+1).padStart(2,"0")+'</span><button type="button" class="reference-remove" aria-label="Xóa ảnh">×</button>';
+    card.querySelector("button")?.addEventListener("click",()=>{modeReferenceFiles.splice(i,1);renderLightingReferences();});
+    modeReferenceGallery.appendChild(card);
+  });
+  modeReferencePlaceholder?.classList.toggle("hidden",modeReferenceFiles.length>0);
+}
+modeReferenceTrigger?.addEventListener("click",()=>modeReferenceInput?.click());
+modeReferenceInput?.addEventListener("change",()=>{
+  if(currentMode!=="Lighting") return;
+  const files=Array.from(modeReferenceInput.files||[]).filter(f=>["image/jpeg","image/png","image/webp"].includes(f.type));
+  modeReferenceFiles.push(...files); modeReferenceInput.value=""; renderLightingReferences();
+});
 function clearModeReference(){
   if(modeReferenceUrl) URL.revokeObjectURL(modeReferenceUrl);
   modeReferenceUrl=null; modeReferenceFile=null;
