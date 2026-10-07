@@ -8,6 +8,34 @@ const result = document.getElementById("result");
 const resultContent = document.getElementById("resultContent");
 const resultText = document.getElementById("resultText");
 const brainStatus = document.getElementById("brainStatus");
+const promptRevisionSource = document.getElementById("promptRevisionSource");
+const promptRevisionReplacement = document.getElementById("promptRevisionReplacement");
+const applyPromptRevision = document.getElementById("applyPromptRevision");
+const undoPromptRevision = document.getElementById("undoPromptRevision");
+const promptRevisionStatus = document.getElementById("promptRevisionStatus");
+let previousPromptBeforeRevision = null;
+
+applyPromptRevision?.addEventListener("click",()=>{
+  const source=(promptRevisionSource?.value||"").trim();
+  const replacement=(promptRevisionReplacement?.value||"").trim();
+  const current=resultContent?.textContent||"";
+  if(!source){ if(promptRevisionStatus) promptRevisionStatus.textContent="Hãy dán chính xác đoạn Prompt cần sửa."; return; }
+  if(!replacement){ if(promptRevisionStatus) promptRevisionStatus.textContent="Hãy nhập nội dung muốn sửa thành."; return; }
+  const occurrences=current.split(source).length-1;
+  if(occurrences===0){ if(promptRevisionStatus) promptRevisionStatus.textContent="Không tìm thấy chính xác đoạn cần sửa. Prompt được giữ nguyên."; return; }
+  if(occurrences>1){ if(promptRevisionStatus) promptRevisionStatus.textContent="Đoạn này xuất hiện nhiều hơn một lần. Hãy copy đoạn dài hơn để xác định duy nhất."; return; }
+  previousPromptBeforeRevision=current;
+  resultContent.textContent=current.replace(source,replacement);
+  if(undoPromptRevision) undoPromptRevision.disabled=false;
+  if(promptRevisionStatus) promptRevisionStatus.textContent="Đã thay đúng đoạn được chọn. Không thêm nội dung thừa vào Prompt.";
+});
+undoPromptRevision?.addEventListener("click",()=>{
+  if(previousPromptBeforeRevision===null) return;
+  resultContent.textContent=previousPromptBeforeRevision;
+  previousPromptBeforeRevision=null;
+  if(undoPromptRevision) undoPromptRevision.disabled=true;
+  if(promptRevisionStatus) promptRevisionStatus.textContent="Đã hoàn tác lần sửa gần nhất.";
+});
 const sceneInput = document.getElementById("sceneInput");
 const referenceInput = document.getElementById("referenceInput");
 const scenePreview = document.getElementById("scenePreview");
@@ -53,6 +81,46 @@ const materialTarget = document.getElementById("materialTarget");
 const materialComponent = document.getElementById("materialComponent");
 const materialMapping = document.getElementById("materialMapping");
 const materialFinish = document.getElementById("materialFinish");
+const modeReferencePanel = document.getElementById("modeReferencePanel");
+const modeReferenceInput = document.getElementById("modeReferenceInput");
+const modeReferencePreview = document.getElementById("modeReferencePreview");
+const modeReferencePlaceholder = document.getElementById("modeReferencePlaceholder");
+const modeReferenceRemove = document.getElementById("modeReferenceRemove");
+const modeReferenceTitle = document.getElementById("modeReferenceTitle");
+const modeReferenceNote = document.getElementById("modeReferenceNote");
+const modeReferenceAction = document.getElementById("modeReferenceAction");
+const modeReferenceHelp = document.getElementById("modeReferenceHelp");
+const modeReferenceConfig = {
+  Lighting: {title:"Ảnh ánh sáng tham chiếu", note:"Tùy chọn · dùng để tham chiếu không khí, hướng sáng và tương phản", action:"＋ Thêm ảnh ánh sáng tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu ánh sáng"},
+  Camera: {title:"Ảnh góc máy tham chiếu", note:"Tùy chọn · dùng để tham chiếu vị trí máy, bố cục và phối cảnh", action:"＋ Thêm ảnh góc máy tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không nhắc tới tham chiếu góc máy"},
+  ReferenceReplica: {title:"Ảnh không gian tham chiếu", note:"Tùy chọn · nguồn hình ảnh để sao chép khi KTS cung cấp", action:"＋ Thêm ảnh không gian tham chiếu", help:"JPG / PNG / WebP · Không có ảnh thì prompt không được giả định có ảnh tham chiếu"}
+};
+let modeReferenceFile=null, modeReferenceUrl=null;
+function renderModeReference(){
+  const cfg=modeReferenceConfig[currentMode];
+  modeReferencePanel?.classList.toggle("hidden",!cfg);
+  if(!cfg) return;
+  if(modeReferenceTitle) modeReferenceTitle.textContent=cfg.title;
+  if(modeReferenceNote) modeReferenceNote.textContent=cfg.note;
+  if(modeReferenceAction) modeReferenceAction.textContent=cfg.action;
+  if(modeReferenceHelp) modeReferenceHelp.textContent=cfg.help;
+}
+function clearModeReference(){
+  if(modeReferenceUrl) URL.revokeObjectURL(modeReferenceUrl);
+  modeReferenceUrl=null; modeReferenceFile=null;
+  if(modeReferenceInput) modeReferenceInput.value="";
+  if(modeReferencePreview){modeReferencePreview.src="";modeReferencePreview.classList.remove("visible");}
+  modeReferencePlaceholder?.classList.remove("hidden"); modeReferenceRemove?.classList.add("hidden");
+}
+modeReferenceInput?.addEventListener("change",()=>{
+  const file=modeReferenceInput.files?.[0]; if(!file) return;
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){alert("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP.");clearModeReference();return;}
+  if(modeReferenceUrl) URL.revokeObjectURL(modeReferenceUrl);
+  modeReferenceFile=file; modeReferenceUrl=URL.createObjectURL(file);
+  if(modeReferencePreview){modeReferencePreview.src=modeReferenceUrl;modeReferencePreview.classList.add("visible");}
+  modeReferencePlaceholder?.classList.add("hidden"); modeReferenceRemove?.classList.remove("hidden");
+});
+modeReferenceRemove?.addEventListener("click",clearModeReference);
 const spaceSyncPanel = document.getElementById("spaceSyncPanel");
 const syncReferenceInput = document.getElementById("syncReferenceInput");
 const syncReferencePreview = document.getElementById("syncReferencePreview");
@@ -111,6 +179,7 @@ for (const kind of ["Face", "Body", "Outfit"]) {
 }
 let currentMode = "Furniture";
 let selectedAITarget = "ChatGPT Images";
+queueMicrotask(renderModeReference);
 
 const aiTargetProfiles = {
   "ChatGPT Images": "Format for OpenAI image editing: direct conversational edit instruction, explicit target, preservation locks, spatial consistency and precise requested change.",
@@ -290,6 +359,11 @@ sceneInput?.addEventListener("change", () => { sceneFile = sceneInput.files?.[0]
 function referenceMetaDefaults() {
   return {
     model: "Sofa",
+    modelCode: "",
+    dimensions: "",
+    viewRole: "KTS chưa xác định",
+    extraReferences: [],
+    extraReferenceRoles: [],
     priority: "Giữ nguyên toàn bộ model cung cấp",
     preservation: "Bảo toàn 100% hình dáng và cấu tạo",
     views: "Nhiều góc nhìn của cùng một model",
@@ -297,11 +371,13 @@ function referenceMetaDefaults() {
   };
 }
 
+function escapeAttribute(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"); }
+
 function renderReferenceGallery() {
   if (!referenceGallery) return;
   referenceGallery.innerHTML = "";
   referenceFiles.forEach((file, i) => {
-    const meta = referenceMeta[i] || referenceMetaDefaults();
+    const meta = {...referenceMetaDefaults(), ...referenceMeta[i]};
     referenceMeta[i] = meta;
     const card = document.createElement("div");
     card.className = "reference-thumb evidence-card";
@@ -311,10 +387,15 @@ function renderReferenceGallery() {
       <button type="button" class="reference-remove" title="Xóa ảnh">×</button>
       <div class="evidence-details">
         <div class="evidence-row"><label>MODEL</label><select class="evidence-model">${referenceOptions.object.map(x => `<option${meta.model === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
+        <div class="evidence-row"><label>MÃ MODEL</label><input class="evidence-model-code" value="${escapeAttribute(meta.modelCode)}" placeholder="Ví dụ: BRT21022"></div>
+        <div class="evidence-row"><label>KÍCH THƯỚC</label><input class="evidence-dimensions" value="${escapeAttribute(meta.dimensions)}" placeholder="Ví dụ: 2600 × 1050 × 750 mm"><small>Nếu kích thước đọc rõ trên ảnh, hệ thống tự nhận diện và điền; KTS có thể sửa lại.</small></div>
+        <details class="evidence-advanced"${meta.advancedOpen ? " open" : ""}><summary>Thiết lập model và góc nhìn</summary><div class="evidence-advanced-grid">
         <div class="evidence-row"><label>ƯU TIÊN MODEL CUNG CẤP</label><select class="evidence-priority">${referenceOptions.priority.map(x => `<option${meta.priority === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>MỨC ĐỘ BẢO TOÀN</label><select class="evidence-preservation">${referenceOptions.preservation.map(x => `<option${meta.preservation === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
-        <div class="evidence-row"><label>CHUẨN HÓA GÓC NHÌN</label><select class="evidence-views">${referenceOptions.views.map(x => `<option${meta.views === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>\n        <div class="evidence-row"><label>GÓC NHÌN DO KTS XÁC ĐỊNH</label><select class="evidence-view-role">${referenceOptions.viewRole.map(x => `<option${meta.viewRole === x ? " selected" : ""}>${x}</option>`).join("")}</select><small>KTS xác định thì hệ thống phải dùng đúng góc này; không được AI đoán lại.</small></div>
-        <div class="evidence-row"><label>GHI CHÚ</label><input class="evidence-note" value="${meta.note || ""}" placeholder="Ghi chú riêng cho ảnh (tùy chọn)"></div>
+        <div class="evidence-row"><label>CHUẨN HÓA GÓC NHÌN</label><select class="evidence-views">${referenceOptions.views.map(x => `<option${meta.views === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
+        <div class="evidence-row"><label>GÓC NHÌN DO KTS XÁC ĐỊNH</label><select class="evidence-view-role">${referenceOptions.viewRole.map(x => `<option${meta.viewRole === x ? " selected" : ""}>${x}</option>`).join("")}</select><small>KTS xác định thì hệ thống phải dùng đúng góc này; không được AI đoán lại.</small></div>
+        <div class="evidence-row"><label>GHI CHÚ</label><input class="evidence-note" value="${escapeAttribute(meta.note)}" placeholder="Ghi chú riêng cho ảnh (tùy chọn)"></div>
+        </div></details>
         <div class="evidence-row evidence-extra-reference"><label>ẢNH THAM CHIẾU THÊM</label><button type="button" class="extra-reference-trigger">＋ Thêm góc của cùng sản phẩm</button><input class="extra-reference-input" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden><div class="extra-reference-gallery"></div><small>Có thể thêm nhiều ảnh của cùng một bàn/ghế/sofa để AI hiểu đủ mặt trước, bên, sau và chi tiết.</small></div>
       </div>`;
     card.querySelector(".reference-remove").addEventListener("click", e => {
@@ -324,10 +405,18 @@ function renderReferenceGallery() {
       renderReferenceGallery();
     });
     const model = card.querySelector(".evidence-model");
+    const advanced = card.querySelector(".evidence-advanced");
+    advanced.addEventListener("toggle", () => {
+      meta.advancedOpen = advanced.open;
+      if (referenceMeta[i]) referenceMeta[i].advancedOpen = advanced.open;
+    });
+    const modelCode = card.querySelector(".evidence-model-code");
+    const dimensions = card.querySelector(".evidence-dimensions");
     const priority = card.querySelector(".evidence-priority");
     const preservation = card.querySelector(".evidence-preservation");
     const views = card.querySelector(".evidence-views");
-    const viewRole = card.querySelector(".evidence-view-role");\n    const note = card.querySelector(".evidence-note");
+    const viewRole = card.querySelector(".evidence-view-role");
+    const note = card.querySelector(".evidence-note");
     const extraTrigger = card.querySelector(".extra-reference-trigger");
     const extraInput = card.querySelector(".extra-reference-input");
     const extraGallery = card.querySelector(".extra-reference-gallery");
@@ -338,7 +427,8 @@ function renderReferenceGallery() {
       meta.extraReferences.forEach((extraFile, extraIndex) => {
         const item = document.createElement("div");
         item.className = "extra-reference-item";
-        item.innerHTML = `<img src="${URL.createObjectURL(extraFile)}" alt="Góc tham chiếu thêm ${extraIndex + 1}"><button type="button" aria-label="Xóa ảnh">×</button><span>${String(extraIndex + 1).padStart(2,"0")}</span><select class="extra-view-role">${referenceOptions.viewRole.map(x => `<option${(meta.extraReferenceRoles[extraIndex] || "KTS chưa xác định") === x ? " selected" : ""}>${x}</option>`).join("")}</select>`;\n        item.querySelector(".extra-view-role").addEventListener("change", e => { meta.extraReferenceRoles[extraIndex] = e.target.value; });
+        item.innerHTML = `<img src="${URL.createObjectURL(extraFile)}" alt="Góc tham chiếu thêm ${extraIndex + 1}"><button type="button" aria-label="Xóa ảnh">×</button><span>${String(extraIndex + 1).padStart(2,"0")}</span><select class="extra-view-role">${referenceOptions.viewRole.map(x => `<option${(meta.extraReferenceRoles[extraIndex] || "KTS chưa xác định") === x ? " selected" : ""}>${x}</option>`).join("")}</select>`;
+        item.querySelector(".extra-view-role").addEventListener("change", e => { meta.extraReferenceRoles[extraIndex] = e.target.value; });
         item.querySelector("button").addEventListener("click", () => { meta.extraReferences.splice(extraIndex,1); meta.extraReferenceRoles.splice(extraIndex,1); renderExtraReferences(); });
         extraGallery.appendChild(item);
       });
@@ -353,19 +443,75 @@ function renderReferenceGallery() {
     });
     renderExtraReferences();
     const save = () => {
-      referenceMeta[i] = { ...meta, model: model.value, priority: priority.value, preservation: preservation.value, views: views.value, viewRole: viewRole.value, note: note.value.trim(), extraReferences: meta.extraReferences || [], extraReferenceRoles: meta.extraReferenceRoles || [] };
+      referenceMeta[i] = { ...meta, model: model.value, modelCode: modelCode.value.trim(), dimensions: dimensions.value.trim(), priority: priority.value, preservation: preservation.value, views: views.value, viewRole: viewRole.value, note: note.value.trim(), extraReferences: meta.extraReferences || [], extraReferenceRoles: meta.extraReferenceRoles || [] };
     };
-    [model, priority, preservation, views, viewRole, note].forEach(el => el.addEventListener("change", save));
+    [model, modelCode, dimensions, priority, preservation, views, viewRole, note].forEach(el => el.addEventListener("change", save));
+    modelCode.addEventListener("input", save);
+    dimensions.addEventListener("input", save);
     note.addEventListener("input", save);
     referenceGallery.appendChild(card);
   });
-  referencePlaceholder?.classList.toggle("hidden", referenceFiles.length > 0);
+  referencePlaceholder?.classList.remove("hidden");
   if (brainStatus) brainStatus.textContent = referenceFiles.length ? `Đã chuẩn bị ${referenceFiles.length} thẻ bằng chứng mẫu` : "Hệ thống sẵn sàng";
 }
+
+const modelLibraryPanel = document.getElementById("modelLibraryPanel");
+const modelLibraryGrid = document.getElementById("modelLibraryGrid");
+const modelLibrarySearch = document.getElementById("modelLibrarySearch");
+const modelLibraryStatus = document.getElementById("modelLibraryStatus");
+const MODEL_LIBRARY_KEY = "hoanggia_edit_ai_model_library_v1";
+
+function readModelLibrary(){
+  try { const items = JSON.parse(localStorage.getItem(MODEL_LIBRARY_KEY) || "[]"); return Array.isArray(items) ? items.filter(x => x && typeof x === "object") : []; } catch { return []; }
+}
+function writeModelLibrary(items){
+  try { localStorage.setItem(MODEL_LIBRARY_KEY, JSON.stringify(items)); return true; }
+  catch { if(brainStatus) brainStatus.textContent="Không thể lưu thư viện trên thiết bị này. Hãy kiểm tra dung lượng hoặc quyền lưu trữ."; return false; }
+}
+function renderModelLibrary(query=""){
+  const items=readModelLibrary();
+  if(modelLibraryStatus) modelLibraryStatus.textContent = items.length ? items.length + " model đã lưu" : "Chưa có model đã lưu";
+  if(!modelLibraryGrid) return;
+  const q=query.trim().toLowerCase();
+  const filtered=items.filter(x => !q || [x.model,x.modelCode,x.dimensions,x.note].join(" ").toLowerCase().includes(q));
+  modelLibraryGrid.innerHTML = filtered.length ? filtered.map(x => `
+    <article class="model-library-card">
+      <strong>${escapeAttribute(x.modelCode || x.model || "Model chưa đặt tên")}</strong>
+      <span>${escapeAttribute(x.model || "Chưa phân loại")}</span>
+      <small>${escapeAttribute(x.dimensions || "Chưa có kích thước")} · ${escapeAttribute(x.viewRole || "KTS chưa xác định góc")}</small>
+      <div><button type="button" data-use-model="${escapeAttribute(x.id)}">Dùng model</button><button type="button" data-delete-model="${escapeAttribute(x.id)}">Xóa</button></div>
+    </article>`).join("") : "<p>Không có model phù hợp.</p>";
+  modelLibraryGrid.querySelectorAll("[data-use-model]").forEach(btn=>btn.addEventListener("click",()=>{
+    const item=items.find(x=>x.id===btn.dataset.useModel); if(!item) return;
+    if (!referenceFiles.length) { if(brainStatus) brainStatus.textContent="Hãy tải ảnh model trước, rồi chọn hồ sơ trong thư viện."; return; }
+    const current = referenceMeta[0] || referenceMetaDefaults();
+    referenceMeta[0] = {...referenceMetaDefaults(),...item,extraReferences:current.extraReferences,extraReferenceRoles:current.extraReferenceRoles};
+    renderReferenceGallery(); modelLibraryPanel?.classList.add("hidden");
+    if(brainStatus) brainStatus.textContent="Đã nạp hồ sơ model " + (item.modelCode || item.model);
+  }));
+  modelLibraryGrid.querySelectorAll("[data-delete-model]").forEach(btn=>btn.addEventListener("click",()=>{
+    if(writeModelLibrary(items.filter(x=>x.id!==btn.dataset.deleteModel))) renderModelLibrary(modelLibrarySearch?.value||"");
+  }));
+}
+document.getElementById("openModelLibrary")?.addEventListener("click",()=>{ modelLibraryPanel?.classList.remove("hidden"); renderModelLibrary(); });
+document.getElementById("closeModelLibrary")?.addEventListener("click",()=>modelLibraryPanel?.classList.add("hidden"));
+modelLibrarySearch?.addEventListener("input",()=>renderModelLibrary(modelLibrarySearch.value));
+document.getElementById("saveModelLibrary")?.addEventListener("click",()=>{
+  if(!referenceMeta.length){ if(brainStatus) brainStatus.textContent="Chưa có model để lưu"; return; }
+  const meta=referenceMeta[0];
+  const items=readModelLibrary();
+  const id=(meta.modelCode||meta.model||"model").toLowerCase().replace(/[^a-z0-9]+/g,"-")+"-"+Date.now();
+  items.unshift({id,model:meta.model,modelCode:meta.modelCode||"",dimensions:meta.dimensions||"",priority:meta.priority,preservation:meta.preservation,views:meta.views,viewRole:meta.viewRole,note:meta.note||"",extraReferenceRoles:meta.extraReferenceRoles||[],savedAt:new Date().toISOString()});
+  if(!writeModelLibrary(items)) return;
+  renderModelLibrary();
+  if(brainStatus) brainStatus.textContent="Đã lưu model " + (meta.modelCode || meta.model) + " vào thư viện";
+});
+renderModelLibrary();
 
 referenceTrigger?.addEventListener("click", () => referenceInput?.click());
 referenceInput?.addEventListener("change", () => {
   Array.from(referenceInput.files || []).forEach(file => {
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) { alert("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP."); return; }
     referenceFiles.push(file);
     referenceMeta.push(referenceMetaDefaults());
   });
@@ -623,7 +769,11 @@ document.getElementById("generate")?.addEventListener("click", () => {
               ? ((decisionsNow.ratio === "Khác" ? decisionsNow.customRatio : decisionsNow.ratio) || "target aspect ratio")
               : "selected spatial system";
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
-  const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}; additional_views=${(m.extraReferences || []).map(f => f.name).join(", ") || "none"}; multi_view_rule=${(m.extraReferences || []).length ? "Treat all additional images as different views/details of the SAME product identity, not separate products." : "none"}`).join(" | ");
+  const productReferenceRoles = referenceFiles.length ? referenceMeta.map((m, i) => `Ảnh model ${i + 1}: ${m.model}; mã=${m.modelCode || "chưa có"}; kích thước=${m.dimensions || "chưa có"}; góc KTS=${m.viewRole || "KTS chưa xác định"}; ưu tiên=${m.priority}; bảo toàn=${m.preservation}; ghi chú=${m.note || "không"}; ảnh bổ sung=${(m.extraReferences || []).map(f => f.name).join(", ") || "không"}`).join(" | ") : "";
+  const modeSpecificReference = modeReferenceFile && modeReferenceConfig[currentMode]
+    ? `${modeReferenceConfig[currentMode].title}: ${modeReferenceFile.name}`
+    : "";
+  const referenceRoles = [productReferenceRoles, modeSpecificReference].filter(Boolean).join(" | ");
   const activeReplicaProductSource = decisionsNow.productSourcePriority === "UPLOADED_PRODUCT_REFERENCE"
     ? "AUTHORIZED UPLOADED PRODUCT REFERENCES: " + (referenceRoles || "none")
     : decisionsNow.productSourcePriority === "WRITTEN_REPLACEMENT_PRODUCTS"
