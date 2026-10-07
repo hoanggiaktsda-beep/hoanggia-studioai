@@ -314,6 +314,7 @@ function renderReferenceGallery() {
         <div class="evidence-row"><label>MỨC ĐỘ BẢO TOÀN</label><select class="evidence-preservation">${referenceOptions.preservation.map(x => `<option${meta.preservation === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>CHUẨN HÓA GÓC NHÌN</label><select class="evidence-views">${referenceOptions.views.map(x => `<option${meta.views === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
         <div class="evidence-row"><label>GHI CHÚ</label><input class="evidence-note" value="${meta.note || ""}" placeholder="Ghi chú riêng cho ảnh (tùy chọn)"></div>
+        <div class="evidence-row evidence-extra-reference"><label>ẢNH THAM CHIẾU THÊM</label><button type="button" class="extra-reference-trigger">＋ Thêm góc của cùng sản phẩm</button><input class="extra-reference-input" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden><div class="extra-reference-gallery"></div><small>Có thể thêm nhiều ảnh của cùng một bàn/ghế/sofa để AI hiểu đủ mặt trước, bên, sau và chi tiết.</small></div>
       </div>`;
     card.querySelector(".reference-remove").addEventListener("click", e => {
       e.preventDefault();
@@ -326,8 +327,31 @@ function renderReferenceGallery() {
     const preservation = card.querySelector(".evidence-preservation");
     const views = card.querySelector(".evidence-views");
     const note = card.querySelector(".evidence-note");
+    const extraTrigger = card.querySelector(".extra-reference-trigger");
+    const extraInput = card.querySelector(".extra-reference-input");
+    const extraGallery = card.querySelector(".extra-reference-gallery");
+    meta.extraReferences = meta.extraReferences || [];
+    const renderExtraReferences = () => {
+      extraGallery.innerHTML = "";
+      meta.extraReferences.forEach((extraFile, extraIndex) => {
+        const item = document.createElement("div");
+        item.className = "extra-reference-item";
+        item.innerHTML = `<img src="${URL.createObjectURL(extraFile)}" alt="Góc tham chiếu thêm ${extraIndex + 1}"><button type="button" aria-label="Xóa ảnh">×</button><span>${String(extraIndex + 1).padStart(2,"0")}</span>`;
+        item.querySelector("button").addEventListener("click", () => { meta.extraReferences.splice(extraIndex,1); renderExtraReferences(); });
+        extraGallery.appendChild(item);
+      });
+    };
+    extraTrigger?.addEventListener("click", () => extraInput?.click());
+    extraInput?.addEventListener("change", () => {
+      Array.from(extraInput.files || []).forEach(extraFile => {
+        if (["image/jpeg","image/png","image/webp"].includes(extraFile.type)) meta.extraReferences.push(extraFile);
+      });
+      extraInput.value = "";
+      renderExtraReferences();
+    });
+    renderExtraReferences();
     const save = () => {
-      referenceMeta[i] = { model: model.value, priority: priority.value, preservation: preservation.value, views: views.value, note: note.value.trim() };
+      referenceMeta[i] = { ...meta, model: model.value, priority: priority.value, preservation: preservation.value, views: views.value, note: note.value.trim(), extraReferences: meta.extraReferences || [] };
     };
     [model, priority, preservation, views, note].forEach(el => el.addEventListener("change", save));
     note.addEventListener("input", save);
@@ -597,7 +621,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
               ? ((decisionsNow.ratio === "Khác" ? decisionsNow.customRatio : decisionsNow.ratio) || "target aspect ratio")
               : "selected spatial system";
   const model = currentMode === "Furniture" ? (referenceMeta[0] || {}) : {};
-  const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}`).join(" | ");
+  const referenceRoles = referenceMeta.map((m, i) => `Image ${i + 1}: ${m.model}; priority=${m.priority}; preservation=${m.preservation}; views=${m.views}; note=${m.note || "none"}; additional_views=${(m.extraReferences || []).map(f => f.name).join(", ") || "none"}; multi_view_rule=${(m.extraReferences || []).length ? "Treat all additional images as different views/details of the SAME product identity, not separate products." : "none"}`).join(" | ");
   const activeReplicaProductSource = decisionsNow.productSourcePriority === "UPLOADED_PRODUCT_REFERENCE"
     ? "AUTHORIZED UPLOADED PRODUCT REFERENCES: " + (referenceRoles || "none")
     : decisionsNow.productSourcePriority === "WRITTEN_REPLACEMENT_PRODUCTS"
