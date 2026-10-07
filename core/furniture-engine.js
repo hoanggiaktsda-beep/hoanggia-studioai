@@ -89,6 +89,10 @@ const SPATIAL_ORIENTATION_RULES = [
   "Ảnh model là Reference View để nhận dạng hình học, cấu tạo, vật liệu và tỷ lệ; KHÔNG phải hướng đặt trong ảnh đích.",
   "Tự phân tích diện ảnh: FRONT / REAR / LEFT / RIGHT / LONG SIDE / SHORT SIDE / 3-4 / TOP / BOTTOM / UNKNOWN.",
   "Nếu KTS xác nhận diện ảnh thủ công, dữ liệu KTS có ưu tiên tuyệt đối.",
+  "Khi có nhiều ảnh tham chiếu, bắt buộc thực hiện Multi-View Fusion: hợp nhất mọi góc thành một Product Model duy nhất trước khi placement.",
+  "Mỗi ảnh phải có View Role riêng; dùng ảnh top/3-4/side/front bổ sung cho nhau để suy ra phần hình học, vật liệu và cấu tạo bị che.",
+  "Không được chọn một ảnh reference làm template đầu ra hoặc bỏ qua các ảnh bổ sung.",
+  "Sau Multi-View Fusion, tạo Target View mới theo camera và trục của ảnh đích; target view có thể khác hoàn toàn mọi reference view.",
   "Xác lập hệ trục LENGTH–WIDTH–HEIGHT từ toàn bộ ảnh tham chiếu và kích thước được cung cấp.",
   "Đọc trục, footprint, hướng và perspective của đồ cũ trong ảnh không gian.",
   "Map trục model vào trục đồ cũ rồi chiếu theo camera/perspective của ảnh gốc; Reference camera is NOT target camera.",
@@ -219,7 +223,8 @@ export function furnitureDirection(target, replacement = "", brief = "", params 
       "Never create impossible human-scale dimensions, unsupported structure or blocked circulation.",
       "Never add decorative details that are not justified by the supplied model or user brief.",
       "ORIENTATION GATE — Reference camera ≠ Target camera. Không lấy hướng chụp ảnh model làm hướng đặt sản phẩm.",
-      "AXIS GATE — LENGTH / WIDTH / HEIGHT phải map đúng với trục đồ cũ; nếu mâu thuẫn phải sửa trước khi xuất."
+      "AXIS GATE — LENGTH / WIDTH / HEIGHT phải map đúng với trục đồ cũ; nếu mâu thuẫn phải sửa trước khi xuất.",
+      "MULTI-VIEW GATE — Nếu có nhiều ảnh tham chiếu nhưng hình học đầu ra chỉ phản ánh một ảnh đơn lẻ, dừng và hợp nhất lại Product Model trước khi xuất."
     ]
   };
 }
