@@ -5,6 +5,28 @@ import { expertFor } from "./core/expert-decision-layer.js";
 import { buildIndependentLightingPrompt } from "./core/lighting-engine.js";
 import { buildIndependentCameraPrompt } from "./core/camera-engine.js";
 
+// Chuẩn hóa đầu ra riêng của Expert 03/04 thành năm phần, không thay đổi engine chuyên môn.
+function formatIndependentExpertPrompt(raw, mode, reference, target, userBrief) {
+  const normalize = value => String(value || "").replace(/\s+/g, " ").trim();
+  const rows = String(raw || "").split(/\n+/).map(normalize).filter(Boolean);
+  const seen = new Set();
+  const unique = rows.filter(line => {
+    const key = line.toLocaleLowerCase("vi");
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  const constraintPattern = /^(preserve|keep|do not|never|no |only |giữ|không |bảo toàn|khóa)/i;
+  const constraints = unique.filter(x => constraintPattern.test(x));
+  const actions = unique.filter(x => !constraintPattern.test(x));
+  return [
+    "BỐI CẢNH: Ảnh tham chiếu: " + normalize(reference) + ". Ảnh cần chỉnh sửa: " + normalize(target) + ".",
+    "VAI TRÒ: Chuyên gia " + (mode === "Lighting" ? "ánh sáng nội thất" : "góc máy kiến trúc") + ".",
+    "NHIỆM VỤ: " + (normalize(userBrief) || (mode === "Lighting" ? "Đồng bộ ánh sáng theo ảnh tham chiếu." : "Điều chỉnh góc máy theo tham chiếu.")) + (actions.length ? "\n" + actions.join("\n") : ""),
+    "RÀNG BUỘC: " + (constraints.length ? constraints.join(" ") : "Giữ nguyên các thành phần không thuộc phạm vi chỉnh sửa."),
+    "KẾT QUẢ: Hình ảnh đúng tham chiếu, tỷ lệ và phối cảnh tự nhiên; không phát sinh thay đổi ngoài yêu cầu."
+  ].join("\n\n");
+}
 const brief = document.getElementById("brief");
 const result = document.getElementById("result");
 const resultContent = document.getElementById("resultContent");
@@ -876,7 +898,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
       if(!cameraReferenceFile) throw new Error("EXPERT 04 cần ẢNH GÓC MÁY THAM CHIẾU.");
       if(!cameraTargetFiles.length) throw new Error("EXPERT 04 cần ít nhất 1 ẢNH NHẬN THAM CHIẾU.");
       const cards=Array.from(cameraTargetGallery?.querySelectorAll(".lighting-target-card")||[]);
-      const prompts=cameraTargetFiles.map((file,index)=>{const card=cards[index];return buildIndependentCameraPrompt({referenceName:cameraReferenceFile.name,targetName:file.name,brief:brief?.value||"",preserve:card?.querySelector(".camera-target-preserve")?.value||"",change:card?.querySelector(".camera-target-change")?.value||"",targetAnalysis:card?.querySelector(".camera-target-note")?.value||"",aiTarget:selectedAITarget});});
+      const prompts=cameraTargetFiles.map((file,index)=>{const card=cards[index];return formatIndependentExpertPrompt(buildIndependentCameraPrompt({referenceName:cameraReferenceFile.name,targetName:file.name,brief:brief?.value||"",preserve:card?.querySelector(".camera-target-preserve")?.value||"",change:card?.querySelector(".camera-target-change")?.value||"",targetAnalysis:card?.querySelector(".camera-target-note")?.value||"",aiTarget:selectedAITarget}),"Camera",cameraReferenceFile.name,file.name,brief?.value||"");});
       if(resultContent)resultContent.textContent=prompts.map((p,i)=>"════════════════════════════════════════\nEXPERT 04 · PROMPT "+String(i+1).padStart(2,"0")+" — "+cameraTargetFiles[i].name+"\n════════════════════════════════════════\n"+p).join("\n\n");
       result?.classList.remove("hidden");result?.scrollIntoView({behavior:"smooth",block:"start"});if(brainStatus)brainStatus.textContent="EXPERT 04 đã tạo "+prompts.length+" Prompt góc máy độc lập";return;
     }
@@ -891,7 +913,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
         const scope = card?.querySelector(".lighting-target-scope")?.value || "Toàn cảnh";
         const strength = card?.querySelector(".lighting-target-strength")?.value || "Trung bình";
         const note = card?.querySelector(".lighting-target-note")?.value || "";
-        return buildIndependentLightingPrompt({ referenceName: lightingReferenceFile.name, targetName: file.name, brief: brief?.value || "", decisions: { target: scope, strength }, aiTarget: selectedAITarget, preserve, change, targetAnalysis: note });
+        return formatIndependentExpertPrompt(buildIndependentLightingPrompt({ referenceName: lightingReferenceFile.name, targetName: file.name, brief: brief?.value || "", decisions: { target: scope, strength }, aiTarget: selectedAITarget, preserve, change, targetAnalysis: note }),"Lighting",lightingReferenceFile.name,file.name,brief?.value||"");
       });
       if (resultContent) resultContent.textContent = prompts.map((prompt, i) => "════════════════════════════════════════\nEXPERT 03 · PROMPT " + String(i + 1).padStart(2, "0") + " — " + lightingTargetFiles[i].name + "\n════════════════════════════════════════\n" + prompt).join("\n\n");
       if (reasoningSummary) reasoningSummary.innerHTML = "<div><b>EXPERT 03 · ÁNH SÁNG</b><span>Ingo Maurer · bộ não độc lập.</span></div><div><b>" + lightingTargetFiles.length + " Prompt riêng</b><span>Một nguồn ánh sáng tham chiếu → từng ảnh nhận độc lập.</span></div><div><b>KHÓA LIÊN MIỀN</b><span>Không đọc quyết định từ Expert 01/02/04/05/06/07/08.</span></div>";
