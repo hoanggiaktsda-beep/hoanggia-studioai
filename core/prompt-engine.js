@@ -3,6 +3,7 @@ import {materialDirection, materialDecisionEngine} from "./material-engine.js";
 import {cameraDirection} from "./camera-engine.js";
 import {cameraDecisionEngine} from "./camera-decision-engine.js";
 import {furnitureDirection} from "./furniture-engine.js";
+import {viewpointAnalysisPrompt} from "./viewpoint-analyzer.js";
 import {editModeDirection} from "./edit-engine.js";
 import {lightingDecisionEngine} from "./lighting-engine.js";
 import {expertDecision} from "./expert-decision-layer.js";
@@ -361,6 +362,8 @@ export function buildDirection({
                 : "Synchronize the whole space using Citterio, Zumthor, Maurer and Baan: " + target;
 
   if (mode === "Furniture") {
+    const viewpointStep = viewpointAnalysisPrompt({hasReference});
+    if (viewpointStep) body.push(viewpointStep);
     const f = furnitureDirection(target, replacement, brief, relevantParams, decisions, model, referenceRoles);
     body.push("NHIỆM VỤ: Chỉ thay sản phẩm nội thất đã chọn: " + target + ".");
     if (hasReference) body.push(
