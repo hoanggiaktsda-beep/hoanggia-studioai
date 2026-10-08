@@ -1,8 +1,8 @@
 
 function structurePromptFiveParts(body, {mode, brief, target, referenceRoles}) {
-  const normalize = value => String(value || "").replace(/\\s+/g, " ").trim();
+  const normalize = value => String(value || "").replace(/\s+/g, " ").trim();
   const seen = new Set();
-  const statements = body.flatMap(part => String(part || "").split("\\n")).map(normalize).filter(Boolean).filter(line => {
+  const statements = body.flatMap(part => String(part || "").split("\n")).map(normalize).filter(Boolean).filter(line => {
     const key = line.toLocaleLowerCase("vi");
     if (seen.has(key)) return false;
     seen.add(key);
@@ -20,10 +20,10 @@ function structurePromptFiveParts(body, {mode, brief, target, referenceRoles}) {
   return [
     "BỐI CẢNH: Ảnh gốc là cơ sở về không gian và bố cục." + (referenceRoles ? " Ảnh tham chiếu: " + normalize(referenceRoles) + "." : ""),
     "VAI TRÒ: Chuyên gia " + (modeLabels[mode] || "chỉnh sửa hình ảnh") + ".",
-    "NHIỆM VỤ: " + (taskText || "Thực hiện đúng lựa chọn của người dùng.") + (target && target !== "Khác" ? " Đối tượng: " + normalize(target) + "." : "") + (tasks.length ? "\\n" + tasks.join("\\n") : ""),
+    "NHIỆM VỤ: " + (taskText || "Thực hiện đúng lựa chọn của người dùng.") + (target && target !== "Khác" ? " Đối tượng: " + normalize(target) + "." : "") + (tasks.length ? "\n" + tasks.join("\n") : ""),
     "RÀNG BUỘC: " + (constraints.length ? constraints.join(" ") : "Chỉ thay đổi phạm vi được chọn; giữ nguyên phần còn lại."),
     "KẾT QUẢ: Ảnh chỉnh sửa nhất quán với yêu cầu, đúng phối cảnh và có sự hòa hợp tự nhiên."
-  ].join("\\n\\n");
+  ].join("\n\n");
 }
 
 import {analyzeBrief} from "./architectural-brain.js";
