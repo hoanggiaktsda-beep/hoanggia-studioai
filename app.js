@@ -27,6 +27,48 @@ function formatIndependentExpertPrompt(raw, mode, reference, target, userBrief) 
     "KẾT QUẢ: Hình ảnh đúng tham chiếu, tỷ lệ và phối cảnh tự nhiên; không phát sinh thay đổi ngoài yêu cầu."
   ].join("\n\n");
 }
+const promptLanguage = document.getElementById("promptLanguage");
+const promptLanguageStatus = document.getElementById("promptLanguageStatus");
+promptLanguage?.addEventListener("change", () => {
+  if (promptLanguageStatus) promptLanguageStatus.textContent = promptLanguage.value === "en"
+    ? "English Language Expert: English-only output; untranslated input is flagged for review."
+    : "Chuyên gia tiếng Việt kiểm tra thuật ngữ và tính mạch lạc.";
+});
+function languageExpertOutput(source, mode, briefText) {
+  if (promptLanguage?.value !== "en") return source;
+  const englishModes = {Furniture:"furniture replacement",Material:"material editing",Lighting:"lighting design",Camera:"camera and perspective editing",Removal:"object removal",AspectRatio:"aspect-ratio adjustment",ReferenceReplica:"reference replication",SpaceSync:"spatial design synchronization"};
+  const sections = String(source||"").split(/\n\s*\n/).filter(Boolean);
+  const sectionsVi = ["BỐI CẢNH:","VAI TRÒ:","NHIỆM VỤ:","RÀNG BUỘC:","KẾT QUẢ:"];
+  const sectionsEn = ["CONTEXT:","ROLE:","TASK:","CONSTRAINTS:","RESULT:"];
+  const vocabulary = [
+    ["Ảnh tham chiếu","Reference image"],["Ảnh cần chỉnh sửa","Target image"],
+    ["Ảnh gốc","Source image"],["Chuyên gia","Specialist"],["ánh sáng nội thất","interior lighting"],
+    ["góc máy kiến trúc","architectural camera"],["Chỉ thay đổi phạm vi đã chọn","Change only the selected scope"],
+    ["giữ nguyên","preserve"],["không thay đổi","do not change"],["không tự suy diễn","do not infer"],
+    ["kiến trúc","architecture"],["nội thất","interior"],["vật liệu","materials"],
+    ["phối cảnh","perspective"],["ánh sáng","lighting"],["bố cục","composition"],
+    ["đối tượng","target object"],["hình ảnh","image"],["kết quả","result"],
+    ["không gian","space"],["tự nhiên","natural"],["theo ảnh tham chiếu","according to the reference image"]
+  ];
+  const translate = value => vocabulary.reduce((s,[vi,en])=>s.replace(new RegExp(vi,"gi"),en),String(value||""));
+  const converted = sections.map((part,i) => {
+    const heading = sectionsVi.findIndex(h=>part.startsWith(h));
+    if (heading<0) return translate(part);
+    return sectionsEn[heading]+translate(part.slice(sectionsVi[heading].length));
+  }).join("\n\n");
+  // Never present mixed-language text as English-only. If a complete translation
+  // is unavailable locally, return a clean English brief rather than leaking mixed text.
+  const remainingVietnamese = /[ăâđêôơưĂÂĐÊÔƠƯ]|[àáảãạằắẳẵặầấẩẫậèéẻẽẹềếểễệìíỉĩịòóỏõọồốổỗộờớởỡợùúủũụừứửữựỳýỷỹỵ]/i.test(converted);
+  if (!remainingVietnamese) return converted;
+  if (promptLanguageStatus) promptLanguageStatus.textContent = "Some Vietnamese input cannot be translated locally. English expert generated a concise English-safe version; review detailed requirements.";
+  return [
+    "CONTEXT: Edit the supplied architectural or interior image, using the uploaded references as visual evidence.",
+    "ROLE: Professional "+(englishModes[mode]||"architectural image editing")+" specialist and English-language editor.",
+    "TASK: Perform the selected expert operation on the intended target only. Apply the configured reference images and expert decisions without mixing separate targets.",
+    "CONSTRAINTS: Preserve unselected architecture, geometry, objects, materials, camera, lighting and composition. Do not invent unseen details or override locked design properties.",
+    "RESULT: A realistic, coherent edited image with accurate scale, perspective, material response and lighting. Review any custom-language instructions separately before execution."
+  ].join("\n\n");
+}
 const brief = document.getElementById("brief");
 const result = document.getElementById("result");
 const resultContent = document.getElementById("resultContent");
@@ -899,7 +941,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
       if(!cameraTargetFiles.length) throw new Error("EXPERT 04 cần ít nhất 1 ẢNH NHẬN THAM CHIẾU.");
       const cards=Array.from(cameraTargetGallery?.querySelectorAll(".lighting-target-card")||[]);
       const prompts=cameraTargetFiles.map((file,index)=>{const card=cards[index];return formatIndependentExpertPrompt(buildIndependentCameraPrompt({referenceName:cameraReferenceFile.name,targetName:file.name,brief:brief?.value||"",preserve:card?.querySelector(".camera-target-preserve")?.value||"",change:card?.querySelector(".camera-target-change")?.value||"",targetAnalysis:card?.querySelector(".camera-target-note")?.value||"",aiTarget:selectedAITarget}),"Camera",cameraReferenceFile.name,file.name,brief?.value||"");});
-      if(resultContent)resultContent.textContent=prompts.map((p,i)=>"════════════════════════════════════════\nEXPERT 04 · PROMPT "+String(i+1).padStart(2,"0")+" — "+cameraTargetFiles[i].name+"\n════════════════════════════════════════\n"+p).join("\n\n");
+      if(resultContent)resultContent.textContent=prompts.map((p,i)=>"════════════════════════════════════════\nEXPERT 04 · PROMPT "+String(i+1).padStart(2,"0")+" — "+cameraTargetFiles[i].name+"\n════════════════════════════════════════\n"+languageExpertOutput(p,"Camera",brief?.value||"")).join("\n\n");
       result?.classList.remove("hidden");result?.scrollIntoView({behavior:"smooth",block:"start"});if(brainStatus)brainStatus.textContent="EXPERT 04 đã tạo "+prompts.length+" Prompt góc máy độc lập";return;
     }
     if (currentMode === "Lighting") {
@@ -1008,7 +1050,7 @@ document.getElementById("generate")?.addEventListener("click", () => {
       evidence: sceneInput?.files?.length ? [{role:"target",observed:false}] : []
     });
     if (!cognitive.ready) throw new Error("Thiếu yêu cầu hợp lệ để biên dịch.");
-    if (resultContent) resultContent.textContent = built.prompt;
+    if (resultContent) resultContent.textContent = languageExpertOutput(built.prompt,currentMode,brief?.value||"");
     if (reasoningSummary) reasoningSummary.innerHTML = `
       <div><b>${built.reasoning.expert}</b><span>${built.reasoning.expertRole}</span></div>
       <div><b>${built.reasoning.independence}</b><span>Không suy luận chéo sang expert khác.</span></div>
