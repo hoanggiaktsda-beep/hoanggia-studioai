@@ -1,3 +1,31 @@
+
+function structurePromptFiveParts(body, {mode, brief, target, referenceRoles}) {
+  const normalize = value => String(value || "").replace(/\\s+/g, " ").trim();
+  const seen = new Set();
+  const statements = body.flatMap(part => String(part || "").split("\\n")).map(normalize).filter(Boolean).filter(line => {
+    const key = line.toLocaleLowerCase("vi");
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  const constraints = [];
+  const tasks = [];
+  const constraintPattern = /^(?:preserve|keep|do not|never|no |only |không |giữ nguyên|bảo toàn|khóa |reference image is the visual authority|source of truth)/i;
+  for (const line of statements) {
+    if (/^(?:user brief:|target: (?:chatgpt|gemini|midjourney)|photorealistic, physically accurate)/i.test(line)) continue;
+    (constraintPattern.test(line) ? constraints : tasks).push(line);
+  }
+  const taskText = normalize(brief);
+  const modeLabels = {Furniture:"chỉnh sửa nội thất",Material:"chỉnh sửa vật liệu",Lighting:"thiết kế ánh sáng",Camera:"góc máy",Removal:"loại bỏ vật thể",AspectRatio:"tỷ lệ khung hình",ReferenceReplica:"sao chép tham chiếu",SpaceSync:"đồng bộ không gian"};
+  return [
+    "BỐI CẢNH: Ảnh gốc là cơ sở về không gian và bố cục." + (referenceRoles ? " Ảnh tham chiếu: " + normalize(referenceRoles) + "." : ""),
+    "VAI TRÒ: Chuyên gia " + (modeLabels[mode] || "chỉnh sửa hình ảnh") + ".",
+    "NHIỆM VỤ: " + (taskText || "Thực hiện đúng lựa chọn của người dùng.") + (target && target !== "Khác" ? " Đối tượng: " + normalize(target) + "." : "") + (tasks.length ? "\\n" + tasks.join("\\n") : ""),
+    "RÀNG BUỘC: " + (constraints.length ? constraints.join(" ") : "Chỉ thay đổi phạm vi được chọn; giữ nguyên phần còn lại."),
+    "KẾT QUẢ: Ảnh chỉnh sửa nhất quán với yêu cầu, đúng phối cảnh và có sự hòa hợp tự nhiên."
+  ].join("\\n\\n");
+}
+
 import {analyzeBrief} from "./architectural-brain.js";
 import {materialDirection, materialDecisionEngine} from "./material-engine.js";
 import {cameraDirection} from "./camera-engine.js";
@@ -476,5 +504,5 @@ export function buildDirection({
   }
 
   const prompt = body.join(" ").replace(/\\s+/g, " ").trim();
-  return {analysis, reasoning, prompt: body.join("\n")};
+  return {analysis, reasoning, prompt: structurePromptFiveParts(body, {mode, brief, target, referenceRoles})};
 }
