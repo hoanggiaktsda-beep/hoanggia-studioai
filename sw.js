@@ -52,6 +52,12 @@ self.addEventListener("fetch", event => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // Only read from the active app cache: legacy caches may contain stale scripts.
+  const offline = async (navigation = false) => {
+    const cache = await caches.open(CACHE);
+    return (await cache.match(request, {ignoreSearch: true})) || (navigation ? await cache.match("./index.html") : undefined);
+  };
+
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
@@ -62,7 +68,7 @@ self.addEventListener("fetch", event => {
           }
           return response;
         })
-        .catch(async () => (await caches.match(request, {ignoreSearch: true})) || (await caches.match("./index.html")))
+        .catch(async () => await offline(true))
     );
     return;
   }
@@ -77,6 +83,6 @@ self.addEventListener("fetch", event => {
         }
         return response;
       })
-      .catch(() => caches.match(request, {ignoreSearch: true}))
+      .catch(() => offline())
   );
 });
