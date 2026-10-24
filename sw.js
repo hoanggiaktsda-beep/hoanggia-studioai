@@ -1,4 +1,4 @@
-const CACHE = "hoanggia-ai-v15";
+const CACHE = "hoanggia-studioai-v16";
 const CORE = [
   "./",
   "./index.html",
@@ -8,6 +8,7 @@ const CORE = [
   "./expert09.css",
   "./expert09.js",
   "./core/multishot-engine.js",
+  "./core/viewpoint-analyzer.js",
   "./core/prompt-engine.js",
   "./core/cognitive-core.js",
   "./core/prompt-copy-guard.js",
@@ -39,7 +40,7 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))
+      .then(keys => Promise.all(keys.filter(key => key.startsWith("hoanggia-studioai-v") && key !== CACHE).map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
@@ -61,7 +62,7 @@ self.addEventListener("fetch", event => {
           }
           return response;
         })
-        .catch(async () => (await caches.match(request)) || (await caches.match("./index.html")))
+        .catch(async () => (await caches.match(request, {ignoreSearch: true})) || (await caches.match("./index.html")))
     );
     return;
   }
@@ -76,6 +77,6 @@ self.addEventListener("fetch", event => {
         }
         return response;
       })
-      .catch(() => caches.match(request))
+      .catch(() => caches.match(request, {ignoreSearch: true}))
   );
 });
