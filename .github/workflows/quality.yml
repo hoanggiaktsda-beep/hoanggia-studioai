@@ -27,6 +27,10 @@ jobs:
           assert.match(index,/href="\.\/expert09\.html"/);
           assert.match(expert,/href="\.\/index\.html"/);
           assert.match(sw,/cache\.put\(request, copy\)/);
+          assert.match(sw,/ignoreSearch:\s*true/);
+          assert.match(sw,/cache\.match\(request, \{ignoreSearch: true\}\)/);
+          assert.doesNotMatch(sw,/caches\.match\(/);
+          assert.match(sw,/key\.startsWith\("hoanggia-studioai-v"\)/);
           assert.doesNotMatch(sw,/cache\.put\("\.\/index\.html", copy\)/);
           for(const path of ['expert09.html','expert09.css','expert09.js','core/multishot-engine.js'])assert.ok(sw.includes('"./'+path+'"'),path);
           for(const id of ['space','outputMode','viewCount','layout','shots','addShot','zone','master','generate','output','status','shotHelp'])assert.ok(expert.includes('id="'+id+'"'),id);
@@ -57,8 +61,9 @@ jobs:
           for(const page of ['index.html','expert09.html']){
             const html=readFileSync(page,'utf8');
             assert.match(html,/apple-touch-icon\.png\?v=13/);
-            assert.match(html,/sw\.js\?v=14/);
-            for(const m of html.matchAll(/<script\s+type="module"\s+src="\.\/([^"]+)"/g))checkImports(m[1]);
+            assert.match(html,/serviceWorker\.register\("\.\/sw\.js\?v=16"\)/);
+            assert.doesNotMatch(html,/serviceWorker\.getRegistrations\(|\.unregister\(\)/);
+            for(const m of html.matchAll(/<script\s+type="module"\s+src="\.\/([^"]+)"/g))checkImports(m[1].split('?')[0]);
           }
           for(const icon of manifest.icons){
             const path=icon.src.replace(/^\.\//,'');
