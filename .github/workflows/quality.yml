@@ -28,6 +28,8 @@ jobs:
           assert.match(expert,/href="\.\/index\.html"/);
           assert.match(sw,/cache\.put\(request, copy\)/);
           assert.match(sw,/ignoreSearch:\s*true/);
+          assert.match(sw,/cache\.match\(request, \{ignoreSearch: true\}\)/);
+          assert.doesNotMatch(sw,/caches\.match\(/);
           assert.match(sw,/key\.startsWith\("hoanggia-studioai-v"\)/);
           assert.doesNotMatch(sw,/cache\.put\("\.\/index\.html", copy\)/);
           for(const path of ['expert09.html','expert09.css','expert09.js','core/multishot-engine.js'])assert.ok(sw.includes('"./'+path+'"'),path);
