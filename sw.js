@@ -1,10 +1,11 @@
-const CACHE = "hoanggia-studioai-v16";
+const CACHE = "hoanggia-studioai-v17";
 const CORE = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./expert09.html",
+  "./material-map.html",
   "./expert09.css",
   "./expert09.js",
   "./core/multishot-engine.js",

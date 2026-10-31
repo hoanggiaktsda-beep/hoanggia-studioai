@@ -189,7 +189,7 @@ modeReferenceRemove?.addEventListener("click",clearModeReference);
 const cameraExpertPanel=document.getElementById("cameraExpertPanel");
 const cameraReferenceInput=document.getElementById("cameraReferenceInput"), cameraReferencePreview=document.getElementById("cameraReferencePreview"), cameraReferencePlaceholder=document.getElementById("cameraReferencePlaceholder"), cameraReferenceRemove=document.getElementById("cameraReferenceRemove");
 const cameraTargetInput=document.getElementById("cameraTargetInput"), cameraTargetGallery=document.getElementById("cameraTargetGallery"), cameraTargetUploadBox=document.getElementById("cameraTargetUploadBox"), cameraTargetTrigger=document.getElementById("cameraTargetTrigger"), cameraTargetPlaceholder=document.getElementById("cameraTargetPlaceholder"), cameraTargetCount=document.getElementById("cameraTargetCount");
-let cameraReferenceFile=null,cameraReferenceUrl=null,cameraTargetFiles=[],cameraTargetUrls=[];
+let cameraReferenceFile=null,cameraReferenceUrl=null,cameraTargetFiles=[],cameraTargetUrls=[],cameraTargetSettings=[];
 const lightingExpertPanel = document.getElementById("lightingExpertPanel");
 const lightingReferenceInput = document.getElementById("lightingReferenceInput");
 const lightingReferencePreview = document.getElementById("lightingReferencePreview");
@@ -205,7 +205,7 @@ const lightingPreserve = document.getElementById("lightingPreserve");
 const lightingChange = document.getElementById("lightingChange");
 const lightingTargetAnalysis = document.getElementById("lightingTargetAnalysis");
 let lightingReferenceFile = null, lightingReferenceUrl = null;
-let lightingTargetFiles = [], lightingTargetUrls = [];
+let lightingTargetFiles = [], lightingTargetUrls = [], lightingTargetSettings = [];
 
 function renderLightingTargets() {
   if (!lightingTargetGallery) return;
@@ -225,13 +225,23 @@ function renderLightingTargets() {
       '<div class="evidence-row"><label>MỨC ĐỘ BÁM THAM CHIẾU</label><select class="lighting-target-strength"><option>Trung bình</option><option>Cao</option><option>Rất cao</option><option>Thấp</option></select></div>' +
       '<div class="evidence-row"><label>GHI CHÚ</label><input class="lighting-target-note" placeholder="Ví dụ: chỉ thay ánh sáng trần"></div>' +
       '</div></details>';
-    remove.addEventListener("click", (event) => { event.stopPropagation(); URL.revokeObjectURL(lightingTargetUrls[index]); lightingTargetFiles.splice(index,1); lightingTargetUrls.splice(index,1); renderLightingTargets(); });
+    const settings = lightingTargetSettings[index] || (lightingTargetSettings[index] = {});
+    details.querySelectorAll("input, select").forEach(field => {
+      if (Object.prototype.hasOwnProperty.call(settings, field.className)) field.value = settings[field.className];
+      const persist = () => { settings[field.className] = field.value; };
+      field.addEventListener("input", persist);
+      field.addEventListener("change", persist);
+    });
+    const advanced = details.querySelector("details");
+    advanced.open = Boolean(settings.advancedOpen);
+    advanced.addEventListener("toggle", () => { settings.advancedOpen = advanced.open; });
+    remove.addEventListener("click", (event) => { event.stopPropagation(); URL.revokeObjectURL(lightingTargetUrls[index]); lightingTargetFiles.splice(index,1); lightingTargetUrls.splice(index,1); lightingTargetSettings.splice(index,1); renderLightingTargets(); });
     card.append(img,badge,remove,details); lightingTargetGallery.appendChild(card);
   });
   lightingTargetPlaceholder?.classList.toggle("hidden", lightingTargetFiles.length > 0);
   if (lightingTargetCount) lightingTargetCount.textContent = lightingTargetFiles.length + " ảnh · " + lightingTargetFiles.length + " Prompt riêng";
 }
-function renderCameraTargets(){if(!cameraTargetGallery)return;cameraTargetGallery.innerHTML="";cameraTargetFiles.forEach((file,index)=>{const card=document.createElement("div");card.className="lighting-target-card evidence-card";const img=document.createElement("img");img.src=cameraTargetUrls[index];img.alt="Ảnh nhận "+(index+1);const badge=document.createElement("span");badge.className="lighting-target-badge";badge.textContent=String(index+1).padStart(2,"0");const remove=document.createElement("button");remove.type="button";remove.className="reference-remove lighting-card-remove";remove.title="Xóa ảnh nhận";remove.setAttribute("aria-label","Xóa ảnh nhận");remove.innerHTML="<span aria-hidden=\"true\">×</span><span class=\"remove-label\">Xóa</span>";const details=document.createElement("div");details.className="evidence-details";details.innerHTML='<div class="evidence-row"><label>GIỮ NGUYÊN</label><input class="camera-target-preserve" value="Kiến trúc · nội thất · vật liệu · ánh sáng · tỷ lệ vật thể"></div><div class="evidence-row"><label>THAY ĐỔI</label><input class="camera-target-change" value="Chỉ góc máy theo ảnh tham chiếu"></div><details class="evidence-advanced"><summary>Thiết lập ảnh nhận</summary><div class="evidence-advanced-grid"><div class="evidence-row"><label>GHI CHÚ</label><input class="camera-target-note" placeholder="Ví dụ: ưu tiên giữ thẳng đứng"></div></div></details>';remove.addEventListener("click",e=>{e.stopPropagation();URL.revokeObjectURL(cameraTargetUrls[index]);cameraTargetFiles.splice(index,1);cameraTargetUrls.splice(index,1);renderCameraTargets();});card.append(img,badge,remove,details);cameraTargetGallery.appendChild(card);});cameraTargetPlaceholder?.classList.toggle("hidden",cameraTargetFiles.length>0);if(cameraTargetCount)cameraTargetCount.textContent=cameraTargetFiles.length+" ảnh · "+cameraTargetFiles.length+" Prompt riêng";}
+function renderCameraTargets(){if(!cameraTargetGallery)return;cameraTargetGallery.innerHTML="";cameraTargetFiles.forEach((file,index)=>{const card=document.createElement("div");card.className="lighting-target-card evidence-card";const img=document.createElement("img");img.src=cameraTargetUrls[index];img.alt="Ảnh nhận "+(index+1);const badge=document.createElement("span");badge.className="lighting-target-badge";badge.textContent=String(index+1).padStart(2,"0");const remove=document.createElement("button");remove.type="button";remove.className="reference-remove lighting-card-remove";remove.title="Xóa ảnh nhận";remove.setAttribute("aria-label","Xóa ảnh nhận");remove.innerHTML="<span aria-hidden=\"true\">×</span><span class=\"remove-label\">Xóa</span>";const details=document.createElement("div");details.className="evidence-details";details.innerHTML='<div class="evidence-row"><label>GIỮ NGUYÊN</label><input class="camera-target-preserve" value="Kiến trúc · nội thất · vật liệu · ánh sáng · tỷ lệ vật thể"></div><div class="evidence-row"><label>THAY ĐỔI</label><input class="camera-target-change" value="Chỉ góc máy theo ảnh tham chiếu"></div><details class="evidence-advanced"><summary>Thiết lập ảnh nhận</summary><div class="evidence-advanced-grid"><div class="evidence-row"><label>GHI CHÚ</label><input class="camera-target-note" placeholder="Ví dụ: ưu tiên giữ thẳng đứng"></div></div></details>';remove.addEventListener("click",e=>{e.stopPropagation();URL.revokeObjectURL(cameraTargetUrls[index]);cameraTargetFiles.splice(index,1);cameraTargetUrls.splice(index,1);cameraTargetSettings.splice(index,1);renderCameraTargets();});const settings=cameraTargetSettings[index]||(cameraTargetSettings[index]={});details.querySelectorAll("input, select").forEach(field=>{if(Object.prototype.hasOwnProperty.call(settings,field.className))field.value=settings[field.className];const persist=()=>{settings[field.className]=field.value;};field.addEventListener("input",persist);field.addEventListener("change",persist);});const advanced=details.querySelector("details");advanced.open=Boolean(settings.advancedOpen);advanced.addEventListener("toggle",()=>{settings.advancedOpen=advanced.open;});card.append(img,badge,remove,details);cameraTargetGallery.appendChild(card);});cameraTargetPlaceholder?.classList.toggle("hidden",cameraTargetFiles.length>0);if(cameraTargetCount)cameraTargetCount.textContent=cameraTargetFiles.length+" ảnh · "+cameraTargetFiles.length+" Prompt riêng";}
 cameraReferenceInput?.addEventListener("change",()=>{const file=cameraReferenceInput.files?.[0];if(!file)return;if(cameraReferenceUrl)URL.revokeObjectURL(cameraReferenceUrl);cameraReferenceFile=file;cameraReferenceUrl=URL.createObjectURL(file);if(cameraReferencePreview){cameraReferencePreview.src=cameraReferenceUrl;cameraReferencePreview.classList.add("visible");}cameraReferencePlaceholder?.classList.add("hidden");cameraReferenceRemove?.classList.remove("hidden");});
 cameraReferenceRemove?.addEventListener("click",()=>{if(cameraReferenceUrl)URL.revokeObjectURL(cameraReferenceUrl);cameraReferenceFile=null;cameraReferenceUrl=null;if(cameraReferenceInput)cameraReferenceInput.value="";if(cameraReferencePreview){cameraReferencePreview.src="";cameraReferencePreview.classList.remove("visible");}cameraReferencePlaceholder?.classList.remove("hidden");cameraReferenceRemove?.classList.add("hidden");});
 cameraTargetUploadBox?.addEventListener("click",e=>{if(e.target.closest(".reference-remove"))return;cameraTargetInput?.click();});cameraTargetTrigger?.addEventListener("click",e=>{e.stopPropagation();cameraTargetInput?.click();});cameraTargetInput?.addEventListener("change",()=>{Array.from(cameraTargetInput.files||[]).filter(file=>["image/jpeg","image/png","image/webp"].includes(file.type)).forEach(file=>{cameraTargetFiles.push(file);cameraTargetUrls.push(URL.createObjectURL(file));});cameraTargetInput.value="";renderCameraTargets();});
@@ -836,6 +846,7 @@ function renderMode(mode) {
   if (materialReferencePanel) materialReferencePanel.classList.toggle("hidden", mode !== "Material");
   if (cameraContextPanel) cameraContextPanel.classList.toggle("hidden", mode !== "Camera");
   currentMode = mode;
+  renderModeReference();
   document.querySelectorAll(".mode-card").forEach(card => card.classList.toggle("active", card.dataset.mode === mode));
   renderExpert(mode);
   renderDecisions(mode);
@@ -856,6 +867,22 @@ document.getElementById("newProject")?.addEventListener("click", () => {
   renderAITargets();
   referenceFiles = [];
   referenceMeta = [];
+  clearModeReference();
+  cameraReferenceRemove?.click();
+  lightingReferenceRemove?.click();
+  cameraTargetUrls.forEach(url => URL.revokeObjectURL(url));
+  cameraTargetFiles = []; cameraTargetUrls = []; cameraTargetSettings = [];
+  if (cameraTargetInput) cameraTargetInput.value = "";
+  renderCameraTargets();
+  lightingTargetUrls.forEach(url => URL.revokeObjectURL(url));
+  lightingTargetFiles = []; lightingTargetUrls = []; lightingTargetSettings = [];
+  if (lightingTargetInput) lightingTargetInput.value = "";
+  renderLightingTargets();
+  previousPromptBeforeRevision = null;
+  if (promptRevisionSource) promptRevisionSource.value = "";
+  if (promptRevisionReplacement) promptRevisionReplacement.value = "";
+  if (promptRevisionStatus) promptRevisionStatus.textContent = "";
+  if (undoPromptRevision) undoPromptRevision.disabled = true;
   materialRemove?.click();
   materialDomain = "Architecture"; renderMaterialTargets();
   if (materialComponent) materialComponent.value = "";
@@ -872,6 +899,7 @@ document.getElementById("newProject")?.addEventListener("click", () => {
   scenePlaceholder?.classList.remove("hidden");
   renderReferenceGallery();
   if (brief) brief.value = "";
+  [intentSpaceType,intentStyle,intentLighting,intentView,intentCamera].forEach(el => { if (el) el.selectedIndex = 0; });
   [cameraWeather,cameraTime,cameraCharacters,cameraActivity,cameraAtmosphere,cameraLifeLevel,cameraExterior,cameraStory].forEach(el => { if (el) el.selectedIndex = 0; });
   for (const kind of ["Face", "Body", "Outfit"]) document.getElementById("camera" + kind + "Remove")?.click();
   if (bodyPreset) bodyPreset.value = "balanced";

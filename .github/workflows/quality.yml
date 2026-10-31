@@ -23,7 +23,7 @@ jobs:
           import assert from 'node:assert/strict';
           import {readFileSync,existsSync} from 'node:fs';
           const index=readFileSync('index.html','utf8'), expert=readFileSync('expert09.html','utf8'), sw=readFileSync('sw.js','utf8'), js=readFileSync('expert09.js','utf8');
-          for(const path of ['index.html','styles.css','app.js','expert09.html','expert09.css','expert09.js','core/multishot-engine.js','assets/brand-mark.svg'])assert.ok(existsSync(path),path);
+          for(const path of ['index.html','styles.css','app.js','expert09.html','material-map.html','expert09.css','expert09.js','core/multishot-engine.js','assets/brand-mark.svg'])assert.ok(existsSync(path),path);
           assert.match(index,/href="\.\/expert09\.html"/);
           assert.match(expert,/href="\.\/index\.html"/);
           assert.match(sw,/cache\.put\(request, copy\)/);
@@ -61,7 +61,7 @@ jobs:
           for(const page of ['index.html','expert09.html']){
             const html=readFileSync(page,'utf8');
             assert.match(html,/apple-touch-icon\.png\?v=13/);
-            assert.match(html,/serviceWorker\.register\("\.\/sw\.js\?v=16"\)/);
+            assert.match(html,/serviceWorker\.register\("\.\/sw\.js\?v=17"\)/);
             assert.doesNotMatch(html,/serviceWorker\.getRegistrations\(|\.unregister\(\)/);
             for(const m of html.matchAll(/<script\s+type="module"\s+src="\.\/([^"]+)"/g))checkImports(m[1].split('?')[0]);
           }
@@ -146,3 +146,17 @@ jobs:
           assert.match(compileMultiShot({...b,shots:[{mode:'manual',zone:'dining',angle:'Toàn cảnh',person:'none'}]}),/Phòng ăn/);
           console.log('Expert 09 regression passed');
           NODE
+
+  browser-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium and Playwright
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Upload, Expert09 and responsive browser regression
+        run: node tests/upload-browser.cjs

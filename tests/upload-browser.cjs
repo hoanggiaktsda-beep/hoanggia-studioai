@@ -59,13 +59,74 @@ const server = http.createServer((req, res) => {
     await page.locator('#materialInput').setInputFiles(image('material.png'));
     assert.ok(await page.locator('#materialPreview').evaluate(el=>el.classList.contains('visible')));
     await page.locator('#materialRemove').click();
+    await page.locator('[data-mode="Camera"]').click();
+    assert.equal(await page.locator('#modeReferencePanel').isVisible(),true);
+    await page.locator('#modeReferenceInput').setInputFiles(image('mode-ref.png'));
+    await page.locator('#cameraReferenceInput').setInputFiles(image('camera-ref.png'));
+    await page.locator('#cameraTargetInput').setInputFiles(image('camera-a.png'));
+    await page.locator('#cameraTargetGallery .evidence-advanced summary').first().click();
+    await page.locator('.camera-target-note').first().fill('Giữ trục camera A');
+    await page.locator('#cameraTargetInput').setInputFiles(image('camera-b.png'));
+    assert.equal(await page.locator('.camera-target-note').first().inputValue(),'Giữ trục camera A');
+    await page.locator('[data-mode="Lighting"]').click();
+    await page.locator('#lightingReferenceInput').setInputFiles(image('light-ref.png'));
+    await page.locator('#lightingTargetInput').setInputFiles(image('light-a.png'));
+    await page.locator('#lightingTargetGallery .evidence-advanced summary').first().click();
+    await page.locator('.lighting-target-note').first().fill('Ánh sáng đèn hắt');
+    await page.locator('#lightingTargetInput').setInputFiles(image('light-b.png'));
+    assert.equal(await page.locator('.lighting-target-note').first().inputValue(),'Ánh sáng đèn hắt');
     await page.locator('#newProject').click();
+    assert.equal(await page.locator('#cameraTargetGallery .lighting-target-card').count(),0);
+    assert.equal(await page.locator('#lightingTargetGallery .lighting-target-card').count(),0);
+    assert.equal(await page.locator('#cameraReferenceInput').inputValue(),'');
+    assert.equal(await page.locator('#lightingReferenceInput').inputValue(),'');
+    assert.equal(await page.locator('#modeReferenceInput').inputValue(),'');
     assert.equal(await page.locator('.evidence-card').count(),0);
     await page.evaluate(()=>localStorage.setItem('hoanggia_edit_ai_model_library_v1','{}'));
     await page.reload();
     await page.locator('#referenceInput').setInputFiles(image('after-reload.png'));
     assert.equal(await page.locator('.evidence-card').count(),1);
+    await page.goto(new URL('expert09.html',base.endsWith('/')?base:base+'/').href);
+    await page.locator('#master').setInputFiles(image('master.png'));
+    await page.locator('#face').setInputFiles(image('face.png'));
+    await page.locator('#outfit').setInputFiles(image('outfit.png'));
+    await page.locator('#bodySuggest').click();
+    await page.locator('#space').selectOption('architecture');
+    await page.locator('#outputMode').selectOption('multiview');
+    await page.locator('#viewCount').selectOption('12');
+    assert.equal(await page.locator('.shot').count(),12);
+    await page.locator('#generate').click();
+    assert.match(await page.locator('#output').inputValue(),/IMAGE 12 \/ 12/);
+    assert.match(await page.locator('#output').inputValue(),/FACE ID FILE/);
+    assert.match(await page.locator('#output').inputValue(),/OUTFIT FILE/);
+    await page.locator('#outputMode').selectOption('storyboard');
+    await page.locator('#layout').selectOption('3x3');
+    await page.locator('#generate').click();
+    assert.match(await page.locator('#output').inputValue(),/with 9 distinct/);
+    for (const width of [390,820,1440]) {
+      await page.setViewportSize({width,height:844});
+      const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+      assert.ok(overflow<=4,'Expert09 horizontal overflow at '+width+'px: '+overflow);
+    }
+    await page.goto(base);
+    for (const width of [390,820,1440]) {
+      await page.setViewportSize({width,height:844});
+      const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+      assert.ok(overflow<=4,'Studio horizontal overflow at '+width+'px: '+overflow);
+    }
+    const offlineContext=await browser.newContext({serviceWorkers:'allow'});
+    try {
+      const offlinePage=await offlineContext.newPage();
+      await offlinePage.goto(base);
+      await offlinePage.evaluate(()=>navigator.serviceWorker.ready);
+      await offlinePage.waitForFunction(()=>Boolean(navigator.serviceWorker.controller),null,{timeout:15000});
+      await offlineContext.setOffline(true);
+      await offlinePage.goto(new URL('material-map.html',base.endsWith('/')?base:base+'/').href);
+      assert.match(await offlinePage.title(),/BẢN ĐỒ VẬT LIỆU/);
+      await offlinePage.goto(new URL('expert09.html',base.endsWith('/')?base:base+'/').href);
+      assert.match(await offlinePage.title(),/Expert 09/);
+    } finally { await offlineContext.close(); }
     assert.deepEqual(errors,[]);
-    console.log('PASS: scene, multiple models, add-more, extra views, metadata, library, material, reset, corrupt storage; no runtime errors');
+    console.log('PASS: uploads/previews, Camera/Lighting state, reset, Expert09, responsive and PWA offline navigation; no runtime errors');
   } finally { await browser.close(); server.close(); }
 })().catch(error=>{console.error(error);server.close();process.exitCode=1;});
