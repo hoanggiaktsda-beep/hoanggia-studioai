@@ -101,6 +101,17 @@ const server = http.createServer((req, res) => {
     await page.locator('#layout').selectOption('3x3');
     await page.locator('#generate').click();
     assert.match(await page.locator('#output').inputValue(),/with 9 distinct/);
+    for (const width of [390,820,1440]) {
+      await page.setViewportSize({width,height:844});
+      const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+      assert.ok(overflow<=4,'Expert09 horizontal overflow at '+width+'px: '+overflow);
+    }
+    await page.goto(base);
+    for (const width of [390,820,1440]) {
+      await page.setViewportSize({width,height:844});
+      const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+      assert.ok(overflow<=4,'Studio horizontal overflow at '+width+'px: '+overflow);
+    }
     assert.deepEqual(errors,[]);
     console.log('PASS: uploads/previews, model metadata, Camera/Lighting per-image edits, new-project reset, Expert09 12-view and 9-shot; no runtime errors');
   } finally { await browser.close(); server.close(); }
