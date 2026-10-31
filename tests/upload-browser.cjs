@@ -64,12 +64,14 @@ const server = http.createServer((req, res) => {
     await page.locator('#modeReferenceInput').setInputFiles(image('mode-ref.png'));
     await page.locator('#cameraReferenceInput').setInputFiles(image('camera-ref.png'));
     await page.locator('#cameraTargetInput').setInputFiles(image('camera-a.png'));
+    await page.locator('#cameraTargetGallery .evidence-advanced summary').first().click();
     await page.locator('.camera-target-note').first().fill('Giữ trục camera A');
     await page.locator('#cameraTargetInput').setInputFiles(image('camera-b.png'));
     assert.equal(await page.locator('.camera-target-note').first().inputValue(),'Giữ trục camera A');
     await page.locator('[data-mode="Lighting"]').click();
     await page.locator('#lightingReferenceInput').setInputFiles(image('light-ref.png'));
     await page.locator('#lightingTargetInput').setInputFiles(image('light-a.png'));
+    await page.locator('#lightingTargetGallery .evidence-advanced summary').first().click();
     await page.locator('.lighting-target-note').first().fill('Ánh sáng đèn hắt');
     await page.locator('#lightingTargetInput').setInputFiles(image('light-b.png'));
     assert.equal(await page.locator('.lighting-target-note').first().inputValue(),'Ánh sáng đèn hắt');
