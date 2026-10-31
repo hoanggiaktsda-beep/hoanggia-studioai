@@ -112,7 +112,19 @@ const server = http.createServer((req, res) => {
       const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
       assert.ok(overflow<=4,'Studio horizontal overflow at '+width+'px: '+overflow);
     }
+    const offlineContext=await browser.newContext({serviceWorkers:'allow'});
+    try {
+      const offlinePage=await offlineContext.newPage();
+      await offlinePage.goto(base);
+      await offlinePage.evaluate(()=>navigator.serviceWorker.ready);
+      await offlinePage.waitForFunction(()=>Boolean(navigator.serviceWorker.controller),null,{timeout:15000});
+      await offlineContext.setOffline(true);
+      await offlinePage.goto(new URL('material-map.html',base.endsWith('/')?base:base+'/').href);
+      assert.match(await offlinePage.title(),/BẢN ĐỒ VẬT LIỆU/);
+      await offlinePage.goto(new URL('expert09.html',base.endsWith('/')?base:base+'/').href);
+      assert.match(await offlinePage.title(),/Expert 09/);
+    } finally { await offlineContext.close(); }
     assert.deepEqual(errors,[]);
-    console.log('PASS: uploads/previews, model metadata, Camera/Lighting per-image edits, new-project reset, Expert09 12-view and 9-shot; no runtime errors');
+    console.log('PASS: uploads/previews, Camera/Lighting state, reset, Expert09, responsive and PWA offline navigation; no runtime errors');
   } finally { await browser.close(); server.close(); }
 })().catch(error=>{console.error(error);server.close();process.exitCode=1;});
