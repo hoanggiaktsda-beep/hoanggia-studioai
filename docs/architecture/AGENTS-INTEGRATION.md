@@ -1,21 +1,7 @@
-# HOANGGIA AI — Architecture Agents V1
+# HOANGGIA AI — ChatGPT-only integration
 
-Two planning-only Claude Code agents:
-- `code-architect`: design new features in the existing codebase.
-- `architecture-modernizer`: audit and plan incremental modernization.
+The architecture assistants operate only through ChatGPT conversations and connected GitHub tools. They are not Claude Code agents, installed plugins or background processes.
 
-## Usage
-Open this repository with Claude Code, then request the appropriate agent by name:
-- "Use code-architect to design [feature]; provide paths, ADR, data flow, test plan."
-- "Use architecture-modernizer to audit [module]; provide evidence, phased migration and rollback."
+See [CHATGPT-AGENTS.md](./CHATGPT-AGENTS.md) for Code Architect, Architecture Modernizer, approval gates, safety policy and invocation examples.
 
-## Safety and release gate
-1. Agents inspect repository evidence; no write or shell tools.
-2. Architecture proposals require human review.
-3. Implementation occurs on a separate feature branch.
-4. Run applicable lint, build, unit/integration and regression tests.
-5. Preview and approve before merging or deploying.
-6. Record actual test results; never report unexecuted tests as passing.
-
-## Scope
-These are Claude Code agent definitions, not active background services, a web dashboard, or a deployed AI runtime. Claude Code and an appropriate model subscription/runtime are required to invoke them.
+Production branch remains unchanged until reviewed and approved. A successful GitHub commit does not demonstrate agent execution, automated testing or deployment.
