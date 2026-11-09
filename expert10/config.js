@@ -1,1 +1,3 @@
-// Set to the public HTTPS endpoint after the Cloud AI backend is deployed.\n// Never store provider keys or private bearer tokens in browser code.\nwindow.HG_EXPERT10_API_URL = "";\n
+// Public backend URL, configured after deployment.
+// Never place API secrets in browser code.
+window.HG_EXPERT10_API_URL = "";
