@@ -8,6 +8,8 @@ import httpx
 import fal_client
 
 app = FastAPI(title="HOANGGIA Expert 10")
+from tencent_provider import router as tencent_router
+app.include_router(tencent_router)
 app.add_middleware(CORSMiddleware,allow_origins=[os.getenv("FRONTEND_ORIGIN","https://hoanggiaktsda-beep.github.io")],allow_methods=["POST"],allow_headers=["*"])
 ALLOWED={"glb","fbx","obj","stl","blend"}
 MAX_DOWNLOAD=200*1024*1024
